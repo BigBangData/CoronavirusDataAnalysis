@@ -1,13 +1,21 @@
-# ------------------------------------- # 
-# CORONAVIRUS DATA ANALYSIS EXPLORATION #
-# 					#
-# Marcelo Sanches			#
-# Boulder, Colorado, 03-20-2020		#
-# ------------------------------------- # 
+#' ---
+#' title: "Coronavirus Data Analysis"
+#' author: "Marcelo Sanches"
+#' date: "3/21/2020"
+#' output: html_document
+#' ---
+#' 
+## ----setup, include=FALSE------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE)
 
-
-# ENVIRONMENT SETUP ===============================================================================
-
+#' 
+#' ## Coronavirus Data Analysis
+#' 
+#' This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see the website) and can be direcly accessed at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)
+#' 
+#' ### Evironment Setup
+#' 
+## ------------------------------------------------------------------------
 # clear workspace and set options 
 rm(list = ls())
 options(scipen=999)
@@ -24,10 +32,17 @@ install_packages <- function(package){
 
 packages <- c("Hmisc","tidyverse","ggplot2")
 
-suppressMessages(install_packages(packages))
+suppressMessages(suppressWarnings(install_packages(packages)))
 
 
-# PRE-PROCESSING ==================================================================================
+
+#' 
+#' ### Data Pre-Processing
+#' 
+#' I pull the data directly from the website into a folder (COVID19) created in the R working directory, perform some pre-processing steps to create one narrow and long dataset with confirmed cases, fatal, and recovered cases, and save it in the compressed RDS format.
+#' 
+#' 
+## ------------------------------------------------------------------------
 
 preprocess <- function() {
 
@@ -61,18 +76,18 @@ preprocess <- function() {
 				  ,"time_series_19-covid-")
 		
 		confirmed_URL  <- paste0(http_header, "Confirmed.csv", url_body, "Confirmed.csv")
-		fatalities_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
+		fatal_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
 		recovered_URL  <- paste0(http_header, "Recovered.csv", url_body, "Recovered.csv")
 									
 		# downloading 
 		download.file(confirmed_URL, destfile="./COVID19/confirmed.csv")
-		download.file(fatalities_URL, destfile="./COVID19/fatalities.csv")
+		download.file(fatal_URL, destfile="./COVID19/fatal.csv")
 		download.file(recovered_URL, destfile="./COVID19/recovered.csv")
 		
 		# read in separate files
 		read_in_file <- function(filename) { 
 		
-			filename <- read.csv(paste0("COVID19/", filename, ".csv"), 
+			filename <- read.csv(paste0("./COVID19/", filename, ".csv"), 
 								,header=TRUE,
 								,stringsAsFactors=FALSE, 
 								,na.strings="")[-1, ]
@@ -80,7 +95,7 @@ preprocess <- function() {
 		}
 	
 		confirmed  <- read_in_file("confirmed")
-		fatalities <- read_in_file("fatalities") 
+		fatal <- read_in_file("fatal") 
 		recovered  <- read_in_file("recovered")
 		
 		# prep data for long format
@@ -93,11 +108,11 @@ preprocess <- function() {
 		}
 		
 		confirmed  <- add_col(confirmed, "confirmed")
-		fatalities <- add_col(fatalities, "fatalities")
+		fatal <- add_col(fatal, "fatal")
 		recovered  <- add_col(recovered, "recovered")
 		
 		# join (union actually) into one dataset 
-		dfm <- rbind(confirmed, fatalities, recovered, make.row.names=FALSE)
+		dfm <- rbind(confirmed, fatal, recovered, make.row.names=FALSE)
 		
 		# rename columns 
 		colnames(dfm) <- c("Province_State", "Country_Region"
@@ -123,25 +138,49 @@ preprocess <- function() {
 dfm <- preprocess()
 
 
-# EXPLORATORY DATA ANALYSIS =======================================================================
 
+#' 
+#' 
+#' ## Exploratory Data Analysis
+#' 
+#' 
+
+I start with a simple aggregation at the country-status level - that is, where we group by a given country or region and the levels of confirmed, fatal, and recovered cases. 
+
+Since I know this is an exponential timer series data, I'm mostly interested in the current totals. 
+
+This isn't a trivial task, however, since the data is cumulative, but the latest day's information isn't always available. Here are some examples:
+
+
+dfm[dfm$Country_Region == "US" 
+		& dfm$Province_State == "California" 
+		& dfm$Status == "recovered" 
+		& as.character(dfm$Date) > "2020-03-01", ]
+
+
+dfm[dfm$Country_Region == "US" 
+		& dfm$Province_State == "Westchester County, NY" 
+		& dfm$Status == "confirmed" 
+		& as.character(dfm$Date) > "2020-03-01", ]
+
+
+# So I'll need to fill in the current data in those cases with at least the same value of the last reported date, 
+# if not a higher value based on some predictive model. For now, I'll just fill in the same value.
+
+
+
+
+
+
+
+
+
+
+
+
+## ------------------------------------------------------------------------
 # aggregate by Country-Region and Status
 agg <- as.data.frame(dfm %>% 
 		     group_by(Country_Region, Status) %>% 
-		     summarise('total'=sum(Value)		# 59 days in time series  
-		 	      ,'daily_average'=round(sum(Value)/length(unique(dfm$Date)))),4)
-							  
-							  
-
-# looking at some countries of personal interest
-agg[agg$Country_Region %in% c("Brazil","China","France","Germany","India"
-			      ,"Iran","Italy","Russia","South Korea","US"), ]
-	
-	
-	
-	
-	
-	
-	
-
-
+		     summarise('total'=sum(Value)))
+					   

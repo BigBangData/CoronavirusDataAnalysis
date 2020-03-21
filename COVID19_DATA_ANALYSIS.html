@@ -403,7 +403,7 @@ suppressMessages(suppressWarnings(install_packages(packages)))</code></pre>
 </div>
 <div id="data-pre-processing" class="section level3">
 <h3>Data Pre-Processing</h3>
-<p>I pull the data directly from the website into a folder (COVID19) created in the R working directory, perform some pre-processing steps to create one narrow and long dataset with confirmed cases, fatalities, and recovered cases, and save it in the compressed RDS format.</p>
+<p>I pull the data directly from the website into a folder (COVID19) created in the R working directory, perform some pre-processing steps to create one narrow and long dataset with confirmed cases, fatal, and recovered cases, and save it in the compressed RDS format.</p>
 <pre class="r"><code>preprocess &lt;- function() {
 
     # create &#39;COVID19&#39; directory, if not exists 
@@ -436,18 +436,18 @@ suppressMessages(suppressWarnings(install_packages(packages)))</code></pre>
                   ,&quot;time_series_19-covid-&quot;)
         
         confirmed_URL  &lt;- paste0(http_header, &quot;Confirmed.csv&quot;, url_body, &quot;Confirmed.csv&quot;)
-        fatalities_URL &lt;- paste0(http_header, &quot;Deaths.csv&quot;, url_body, &quot;Deaths.csv&quot;)
+        fatal_URL &lt;- paste0(http_header, &quot;Deaths.csv&quot;, url_body, &quot;Deaths.csv&quot;)
         recovered_URL  &lt;- paste0(http_header, &quot;Recovered.csv&quot;, url_body, &quot;Recovered.csv&quot;)
                                     
         # downloading 
         download.file(confirmed_URL, destfile=&quot;./COVID19/confirmed.csv&quot;)
-        download.file(fatalities_URL, destfile=&quot;./COVID19/fatalities.csv&quot;)
+        download.file(fatal_URL, destfile=&quot;./COVID19/fatal.csv&quot;)
         download.file(recovered_URL, destfile=&quot;./COVID19/recovered.csv&quot;)
         
         # read in separate files
         read_in_file &lt;- function(filename) { 
         
-            filename &lt;- read.csv(paste0(&quot;COVID19/&quot;, filename, &quot;.csv&quot;), 
+            filename &lt;- read.csv(paste0(&quot;./COVID19/&quot;, filename, &quot;.csv&quot;), 
                                 ,header=TRUE,
                                 ,stringsAsFactors=FALSE, 
                                 ,na.strings=&quot;&quot;)[-1, ]
@@ -455,7 +455,7 @@ suppressMessages(suppressWarnings(install_packages(packages)))</code></pre>
         }
     
         confirmed  &lt;- read_in_file(&quot;confirmed&quot;)
-        fatalities &lt;- read_in_file(&quot;fatalities&quot;) 
+        fatal &lt;- read_in_file(&quot;fatal&quot;) 
         recovered  &lt;- read_in_file(&quot;recovered&quot;)
         
         # prep data for long format
@@ -468,11 +468,11 @@ suppressMessages(suppressWarnings(install_packages(packages)))</code></pre>
         }
         
         confirmed  &lt;- add_col(confirmed, &quot;confirmed&quot;)
-        fatalities &lt;- add_col(fatalities, &quot;fatalities&quot;)
+        fatal &lt;- add_col(fatal, &quot;fatal&quot;)
         recovered  &lt;- add_col(recovered, &quot;recovered&quot;)
         
         # join (union actually) into one dataset 
-        dfm &lt;- rbind(confirmed, fatalities, recovered, make.row.names=FALSE)
+        dfm &lt;- rbind(confirmed, fatal, recovered, make.row.names=FALSE)
         
         # rename columns 
         colnames(dfm) &lt;- c(&quot;Province_State&quot;, &quot;Country_Region&quot;
@@ -500,46 +500,63 @@ dfm &lt;- preprocess()</code></pre>
 </div>
 <div id="exploratory-data-analysis" class="section level2">
 <h2>Exploratory Data Analysis</h2>
-<p>I start with a simple aggregation at the country-status level.</p>
-<pre class="r"><code># aggregate by Country-Region and Status
-agg &lt;- as.data.frame(dfm %&gt;% 
-             group_by(Country_Region, Status) %&gt;% 
-             summarise(&#39;total&#39;=sum(Value)       # 59 days in time series  
-                  ,&#39;daily_average&#39;=round(sum(Value)/length(unique(dfm$Date)))),4)
-                              
-                              
+<p>I start with a simple aggregation at the country-status level - that is, where we group by a given country or region and the levels of confirmed, fatal, and recovered cases.</p>
+<p>Since I know this is an exponential timer series data, I’m mostly interested in the current totals.</p>
+<p>This isn’t a trivial task, however, since the data is cumulative, but the latest day’s information isn’t always available. Here are some examples:</p>
+<pre class="r"><code># examples of bad data
+ex1 &lt;-  dfm[dfm$Country_Region == &quot;US&quot; 
+            &amp; dfm$Province_State == &quot;California&quot; 
+            &amp; dfm$Status == &quot;recovered&quot; 
+            &amp; as.character(dfm$Date) &gt; &quot;2020-03-01&quot;, !colnames(dfm) %in% c(&quot;Lat&quot;,&quot;Long&quot;)]
+    
+    
+ex2 &lt;- dfm[dfm$Country_Region == &quot;US&quot; 
+            &amp; dfm$Province_State == &quot;Westchester County, NY&quot; 
+            &amp; dfm$Status == &quot;confirmed&quot; 
+            &amp; as.character(dfm$Date) &gt; &quot;2020-03-01&quot;, !colnames(dfm) %in% c(&quot;Lat&quot;,&quot;Long&quot;)]
 
-# looking at some countries of personal interest
-agg[agg$Country_Region %in% c(&quot;Brazil&quot;,&quot;China&quot;,&quot;France&quot;,&quot;Germany&quot;,&quot;India&quot;
-                  ,&quot;Iran&quot;,&quot;Italy&quot;,&quot;Russia&quot;,&quot;South Korea&quot;,&quot;US&quot;), ]                       </code></pre>
-<pre><code>##     Country_Region     Status   total daily_average
-## 64          Brazil  confirmed    2982            51
-## 65          Brazil fatalities      21             0
-## 66          Brazil  recovered       9             0
-## 97           China  confirmed 3287028         55712
-## 98           China fatalities  109614          1858
-## 99           China  recovered 1570179         26613
-## 166         France  confirmed   71858          1218
-## 167         France fatalities    1623            28
-## 168         France  recovered     342             6
-## 178        Germany  confirmed   89015          1509
-## 179        Germany fatalities     217             4
-## 180        Germany  recovered    1063            18
-## 211          India  confirmed    1647            28
-## 212          India fatalities      25             0
-## 213          India  recovered     178             3
-## 217           Iran  confirmed  188884          3201
-## 218           Iran fatalities    9883           168
-## 219           Iran  recovered   56432           956
-## 229          Italy  confirmed  326105          5527
-## 230          Italy fatalities   23658           401
-## 231          Italy  recovered   30834           523
-## 376         Russia  confirmed    1173            20
-## 377         Russia fatalities       2             0
-## 378         Russia  recovered     126             2
-## 469             US  confirmed   67002          1136
-## 470             US fatalities    1135            19
-## 471             US  recovered     249             4</code></pre>
+ex1</code></pre>
+<pre><code>##       Province_State Country_Region       Date Value    Status
+## 70801     California             US 2020-03-20     0 recovered
+## 70802     California             US 2020-03-19     0 recovered
+## 70803     California             US 2020-03-18     0 recovered
+## 70804     California             US 2020-03-17     6 recovered
+## 70805     California             US 2020-03-16     6 recovered
+## 70806     California             US 2020-03-15     6 recovered
+## 70807     California             US 2020-03-14     6 recovered
+## 70808     California             US 2020-03-13     6 recovered
+## 70809     California             US 2020-03-12     6 recovered
+## 70810     California             US 2020-03-11     2 recovered
+## 70811     California             US 2020-03-10     2 recovered
+## 70812     California             US 2020-03-09     0 recovered
+## 70813     California             US 2020-03-08     0 recovered
+## 70814     California             US 2020-03-07     0 recovered
+## 70815     California             US 2020-03-06     0 recovered
+## 70816     California             US 2020-03-05     0 recovered
+## 70817     California             US 2020-03-04     0 recovered
+## 70818     California             US 2020-03-03     0 recovered
+## 70819     California             US 2020-03-02     0 recovered</code></pre>
+<pre class="r"><code>ex2</code></pre>
+<pre><code>##               Province_State Country_Region       Date Value    Status
+## 27436 Westchester County, NY             US 2020-03-20     0 confirmed
+## 27437 Westchester County, NY             US 2020-03-19     0 confirmed
+## 27438 Westchester County, NY             US 2020-03-18     0 confirmed
+## 27439 Westchester County, NY             US 2020-03-17     0 confirmed
+## 27440 Westchester County, NY             US 2020-03-16     0 confirmed
+## 27441 Westchester County, NY             US 2020-03-15     0 confirmed
+## 27442 Westchester County, NY             US 2020-03-14     0 confirmed
+## 27443 Westchester County, NY             US 2020-03-13     0 confirmed
+## 27444 Westchester County, NY             US 2020-03-12     0 confirmed
+## 27445 Westchester County, NY             US 2020-03-11     0 confirmed
+## 27446 Westchester County, NY             US 2020-03-10     0 confirmed
+## 27447 Westchester County, NY             US 2020-03-09    98 confirmed
+## 27448 Westchester County, NY             US 2020-03-08    83 confirmed
+## 27449 Westchester County, NY             US 2020-03-07    57 confirmed
+## 27450 Westchester County, NY             US 2020-03-06    19 confirmed
+## 27451 Westchester County, NY             US 2020-03-05    18 confirmed
+## 27452 Westchester County, NY             US 2020-03-04    10 confirmed
+## 27453 Westchester County, NY             US 2020-03-03     1 confirmed
+## 27454 Westchester County, NY             US 2020-03-02     0 confirmed</code></pre>
 </div>
 
 

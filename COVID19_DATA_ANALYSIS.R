@@ -125,17 +125,17 @@ dfm <- preprocess()
 
 # EXPLORATORY DATA ANALYSIS =======================================================================
 
+# aggregate by Country-Region and Status
 agg <- as.data.frame(dfm %>% 
 		     group_by(Country_Region, Status) %>% 
 		     summarise('total'=sum(Value)		# 59 days in time series  
 		 	      ,'daily_average'=round(sum(Value)/length(unique(dfm$Date)))),4)
 							  
 							  
-head(agg,39)
 
+# looking at some countries of personal interest
 agg[agg$Country_Region %in% c("Brazil","China","France","Germany","India"
-			      ,"Iran","Italy","Russia","South Korea","US"), ]						  
-	
+			      ,"Iran","Italy","Russia","South Korea","US"), ]
 	
 	
 	

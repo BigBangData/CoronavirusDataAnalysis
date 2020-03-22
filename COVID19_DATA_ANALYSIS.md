@@ -12,13 +12,18 @@ output:
 
 
 
+
+
+
 ## Coronavirus Data Analysis
 
 This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)
 
-### Data Pre-Processing
+---
 
-The `preprocess` function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs some pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the [Code Appendix.](#codeappendix-link)
+### Data Pre-Processing {#preprocess-link}
+
+The `preprocess` function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs various pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the [Code Appendix.](#codeappendix-link)
 
 
 
@@ -26,95 +31,63 @@ The `preprocess` function creates a local folder and pulls three csv files, one 
 ```r
 # read in RDS file 
 dfm <- preprocess()
+
+head(dfm)
 ```
 
+```
+##   Province_State Country_Region Lat Long       Date Value    Status
+## 1           <NA>    Afghanistan  33   65 2020-03-21    24 confirmed
+## 2           <NA>    Afghanistan  33   65 2020-03-20    24 confirmed
+## 3           <NA>    Afghanistan  33   65 2020-03-19    22 confirmed
+## 4           <NA>    Afghanistan  33   65 2020-03-18    22 confirmed
+## 5           <NA>    Afghanistan  33   65 2020-03-17    22 confirmed
+## 6           <NA>    Afghanistan  33   65 2020-03-16    21 confirmed
+```
 
-### Exploratory Data Analysis
+---
+
+### Data Cleanup  {#cleanup-link}
 
 
-The time series data is cumulative and exponential, but pulling current totals isn't as simple as subsetting the dataset to today's date. 
 
-For some reason, the data shows zeroes after positive values within a time series. I assume these ending zeroes should be treated as `NA` values and need to be imputed. Here are a couple of examples:
-
-
+The time series data is cumulative, but pulling current totals isn't qutie as simple as subsetting the dataset to the most current date. For some reason, the data shows zeroes after positive values within a time series. I assume these ending zeroes should be treated as `NA` values and need to be imputed. Here is an example from the original dataset:
 
 
 
 ```r
-example1
-```
-
-```
-##       Province_State Country_Region       Date Value    Status
-## 70801     California             US 2020-03-20     0 recovered
-## 70802     California             US 2020-03-19     0 recovered
-## 70803     California             US 2020-03-18     0 recovered
-## 70804     California             US 2020-03-17     6 recovered
-## 70805     California             US 2020-03-16     6 recovered
-## 70806     California             US 2020-03-15     6 recovered
-## 70807     California             US 2020-03-14     6 recovered
-## 70808     California             US 2020-03-13     6 recovered
-## 70809     California             US 2020-03-12     6 recovered
-## 70810     California             US 2020-03-11     2 recovered
-## 70811     California             US 2020-03-10     2 recovered
-## 70812     California             US 2020-03-09     0 recovered
-## 70813     California             US 2020-03-08     0 recovered
-## 70814     California             US 2020-03-07     0 recovered
-## 70815     California             US 2020-03-06     0 recovered
-## 70816     California             US 2020-03-05     0 recovered
-## 70817     California             US 2020-03-04     0 recovered
-## 70818     California             US 2020-03-03     0 recovered
-## 70819     California             US 2020-03-02     0 recovered
-```
-
-```r
-example2
+# example of NA values coded as zeroes
+dfm[dfm$Country_Region == "US" & dfm$Province_State == "Westchester County, NY" & dfm$Status == "confirmed"
+    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
 ```
 
 ```
 ##               Province_State Country_Region       Date Value    Status
-## 27436 Westchester County, NY             US 2020-03-20     0 confirmed
-## 27437 Westchester County, NY             US 2020-03-19     0 confirmed
-## 27438 Westchester County, NY             US 2020-03-18     0 confirmed
-## 27439 Westchester County, NY             US 2020-03-17     0 confirmed
-## 27440 Westchester County, NY             US 2020-03-16     0 confirmed
-## 27441 Westchester County, NY             US 2020-03-15     0 confirmed
-## 27442 Westchester County, NY             US 2020-03-14     0 confirmed
-## 27443 Westchester County, NY             US 2020-03-13     0 confirmed
-## 27444 Westchester County, NY             US 2020-03-12     0 confirmed
-## 27445 Westchester County, NY             US 2020-03-11     0 confirmed
-## 27446 Westchester County, NY             US 2020-03-10     0 confirmed
-## 27447 Westchester County, NY             US 2020-03-09    98 confirmed
-## 27448 Westchester County, NY             US 2020-03-08    83 confirmed
-## 27449 Westchester County, NY             US 2020-03-07    57 confirmed
-## 27450 Westchester County, NY             US 2020-03-06    19 confirmed
-## 27451 Westchester County, NY             US 2020-03-05    18 confirmed
-## 27452 Westchester County, NY             US 2020-03-04    10 confirmed
-## 27453 Westchester County, NY             US 2020-03-03     1 confirmed
-## 27454 Westchester County, NY             US 2020-03-02     0 confirmed
+## 28201 Westchester County, NY             US 2020-03-21     0 confirmed
+## 28202 Westchester County, NY             US 2020-03-20     0 confirmed
+## 28203 Westchester County, NY             US 2020-03-19     0 confirmed
+## 28204 Westchester County, NY             US 2020-03-18     0 confirmed
+## 28205 Westchester County, NY             US 2020-03-17     0 confirmed
+## 28206 Westchester County, NY             US 2020-03-16     0 confirmed
+## 28207 Westchester County, NY             US 2020-03-15     0 confirmed
+## 28208 Westchester County, NY             US 2020-03-14     0 confirmed
+## 28209 Westchester County, NY             US 2020-03-13     0 confirmed
+## 28210 Westchester County, NY             US 2020-03-12     0 confirmed
+## 28211 Westchester County, NY             US 2020-03-11     0 confirmed
+## 28212 Westchester County, NY             US 2020-03-10     0 confirmed
+## 28213 Westchester County, NY             US 2020-03-09    98 confirmed
+## 28214 Westchester County, NY             US 2020-03-08    83 confirmed
+## 28215 Westchester County, NY             US 2020-03-07    57 confirmed
+## 28216 Westchester County, NY             US 2020-03-06    19 confirmed
+## 28217 Westchester County, NY             US 2020-03-05    18 confirmed
+## 28218 Westchester County, NY             US 2020-03-04    10 confirmed
+## 28219 Westchester County, NY             US 2020-03-03     1 confirmed
+## 28220 Westchester County, NY             US 2020-03-02     0 confirmed
 ```
 
 
-Here's a panoramic view of the cumulative dataset showing how, for several US states, there is no data available after 3/10, and instead of ending with the highest value available, the cumulative series just zeros out again. This is a zoomed out Excel file with conditional formatting on a scale from green to red, green representing zero. The dataset format is long, meaning, the time series is represented from left to right, so the green zones at the end of this file should all be `NA` values:
 
-
-**US States that zero out after 3/10**
-
-![image: US states](./IMG/US_states_zeroing.PNG)
-
----
-
-
-By comparison, here is the same visualization for the Chinese province of Hubei, showing the exponential growth of confirmed cases:
-
-**Hubei cumulative series**
-
-![image: Hubei Province](./IMG/Hubei_example.PNG)
-
----
-
-
-We can see the typical cumulative time series with exponential growth and flattening in Hubei Province, compared to the anomalous data of Westchester County, NY:
+In this plot I compare the cumulative curve for confirmed cases in Hubei Province (China) with that of Westchester County, NY, which has this anomaly. The number of confirmed cases in Westchester is much smaller so I adjusted the y axes (note values):
 
 ![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
@@ -126,37 +99,51 @@ The simplest imputation strategy is to replace all the zeroes after positive val
 
 ```
 ##               Province_State Country_Region       Date Value    Status
-## 27436 Westchester County, NY             US 2020-03-20    98 confirmed
-## 27437 Westchester County, NY             US 2020-03-19    98 confirmed
-## 27438 Westchester County, NY             US 2020-03-18    98 confirmed
-## 27439 Westchester County, NY             US 2020-03-17    98 confirmed
-## 27440 Westchester County, NY             US 2020-03-16    98 confirmed
-## 27441 Westchester County, NY             US 2020-03-15    98 confirmed
-## 27442 Westchester County, NY             US 2020-03-14    98 confirmed
-## 27443 Westchester County, NY             US 2020-03-13    98 confirmed
-## 27444 Westchester County, NY             US 2020-03-12    98 confirmed
-## 27445 Westchester County, NY             US 2020-03-11    98 confirmed
-## 27446 Westchester County, NY             US 2020-03-10    98 confirmed
-## 27447 Westchester County, NY             US 2020-03-09    98 confirmed
-## 27448 Westchester County, NY             US 2020-03-08    83 confirmed
-## 27449 Westchester County, NY             US 2020-03-07    57 confirmed
-## 27450 Westchester County, NY             US 2020-03-06    19 confirmed
-## 27451 Westchester County, NY             US 2020-03-05    18 confirmed
-## 27452 Westchester County, NY             US 2020-03-04    10 confirmed
-## 27453 Westchester County, NY             US 2020-03-03     1 confirmed
-## 27454 Westchester County, NY             US 2020-03-02     0 confirmed
+## 28201 Westchester County, NY             US 2020-03-21    98 confirmed
+## 28202 Westchester County, NY             US 2020-03-20    98 confirmed
+## 28203 Westchester County, NY             US 2020-03-19    98 confirmed
+## 28204 Westchester County, NY             US 2020-03-18    98 confirmed
+## 28205 Westchester County, NY             US 2020-03-17    98 confirmed
+## 28206 Westchester County, NY             US 2020-03-16    98 confirmed
+## 28207 Westchester County, NY             US 2020-03-15    98 confirmed
+## 28208 Westchester County, NY             US 2020-03-14    98 confirmed
+## 28209 Westchester County, NY             US 2020-03-13    98 confirmed
+## 28210 Westchester County, NY             US 2020-03-12    98 confirmed
+## 28211 Westchester County, NY             US 2020-03-11    98 confirmed
+## 28212 Westchester County, NY             US 2020-03-10    98 confirmed
+## 28213 Westchester County, NY             US 2020-03-09    98 confirmed
+## 28214 Westchester County, NY             US 2020-03-08    83 confirmed
+## 28215 Westchester County, NY             US 2020-03-07    57 confirmed
+## 28216 Westchester County, NY             US 2020-03-06    19 confirmed
+## 28217 Westchester County, NY             US 2020-03-05    18 confirmed
+## 28218 Westchester County, NY             US 2020-03-04    10 confirmed
+## 28219 Westchester County, NY             US 2020-03-03     1 confirmed
+## 28220 Westchester County, NY             US 2020-03-02     0 confirmed
 ```
 
 
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 
+---
+
+### Exploratory Data Analysis {#eda-link}
+
+
+---
 
 ### Code Appendix {#codeappendix-link}
 
 
 ```r
-# install packages function
+# SETUP
+#------
+
+rm(list = ls())
+options(scipen=999)
+
 install_packages <- function(package){
+  
   newpackage <- package[!(package %in% installed.packages()[, "Package"])]
       
 	if (length(newpackage)) {
@@ -165,21 +152,31 @@ install_packages <- function(package){
 	sapply(package, require, character.only = TRUE)
 }
 
+
+# install packages  
+packages <- c("Hmisc","tidyverse","ggplot2")
+suppressPackageStartupMessages(install_packages(packages))
+
+# PREPROCESS
+# -----------
+
 # preprocessing function
 preprocess <- function() {
 
-	# create 'COVID19' directory, if not exists 
-	if (!file.exists("COVID19")) {
-		dir.create("COVID19")
+	# create a folder for the data 
+	dir_name <- "COVID19_DATA"
+	if (!file.exists(dir_name)) {
+		dir.create(dir_name)
 	}
 	
+	dir_path <- "COVID19_DATA/"
 	
-	# download only if file does not exist, save RDS first time, read otherwise
-	if (!file.exists("./COVID19/covid_data.rds")) {
+	# download today's file, save as RDS first time, read otherwise
+	file_name <- paste0(dir_path, gsub("-", "", Sys.Date()), "_data.rds")
 	
-		# download files
+	if (!file.exists(file_name)) {
 
-		# creating URLs
+		# create URLs
 		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series-ncov-"
 		
 		url_body <- paste0("?dest=data_edit&filter01=explode&explode-header-att01=date&explode-"
@@ -201,30 +198,26 @@ preprocess <- function() {
 		fatal_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
 		recovered_URL  <- paste0(http_header, "Recovered.csv", url_body, "Recovered.csv")
 									
-		# downloading 
-		download.file(confirmed_URL, destfile="./COVID19/confirmed.csv")
-		download.file(fatal_URL, destfile="./COVID19/fatal.csv")
-		download.file(recovered_URL, destfile="./COVID19/recovered.csv")
+		# download
+		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
+		download.file(fatal_URL, destfile=paste0(dir_path, "fatal.csv"))
+		download.file(recovered_URL, destfile=paste0(dir_path, "recovered.csv"))
 		
-		# read in separate files
-		read_in_file <- function(filename) { 
-		
-			filename <- read.csv(paste0("./COVID19/", filename, ".csv"), 
-								,header=TRUE,
-								,stringsAsFactors=FALSE, 
-								,na.strings="")[-1, ]
+		# load csvs
+		load_csv <- function(filename) { 
+			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
+								, stringsAsFactors=FALSE, na.strings="")[-1, ]
 			filename
 		}
 	
-		confirmed  <- read_in_file("confirmed")
-		fatal <- read_in_file("fatal") 
-		recovered  <- read_in_file("recovered")
+		confirmed  <- load_csv("confirmed")
+		fatal <- load_csv("fatal") 
+		recovered  <- load_csv("recovered")
 		
 		# prep data for long format
 		
 		# add column identifying the dataset	
 		add_col <- function(dfm, name) {
-		
 			dfm$Status <- rep(name, nrow(dfm))
 			dfm
 		}
@@ -246,13 +239,13 @@ preprocess <- function() {
 		dfm$Long <- as.numeric(dfm$Long)
 		dfm$Date <- as.Date(dfm$Date)
 		dfm$Status <- as.factor(dfm$Status)
-		
+	
 		# save as RDS 
-		saveRDS(dfm, file = "COVID19/covid_data.rds")
+		saveRDS(dfm, file = file_name)
 		
 	} 
 
-	dfm <- readRDS("./COVID19/covid_data.rds") 
+	dfm <- readRDS(file_name) 
 
 }
 
@@ -260,21 +253,15 @@ preprocess <- function() {
 # read in RDS file 
 dfm <- preprocess()
 
-# examples of bad data
-example1 <-  dfm[dfm$Country_Region == "US" 
-    		       & dfm$Province_State == "California" 
-    		       & dfm$Status == "recovered" 
-    		       & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
-    
-    
-example2 <- dfm[dfm$Country_Region == "US" 
-    		      & dfm$Province_State == "Westchester County, NY" 
-    		      & dfm$Status == "confirmed" 
-    		      & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
 
-example1
-example2
+# DATA CLEANUP 
+# ------------
 
+# example of NA values coded as zeroes
+dfm[dfm$Country_Region == "US" & dfm$Province_State == "Westchester County, NY" & dfm$Status == "confirmed"
+    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
+
+# Hubei vs Westchester plot 1
 hubei <- dfm[dfm$Country_Region == "China" 
 			& dfm$Province_State == "Hubei" 
 			& dfm$Status == "confirmed", ]
@@ -285,7 +272,6 @@ westchester <- dfm[dfm$Country_Region == "US"
 
 mult_factor <- max(hubei$Value)/max(westchester$Value)
 
-# plot
 par(mar = c(5,5,2,5))
 with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
 		     main="Hubei Province, China vs Westchester County, NY",
@@ -299,17 +285,33 @@ legend("topleft",
        legend=c("Hubei", "Westchester"),
        lty=1, lwd=1, col=c("red3", "black"))
 
-# imputing missing values with latest cumulative value
+
+
+# impute NAs with latest cumulative value
+# NAs are 0-values at the end of a cumulative time series 
+# which I impute with the last cumulative value available in the series 
+Ndays <- length(unique(dfm$Date))
+Ladfm_date <- unique(dfm$Date)[1]
+
 for (i in 1:(nrow(dfm))) {
 
-	if (dfm$Date[i] == "2020-03-20" & dfm$Value[i] == 0) {
+	# if today's date shows 0 as Value 
+	if (dfm$Date[i] == Ladfm_date & dfm$Value[i] == 0) {
 
-		for (j in i:(i+57)) {
+		# for each subsequent row in a given series 
+		# starting at the ith row and ending in the penultimate row of the series 
+		# (since we're comparing with the ith+1 row and starting the count at i 
+		# we need to subtract 2)
+		for (j in i:(i+(Ndays-2))) {
 		
+			# if the value of the jth+1 row is 0, continue
+			# if the value of the jth+1 row is > 0...
 			if (dfm$Value[j] == 0 & dfm$Value[j+1] > 0) {
 	
+				# ... for k (j to i) previous 0 values in that time series 
 				for (k in j:i) {
 				
+					# substitute them with the jth+1 positive valuee 
 					dfm$Value[k] <- dfm$Value[j+1]
 				}
 			}		
@@ -317,11 +319,40 @@ for (i in 1:(nrow(dfm))) {
 	} 
 }
 
-# example 2 - fixed
+# Hubei vs Westchester data example - FIXED NAs
 dfm[dfm$Country_Region == "US" 
     & dfm$Province_State == "Westchester County, NY" 
     & dfm$Status == "confirmed" 
     & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
+
+
+# Hubei vs Westchester plot - FIXED NAs
+hubei <- dfm[dfm$Country_Region == "China" 
+			& dfm$Province_State == "Hubei" 
+			& dfm$Status == "confirmed", ]
+			
+westchester <- dfm[dfm$Country_Region == "US" 
+					& dfm$Province_State == "Westchester County, NY" 
+					& dfm$Status == "confirmed", ]
+
+mult_factor <- max(hubei$Value)/max(westchester$Value)
+
+par(mar = c(5,5,2,5))
+with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
+		     main="Hubei Province, China vs Westchester County, NY",
+             ylab="Confirmed Cases (Hubei)"))
+					 
+par(new = TRUE)
+with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
+axis(side = 4)
+mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
+legend("topleft",
+       legend=c("Hubei", "Westchester"),
+       lty=1, lwd=1, col=c("red3", "black"))
+
+
+# EXPLORATORY DATA ANALYSIS
+# -------------------------
 ```
 
 

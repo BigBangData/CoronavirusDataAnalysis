@@ -28,27 +28,32 @@ The `preprocess` function creates a local folder and pulls three csv files, one 
 
 
 
+
 ```r
 # read in RDS file 
 dfm <- preprocess()
 
-head(dfm)
+str(dfm)
 ```
 
 ```
-##   Province_State Country_Region Lat Long       Date Value    Status
-## 1           <NA>    Afghanistan  33   65 2020-03-21    24 confirmed
-## 2           <NA>    Afghanistan  33   65 2020-03-20    24 confirmed
-## 3           <NA>    Afghanistan  33   65 2020-03-19    22 confirmed
-## 4           <NA>    Afghanistan  33   65 2020-03-18    22 confirmed
-## 5           <NA>    Afghanistan  33   65 2020-03-17    22 confirmed
-## 6           <NA>    Afghanistan  33   65 2020-03-16    21 confirmed
+## 'data.frame':	86760 obs. of  7 variables:
+##  $ Province_State: chr  NA NA NA NA ...
+##  $ Country_Region: chr  "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
+##  $ Lat           : num  33 33 33 33 33 33 33 33 33 33 ...
+##  $ Long          : num  65 65 65 65 65 65 65 65 65 65 ...
+##  $ Date          : Date, format: "2020-03-21" "2020-03-20" ...
+##  $ Value         : int  24 24 22 22 22 21 16 11 7 7 ...
+##  $ Status        : Factor w/ 3 levels "confirmed","fatal",..: 1 1 1 1 1 1 1 1 1 1 ...
 ```
+
+
+There are 86760 rows and 7 columns. There's a 'Status' column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. "confirmed"). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country.
+
 
 ---
 
 ### Data Cleanup  {#cleanup-link}
-
 
 
 The time series data is cumulative, but pulling current totals isn't qutie as simple as subsetting the dataset to the most current date. For some reason, the data shows zeroes after positive values within a time series. I assume these ending zeroes should be treated as `NA` values and need to be imputed. Here is an example from the original dataset:
@@ -128,6 +133,80 @@ The simplest imputation strategy is to replace all the zeroes after positive val
 ---
 
 ### Exploratory Data Analysis {#eda-link}
+
+
+
+
+
+
+
+| Status | total |
+|:--------------------:|:-------------------:|
+| confirmed | 305049 |
+| fatal | 12998 |
+| recovered | 91523 |
+|                     |                    |
+  
+Table: Current Totals
+
+
+### Barplots of Total Counts per Status and Location
+
+I believe the plots can speak for themselves. I've separated the top ten cases from the eleventh through the thirtieth cases, for each status, so we can visualize the worst and second-worst (or best in case of recovered) as a group, since the distributions are somewhat exponential.
+
+
+
+
+
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+
+
+
+
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+
+
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+
+---
+
+One problem with these plots is that locations are ill defined, we have countries compared to states or provinces and even counties. The US data alone offers problems such as a Colorado count but also counts for various counties within Colorado, and there is no US total count. To address these problems, a lot more data cleanup would be needed to separate out locations by levels such as: countries, states, counties. The country location might work for the entire dataset, but the state and county location levels will be too incomplete. I believe two worthwile attemps would be a world countries level and a US states level.
+
+For now, I will explore plotting the time series themselves, to gain some insight into how the coronavirus spreads, since the current totals are inadequate in telling a story about a locaion, as different locations have different timelines.
+
+
+### Time Series Plots per Status and Location
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---
@@ -291,12 +370,12 @@ legend("topleft",
 # NAs are 0-values at the end of a cumulative time series 
 # which I impute with the last cumulative value available in the series 
 Ndays <- length(unique(dfm$Date))
-Ladfm_date <- unique(dfm$Date)[1]
+Lastdate <- unique(dfm$Date)[1]
 
 for (i in 1:(nrow(dfm))) {
 
 	# if today's date shows 0 as Value 
-	if (dfm$Date[i] == Ladfm_date & dfm$Value[i] == 0) {
+	if (dfm$Date[i] == Lastdate & dfm$Value[i] == 0) {
 
 		# for each subsequent row in a given series 
 		# starting at the ith row and ending in the penultimate row of the series 
@@ -353,9 +432,141 @@ legend("topleft",
 
 # EXPLORATORY DATA ANALYSIS
 # -------------------------
+
+# subset to current counts 
+current <- data.frame(dfm %>%
+						select(Country_Region, Province_State, Date, Value, Status) %>% 
+						filter(Date == unique(dfm$Date)[1]))
+
+# order current counts by status and then descending counts 
+current_ordered <- current[order(current$Status, -current$Value), ]
+
+# subset to world totals 
+totals <- data.frame(current %>% 
+						select(Country_Region, Province_State, Date, Value, Status) %>% 
+						group_by(Status) %>%
+						summarise('total'=sum(Value)))
+
+colnames(totals)
+
+# Confirmed Cases over 100
+confirmed <- current_ordered[current_ordered$Status == "confirmed" & current_ordered$Value > 100, ]
+
+# concatenate country and state 
+confirmed$Country_State <- NULL
+for (i in 1:nrow(confirmed)) {
+
+	 confirmed$Country_State[i] <- ifelse(is.na(confirmed$Province_State[i]) | 
+	                                      (confirmed$Province_State[i] == confirmed$Country_Region[i]), 
+										                    confirmed$Country_Region[i],
+										                    paste0(confirmed$Country_Region[i], ", ", confirmed$Province_State[i]))
+}
+
+confirmed <- confirmed[ , c(6,3,4)]
+colnames(confirmed) <- c("Country_State", "Date", "Confirmed")
+rownames(confirmed) <- 1:nrow(confirmed)
+
+# plot top 10
+g10 <- ggplot(data=confirmed[1:10, ], aes(x=reorder(Country_State, Confirmed), y=Confirmed)) +
+			  geom_bar(stat="identity", fill="steelblue") +
+			  ggtitle("Top Ten Locations for Confirmed Cases") +
+			  xlab("Country or Region") + ylab("Number of Confirmed Cases") +
+        coord_flip() +
+        theme_minimal()
+
+g10
+
+# plot top 11 through 30
+g30 <- ggplot(data=confirmed[11:30, ], aes(x=reorder(Country_State, Confirmed), y=Confirmed)) +
+			  geom_bar(stat="identity", fill="steelblue") +
+			  ggtitle("11th to 30th Locations for Confirmed Cases") +
+			  xlab("Country or Region") + ylab("Number of Confirmed Cases") +
+			  coord_flip() +
+			  theme_minimal()
+
+g30
+
+# Fatal Cases - current and nonzero
+fatal <- current_ordered[current_ordered$Status == "fatal" & current_ordered$Value > 0, ]
+
+# concatenate country and state 
+fatal$Country_State <- NULL
+for (i in 1:nrow(fatal)) {
+
+	 fatal$Country_State[i] <- ifelse(is.na(fatal$Province_State[i]) | (fatal$Province_State[i] == fatal$Country_Region[i]), 
+										  fatal$Country_Region[i],
+										  paste0(fatal$Country_Region[i], ", ", fatal$Province_State[i]))
+}
+
+fatal <- fatal[ , c(6,3,4)]
+colnames(fatal) <- c("Country_State", "Date", "Fatal")
+rownames(fatal) <- 1:nrow(fatal)
+
+# plot top 10
+g10 <- ggplot(data=fatal[1:10, ], aes(x=reorder(Country_State, Fatal), y=Fatal)) +
+			  geom_bar(stat="identity", fill="red4") +
+			  ggtitle("Top Ten Locations for Fatal Cases") +
+			  xlab("Country or Region") + ylab("Number of Fatal Cases") +
+			  coord_flip() +
+			  theme_minimal()
+
+g10
+
+# plot top 11 through 30
+g30 <- ggplot(data=fatal[11:30, ], aes(x=reorder(Country_State, Fatal), y=Fatal)) +
+			  geom_bar(stat="identity", fill="red4") +
+			  ggtitle("11th to 30th Locations for Fatal Cases") +
+			  xlab("Country or Region") + ylab("Number of Fatal Cases") +
+			  coord_flip() +
+			  theme_minimal()
+
+g30
+
+# Recovered Cases - current and nonzero
+recovered <- current_ordered[current_ordered$Status == "recovered" & current_ordered$Value > 0, ]
+
+# concatenate country and state 
+recovered$Country_State <- NULL
+for (i in 1:nrow(recovered)) {
+
+	 recovered$Country_State[i] <- ifelse(is.na(recovered$Province_State[i]) | (recovered$Province_State[i] == recovered$Country_Region[i]), 
+										  recovered$Country_Region[i],
+										  paste0(recovered$Country_Region[i], ", ", recovered$Province_State[i]))
+}
+
+recovered <- recovered[ , c(6,3,4)]
+colnames(recovered) <- c("Country_State", "Date", "Recovered")
+rownames(recovered) <- 1:nrow(recovered)
+
+# plot top 10
+g10 <- ggplot(data=recovered[1:10, ], aes(x=reorder(Country_State, Recovered), y=Recovered)) +
+			  geom_bar(stat="identity", fill="springgreen4") +
+			  ggtitle("Top Ten Locations for Recovered Cases") +
+			  xlab("Country or Region") + ylab("Number of Recovered Cases") +
+			  coord_flip() +
+			  theme_minimal()
+
+g10
+
+# plot top 11 through 30
+g30 <- ggplot(data=recovered[11:30, ], aes(x=reorder(Country_State, Recovered), y=Recovered)) +
+			  geom_bar(stat="identity", fill="springgreen4") +
+			  ggtitle("11th to 30th Locations for Recovered Cases") +
+			  xlab("Country or Region") + ylab("Number of Recovered Cases") +
+			  coord_flip() +
+			  theme_minimal()
+
+g30
 ```
 
 
 
+
+```r
+# uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
+#library(knitr)
+#options(knitr.purl.inline = TRUE)
+#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+```
 
 

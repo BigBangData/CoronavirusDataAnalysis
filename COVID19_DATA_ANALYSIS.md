@@ -7,9 +7,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Coronavirus Data Analysis
 
@@ -17,7 +15,8 @@ This is a simple exploration of the time series data which was compiled by the J
 
 ### Evironment Setup
 
-```{r}
+
+```r
 # clear workspace and set options 
 rm(list = ls())
 options(scipen=999)
@@ -35,8 +34,11 @@ install_packages <- function(package){
 packages <- c("Hmisc","tidyverse","ggplot2")
 
 suppressMessages(suppressWarnings(install_packages(packages)))
+```
 
-
+```
+##     Hmisc tidyverse   ggplot2 
+##      TRUE      TRUE      TRUE
 ```
 
 ### Data Pre-Processing
@@ -44,8 +46,8 @@ suppressMessages(suppressWarnings(install_packages(packages)))
 I pull the data directly from the website into a folder (COVID19) created in the R working directory, perform some pre-processing steps to create one narrow and long dataset with confirmed cases, fatal, and recovered cases, and save it in the compressed RDS format.
 
 
-```{r}
 
+```r
 preprocess <- function() {
 
 	# create 'COVID19' directory, if not exists 
@@ -138,8 +140,6 @@ preprocess <- function() {
 
 # read in RDS file 
 dfm <- preprocess()
-
-
 ```
 
 
@@ -152,7 +152,8 @@ The time series data is cumulative and exponential, but pulling current totals i
 For some reason, the data often zeroes out after starting some accumulation, which tells me that the recent zeroes must be NA values that need to be imputed. Here are a couple of examples:
 
 
-```{r}
+
+```r
 # examples of bad data
 example1 <-  dfm[dfm$Country_Region == "US" 
     		       & dfm$Province_State == "California" 
@@ -166,7 +167,56 @@ example2 <- dfm[dfm$Country_Region == "US"
     		      & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
 
 example1
+```
+
+```
+##       Province_State Country_Region       Date Value    Status
+## 70801     California             US 2020-03-20     0 recovered
+## 70802     California             US 2020-03-19     0 recovered
+## 70803     California             US 2020-03-18     0 recovered
+## 70804     California             US 2020-03-17     6 recovered
+## 70805     California             US 2020-03-16     6 recovered
+## 70806     California             US 2020-03-15     6 recovered
+## 70807     California             US 2020-03-14     6 recovered
+## 70808     California             US 2020-03-13     6 recovered
+## 70809     California             US 2020-03-12     6 recovered
+## 70810     California             US 2020-03-11     2 recovered
+## 70811     California             US 2020-03-10     2 recovered
+## 70812     California             US 2020-03-09     0 recovered
+## 70813     California             US 2020-03-08     0 recovered
+## 70814     California             US 2020-03-07     0 recovered
+## 70815     California             US 2020-03-06     0 recovered
+## 70816     California             US 2020-03-05     0 recovered
+## 70817     California             US 2020-03-04     0 recovered
+## 70818     California             US 2020-03-03     0 recovered
+## 70819     California             US 2020-03-02     0 recovered
+```
+
+```r
 example2
+```
+
+```
+##               Province_State Country_Region       Date Value    Status
+## 27436 Westchester County, NY             US 2020-03-20     0 confirmed
+## 27437 Westchester County, NY             US 2020-03-19     0 confirmed
+## 27438 Westchester County, NY             US 2020-03-18     0 confirmed
+## 27439 Westchester County, NY             US 2020-03-17     0 confirmed
+## 27440 Westchester County, NY             US 2020-03-16     0 confirmed
+## 27441 Westchester County, NY             US 2020-03-15     0 confirmed
+## 27442 Westchester County, NY             US 2020-03-14     0 confirmed
+## 27443 Westchester County, NY             US 2020-03-13     0 confirmed
+## 27444 Westchester County, NY             US 2020-03-12     0 confirmed
+## 27445 Westchester County, NY             US 2020-03-11     0 confirmed
+## 27446 Westchester County, NY             US 2020-03-10     0 confirmed
+## 27447 Westchester County, NY             US 2020-03-09    98 confirmed
+## 27448 Westchester County, NY             US 2020-03-08    83 confirmed
+## 27449 Westchester County, NY             US 2020-03-07    57 confirmed
+## 27450 Westchester County, NY             US 2020-03-06    19 confirmed
+## 27451 Westchester County, NY             US 2020-03-05    18 confirmed
+## 27452 Westchester County, NY             US 2020-03-04    10 confirmed
+## 27453 Westchester County, NY             US 2020-03-03     1 confirmed
+## 27454 Westchester County, NY             US 2020-03-02     0 confirmed
 ```
 
 
@@ -192,7 +242,8 @@ By comparison, here is the same visualization for the Chinese province of Hubei,
 
 We can see the typical cumulative time series with exponential growth and flattening in Hubei Province, compared to the anomalous data of Westchester County, NY:
 
-```{r fig.height=4, fig.width=9}
+
+```r
 hubei <- dfm[dfm$Country_Region == "China" 
 			& dfm$Province_State == "Hubei" 
 			& dfm$Status == "confirmed", ]
@@ -216,14 +267,10 @@ mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
 legend("topleft",
        legend=c("Hubei", "Westchester"),
        lty=1, lwd=1, col=c("red3", "black"))
-
 ```
 
-```{r include=FALSE}
-# uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#library(knitr)
-#options(knitr.purl.inline = TRUE)
-#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
-``` 
+![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
 
 

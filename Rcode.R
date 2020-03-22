@@ -219,6 +219,40 @@ legend("topleft",
 
 #' 
 #' 
+#' ### Impute missing values
+#' 
+#' The simplest imputation strategy is to replace all the zeroes after positive values given a time series, which I interpret as missing values, with the latest cumulative value. This is the result of the imputation for Westchester County, NY:
+#' 
+## ----echo=FALSE----------------------------------------------------------
+# imputing missing values with latest cumulative value
+for (i in 1:(nrow(dfm))) {
+
+	if (dfm$Date[i] == "2020-03-20" & dfm$Value[i] == 0) {
+
+		for (j in i:(i+57)) {
+		
+			if (dfm$Value[j] == 0 & dfm$Value[j+1] > 0) {
+	
+				for (k in j:i) {
+				
+					dfm$Value[k] <- dfm$Value[j+1]
+				}
+			}		
+		}			
+	} 
+}
+
+# example 2 - fixed
+dfm[dfm$Country_Region == "US" 
+    & dfm$Province_State == "Westchester County, NY" 
+    & dfm$Status == "confirmed" 
+    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
+
+#' 
+#' 
+#' 
+#' 
+#' 
 #' ### Code Appendix {#codeappendix-link}
 #' 
 ## ----eval=FALSE----------------------------------------------------------
@@ -367,15 +401,37 @@ legend("topleft",
 ##        legend=c("Hubei", "Westchester"),
 ##        lty=1, lwd=1, col=c("red3", "black"))
 ## 
+## # imputing missing values with latest cumulative value
+## for (i in 1:(nrow(dfm))) {
 ## 
+## 	if (dfm$Date[i] == "2020-03-20" & dfm$Value[i] == 0) {
+## 
+## 		for (j in i:(i+57)) {
+## 		
+## 			if (dfm$Value[j] == 0 & dfm$Value[j+1] > 0) {
+## 	
+## 				for (k in j:i) {
+## 				
+## 					dfm$Value[k] <- dfm$Value[j+1]
+## 				}
+## 			}		
+## 		}			
+## 	}
+## }
+## 
+## # example 2 - fixed
+## dfm[dfm$Country_Region == "US"
+##     & dfm$Province_State == "Westchester County, NY"
+##     & dfm$Status == "confirmed"
+##     & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
 
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#library(knitr)
-#options(knitr.purl.inline = TRUE)
-#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+library(knitr)
+options(knitr.purl.inline = TRUE)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 
 #' 
 #' 

@@ -119,6 +119,38 @@ We can see the typical cumulative time series with exponential growth and flatte
 ![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
+### Impute missing values
+
+The simplest imputation strategy is to replace all the zeroes after positive values given a time series, which I interpret as missing values, with the latest cumulative value. This is the result of the imputation for Westchester County, NY:
+
+
+```
+##               Province_State Country_Region       Date Value    Status
+## 27436 Westchester County, NY             US 2020-03-20    98 confirmed
+## 27437 Westchester County, NY             US 2020-03-19    98 confirmed
+## 27438 Westchester County, NY             US 2020-03-18    98 confirmed
+## 27439 Westchester County, NY             US 2020-03-17    98 confirmed
+## 27440 Westchester County, NY             US 2020-03-16    98 confirmed
+## 27441 Westchester County, NY             US 2020-03-15    98 confirmed
+## 27442 Westchester County, NY             US 2020-03-14    98 confirmed
+## 27443 Westchester County, NY             US 2020-03-13    98 confirmed
+## 27444 Westchester County, NY             US 2020-03-12    98 confirmed
+## 27445 Westchester County, NY             US 2020-03-11    98 confirmed
+## 27446 Westchester County, NY             US 2020-03-10    98 confirmed
+## 27447 Westchester County, NY             US 2020-03-09    98 confirmed
+## 27448 Westchester County, NY             US 2020-03-08    83 confirmed
+## 27449 Westchester County, NY             US 2020-03-07    57 confirmed
+## 27450 Westchester County, NY             US 2020-03-06    19 confirmed
+## 27451 Westchester County, NY             US 2020-03-05    18 confirmed
+## 27452 Westchester County, NY             US 2020-03-04    10 confirmed
+## 27453 Westchester County, NY             US 2020-03-03     1 confirmed
+## 27454 Westchester County, NY             US 2020-03-02     0 confirmed
+```
+
+
+
+
+
 ### Code Appendix {#codeappendix-link}
 
 
@@ -266,6 +298,30 @@ mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
 legend("topleft",
        legend=c("Hubei", "Westchester"),
        lty=1, lwd=1, col=c("red3", "black"))
+
+# imputing missing values with latest cumulative value
+for (i in 1:(nrow(dfm))) {
+
+	if (dfm$Date[i] == "2020-03-20" & dfm$Value[i] == 0) {
+
+		for (j in i:(i+57)) {
+		
+			if (dfm$Value[j] == 0 & dfm$Value[j+1] > 0) {
+	
+				for (k in j:i) {
+				
+					dfm$Value[k] <- dfm$Value[j+1]
+				}
+			}		
+		}			
+	} 
+}
+
+# example 2 - fixed
+dfm[dfm$Country_Region == "US" 
+    & dfm$Province_State == "Westchester County, NY" 
+    & dfm$Status == "confirmed" 
+    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
 ```
 
 

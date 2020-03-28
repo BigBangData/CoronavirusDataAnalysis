@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "3/21/2020"
+date: "3/27/2020"
 output: 
   html_document:
     keep_md: true
@@ -15,16 +15,23 @@ output:
 
 
 
-## Coronavirus Data Analysis
+
 
 This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)
 
+
+## Contents {#contents-link}
+
+* [Data Pre-Processing](#preprocess-link)
+* [Data Cleanup](#cleanup-link)
+* [Exploratory Data Analysis](#eda-link)
+* [Code Appendix](#codeappendix-link)
+
 ---
 
-### Data Pre-Processing {#preprocess-link}
+## Data Pre-Processing {#preprocess-link}
 
 The `preprocess` function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs various pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the [Code Appendix.](#codeappendix-link)
-
 
 
 
@@ -32,133 +39,49 @@ The `preprocess` function creates a local folder and pulls three csv files, one 
 ```r
 # read in RDS file 
 dfm <- preprocess()
-
 str(dfm)
 ```
 
 ```
-## 'data.frame':	93186 obs. of  7 variables:
+## 'data.frame':	48378 obs. of  7 variables:
 ##  $ Province_State: chr  NA NA NA NA ...
 ##  $ Country_Region: chr  "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
 ##  $ Lat           : num  33 33 33 33 33 33 33 33 33 33 ...
 ##  $ Long          : num  65 65 65 65 65 65 65 65 65 65 ...
-##  $ Date          : Date, format: "2020-03-23" "2020-03-22" ...
-##  $ Value         : int  40 40 24 24 22 22 22 21 16 11 ...
+##  $ Date          : Date, format: "2020-03-27" "2020-03-26" ...
+##  $ Value         : int  110 94 84 74 40 40 24 24 22 22 ...
 ##  $ Status        : Factor w/ 3 levels "confirmed","fatal",..: 1 1 1 1 1 1 1 1 1 1 ...
 ```
 
 
-There are 93186 rows and 7 columns. There's a 'Status' column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. "confirmed"). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country.
+There are 48378 rows and 7 columns. There's a 'Status' column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. "confirmed"). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country, and also varies per day depending on how the dataset is built. 
 
 
 ---
 
-### Data Cleanup  {#cleanup-link}
+[Back to [Contents](#contents-link)]{style="float:right"}
+
+## Data Cleanup  {#cleanup-link}
 
 
-The time series data is cumulative, but pulling current totals isn't qutie as simple as subsetting the dataset to the most current date. Given a cumulative time series, the data show zeroes after positive values. These ending zeroes should be treated as `NA` values and need to be imputed.
+### Location Granularity 
 
-* UPDATE: On 03-21 I sent a message to the dataset owner praising their efforts and thanking them for making the data publicly available. I also suggested they code these zeroes as missing values. As of 03-23 `NA` values started to appear in the data - this might be unrelated. We now have zeroes mixed in with missing values and need to account for both.
+The data's location variables have several issues. The `Country_Region` variable represents a larger area while the `Province_State` represents more granular areas. There are a few countries which include the subnational provinces or states, and others that do not. In the US, the granularity sometimes arrives at county level (Mar 27 UPDATE: this has not been true in recent days.)
 
-
-```r
-# Before preprocessing
-dfm[dfm$Country_Region == "US" & dfm$Province_State == "Westchester County, NY" & dfm$Status == "confirmed"
-    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
-```
-
-```
-##               Province_State Country_Region       Date Value    Status
-## 30319 Westchester County, NY             US 2020-03-23    NA confirmed
-## 30320 Westchester County, NY             US 2020-03-22     0 confirmed
-## 30321 Westchester County, NY             US 2020-03-21     0 confirmed
-## 30322 Westchester County, NY             US 2020-03-20     0 confirmed
-## 30323 Westchester County, NY             US 2020-03-19     0 confirmed
-## 30324 Westchester County, NY             US 2020-03-18     0 confirmed
-## 30325 Westchester County, NY             US 2020-03-17     0 confirmed
-## 30326 Westchester County, NY             US 2020-03-16     0 confirmed
-## 30327 Westchester County, NY             US 2020-03-15     0 confirmed
-## 30328 Westchester County, NY             US 2020-03-14     0 confirmed
-## 30329 Westchester County, NY             US 2020-03-13     0 confirmed
-## 30330 Westchester County, NY             US 2020-03-12     0 confirmed
-## 30331 Westchester County, NY             US 2020-03-11     0 confirmed
-## 30332 Westchester County, NY             US 2020-03-10     0 confirmed
-## 30333 Westchester County, NY             US 2020-03-09    98 confirmed
-## 30334 Westchester County, NY             US 2020-03-08    83 confirmed
-## 30335 Westchester County, NY             US 2020-03-07    57 confirmed
-## 30336 Westchester County, NY             US 2020-03-06    19 confirmed
-## 30337 Westchester County, NY             US 2020-03-05    18 confirmed
-## 30338 Westchester County, NY             US 2020-03-04    10 confirmed
-## 30339 Westchester County, NY             US 2020-03-03     1 confirmed
-## 30340 Westchester County, NY             US 2020-03-02     0 confirmed
-```
-
-
-
-In this plot I compare the cumulative curve for confirmed cases in Hubei Province (China) with that of Westchester County, NY, which has this anomaly. The number of confirmed cases in Westchester is much smaller so I adjusted the y axes (note values):
-
-![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
-
-
-### Impute missing values
-
-The simplest imputation strategy is to replace all the zeroes and `NA` values after positive values with the latest cumulative value. This is the result of the imputation for Westchester County, NY:
-
-
-
-```
-##               Province_State Country_Region       Date Value    Status
-## 30319 Westchester County, NY             US 2020-03-23    98 confirmed
-## 30320 Westchester County, NY             US 2020-03-22    98 confirmed
-## 30321 Westchester County, NY             US 2020-03-21    98 confirmed
-## 30322 Westchester County, NY             US 2020-03-20    98 confirmed
-## 30323 Westchester County, NY             US 2020-03-19    98 confirmed
-## 30324 Westchester County, NY             US 2020-03-18    98 confirmed
-## 30325 Westchester County, NY             US 2020-03-17    98 confirmed
-## 30326 Westchester County, NY             US 2020-03-16    98 confirmed
-## 30327 Westchester County, NY             US 2020-03-15    98 confirmed
-## 30328 Westchester County, NY             US 2020-03-14    98 confirmed
-## 30329 Westchester County, NY             US 2020-03-13    98 confirmed
-## 30330 Westchester County, NY             US 2020-03-12    98 confirmed
-## 30331 Westchester County, NY             US 2020-03-11    98 confirmed
-## 30332 Westchester County, NY             US 2020-03-10    98 confirmed
-## 30333 Westchester County, NY             US 2020-03-09    98 confirmed
-## 30334 Westchester County, NY             US 2020-03-08    83 confirmed
-## 30335 Westchester County, NY             US 2020-03-07    57 confirmed
-## 30336 Westchester County, NY             US 2020-03-06    19 confirmed
-## 30337 Westchester County, NY             US 2020-03-05    18 confirmed
-## 30338 Westchester County, NY             US 2020-03-04    10 confirmed
-## 30339 Westchester County, NY             US 2020-03-03     1 confirmed
-## 30340 Westchester County, NY             US 2020-03-02     0 confirmed
-```
-
-
-![](COVID19_DATA_ANALYSIS_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
-
-
-There are still a lot of `NA` values on 03-23 so I will for now just dump those:
-
-
-```r
-dfm <- dfm[!is.na(dfm$Value), ]
-```
-
-
----
-
-### Location Granularity Cleanup
-
-The data's location variables have several issues. The `Country_Region` variable represents a larger area while the `Province_State` represents more granular areas. There are a few countries which include the sub-national provinces or states, and others that do not. In the US, the granularity sometimes arrives at county levels. 
-
-All these differences represent a problem when grouping by a certain area. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing.
+All these differences represent a problem when grouping by a certain area. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing. I will delve into subnational data at another time, so I recreated the dataset at the national level (see [Code Appendix](#codeappendix-link) for details).
  
-This would require extensive cleanup - to be done in the near future...
+
+
+
+
 
 
 ---
 
+[Back to [Contents](#contents-link)]{style="float:right"}
 
-### Exploratory Data Analysis {#eda-link}
+
+## Exploratory Data Analysis {#eda-link}
 
 
 
@@ -168,9 +91,9 @@ This would require extensive cleanup - to be done in the near future...
 
 | Status | total |
 |:--------------------:|:-------------------:|
-| confirmed | 336666 |
-| fatal | 14669 |
-| recovered | 98364 |
+| confirmed | 656967 |
+| fatal | 30609 |
+| recovered | 137092 |
 |                     |                    |
   
 Table: Current Grand Totals
@@ -178,25 +101,41 @@ Table: Current Grand Totals
 
 ### Time Series Plots per Status and Location
 
-Since Italy is leading in fatalities, I wanted to get a sense for how fast the numbers increase. Exponential graphs are difficult for humans to grasp. Playing around with this interactive plot can enlighten us - it looks like it took from Feb 21 to Mar 11 to get from one to 800 deaths, and a mere ten days later on Mar 21, there are 800 deaths reported daily.
-
-<!--html_preserve--><div id="htmlwidget-fb65a9c68391b10d3a50" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fb65a9c68391b10d3a50">{"x":{"attrs":{"title":"Italy","xlabel":"","ylabel":"Number of Fatalities","labels":["day","V1"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"colors":["#FF0000CC"],"stackedGraph":true,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,5476]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script><!--/html_preserve-->
+This interactive time series speaks for itself: the US has overtaken Italy and China in number of confirmed cases in the last two days.
 
 
 
+<!--html_preserve--><div id="htmlwidget-570902a41ee4299ca652" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-570902a41ee4299ca652">{"x":{"attrs":{"title":"US Overtakes Italy and China in Confirmed Cases","xlabel":"","ylabel":"Number of Confirmed Cases","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[1,1,2,2,5,5,5,5,5,7,8,8,11,11,11,11,11,11,11,11,12,12,13,13,13,13,13,13,13,13,15,15,15,51,51,57,58,60,68,74,98,118,149,217,262,402,518,583,959,1281,1663,2179,2727,3499,4632,6421,7783,13677,19100,25489,33276,43847,53740,65778,83836,101657],[0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,20,62,155,229,322,453,655,888,1128,1694,2036,2502,3089,3858,4636,5883,7375,9172,10149,12462,12462,17660,21157,24747,27980,31506,35713,41035,47021,53578,59138,63927,69176,74386,80589,86498],[548,643,920,1406,2075,2877,5509,6087,8141,9802,11891,16630,19716,23707,27440,30587,34110,36814,39829,42354,44386,44759,59895,66358,68413,70513,72434,74211,74619,75077,75550,77001,77022,77241,77754,78166,78600,78928,79356,79932,80136,80261,80386,80537,80690,80770,80823,80860,80887,80921,80932,80945,80977,81003,81033,81058,81102,81156,81250,81305,81435,81498,81591,81661,81782,81897],[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,13,15,32,45,84,120,165,222,259,400,500,673,1073,1695,2277,2277,5232,6391,7798,9942,11748,13910,17963,20410,25374,28768,35136,39885,49515,57786,65719],[0,0,0,0,0,1,4,4,4,5,8,10,12,12,12,12,13,13,14,14,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,27,46,48,79,130,159,196,262,482,670,799,1040,1176,1457,1908,2078,3675,4585,5795,7272,9257,12327,15320,19848,22213,24873,29056,32986,37323,43938,50871]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script><!--/html_preserve-->
 
 
+This is the same visualization using the data on fatalities:
+
+<!--html_preserve--><div id="htmlwidget-cee8b54cce57a34002dc" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cee8b54cce57a34002dc">{"x":{"attrs":{"title":"Italy Leads in Fatalities","xlabel":"","ylabel":"Number of Fatalities","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,6,7,11,12,14,17,21,22,28,36,40,47,54,63,85,108,118,200,244,307,417,557,706,942,1209,1581],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,6077,6820,7503,8215,9134],[17,18,26,42,56,82,131,133,171,213,259,361,425,491,563,633,718,805,905,1012,1112,1117,1369,1521,1663,1766,1864,2003,2116,2238,2238,2443,2445,2595,2665,2717,2746,2790,2837,2872,2914,2947,2983,3015,3044,3072,3100,3123,3139,3161,3172,3180,3193,3203,3217,3230,3241,3249,3253,3259,3274,3274,3281,3285,3291,3296],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,5,10,17,28,35,54,55,133,195,289,342,533,623,830,1043,1375,1772,2311,2808,3647,4365,5138],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,7,9,11,17,24,28,44,67,84,94,123,157,206,267,342]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script><!--/html_preserve-->
+
+
+This is the same visualization using the data on recoveries:
+
+<!--html_preserve--><div id="htmlwidget-e77f49762c55609f180d" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e77f49762c55609f180d">{"x":{"attrs":{"title":"China Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950],[28,30,36,39,49,58,101,120,135,214,275,463,614,843,1115,1477,1999,2596,3219,3918,4636,5082,6217,7977,9298,10755,12462,14206,15962,18014,18704,22699,23187,25015,27676,30084,32930,36329,39320,42162,44854,47450,50001,52292,53944,55539,57388,58804,60181,61644,62901,64196,65660,67017,67910,68798,69755,70535,71266,71857,72362,72814,73280,73773,74181,74720],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script><!--/html_preserve-->
+
+Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:
+
+<!--html_preserve--><div id="htmlwidget-408ac5880389640f3669" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-408ac5880389640f3669">{"x":{"attrs":{"title":"After China, Italy Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script><!--/html_preserve-->
 
 
 
 ---
 
+[Back to [Contents](#contents-link)]{style="float:right"}
+
 ### Code Appendix {#codeappendix-link}
 
 
 ```r
-### Setup
+## Setup
 
 rm(list = ls())
 options(scipen=999)
@@ -213,11 +152,11 @@ install_packages <- function(package){
 
 
 # install packages  
-packages <- c("dygraphs","tidyverse","xts")
+packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer")
 suppressPackageStartupMessages(install_packages(packages))
 
 
-### Data Pre-Processing
+## Data Pre-Processing
 
 
 # preprocessing function
@@ -237,26 +176,28 @@ preprocess <- function() {
 	if (!file.exists(file_name)) {
 
 		# create URLs
-		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series-ncov-"
+		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series_covid19_"
 		
-		url_body <- paste0("?dest=data_edit&filter01=explode&explode-header-att01=date&explode-"
-				  ,"value-att01=value&filter02=rename&rename-oldtag02=%23affected%2Bdate"
-				  ,"&rename-newtag02=%23date&rename-header02=Date&filter03=rename&rename"
-				  ,"-oldtag03=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfected"
-				  ,"%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&clean-date-tags04"
-				  ,"=%23date&filter05=sort&sort-tags05=%23date&sort-reverse05=on&filter06"
-				  ,"=sort&sort-tags06=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all"
-				  ,"=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%"
-				  ,"2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion"
-				  ,"&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%"
-				  ,"23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-"
-				  ,"row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2F"
-				  ,"COVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2F"
-				  ,"time_series_19-covid-")
+		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode-header-att01="
+		                  ,"date&explode-value-att01=value&filter02=rename&rename-oldtag02=%23"
+		                  ,"affected%2Bdate&rename-newtag02=%23date&rename-header02=Date&filter"
+		                  ,"03=rename&rename-oldtag03=%23affected%2Bvalue&rename-newtag03=%23af"
+		                  ,"fected%2Binfected%2Bvalue%2Bnum&rename-header03=Value&filter04=clea"
+		                  ,"n&clean-date-tags04=%23date&filter05=sort&sort-tags05=%23date&sort-"
+		                  ,"reverse05=on&filter06=sort&sort-tags06=%23country%2Bname%2C%23adm1%"
+		                  ,"2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&t"
+		                  ,"agger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger"
+		                  ,"-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-"
+		                  ,"03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagge"
+		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
+		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
+		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
+
 		
-		confirmed_URL  <- paste0(http_header, "Confirmed.csv", url_body, "Confirmed.csv")
-		fatal_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
-		recovered_URL  <- paste0(http_header, "Recovered.csv", url_body, "Recovered.csv")
+		
+		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
+		fatal_URL <- paste0(http_header, "deaths_global", url_body, "deaths_global.csv")
+		recovered_URL  <- paste0(http_header, "recovered_global", url_body, "recovered_global.csv")
 									
 		# download
 		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
@@ -265,8 +206,11 @@ preprocess <- function() {
 		
 		# load csvs
 		load_csv <- function(filename) { 
-			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
-								, stringsAsFactors=FALSE, na.strings="")[-1, ]
+		
+			filename <- read.csv(paste0(dir_path, filename, ".csv")
+								 , header=TRUE
+								 , fileEncoding="UTF-8-BOM"
+								 , stringsAsFactors=FALSE, na.strings="")[-1, ]
 			filename
 		}
 	
@@ -291,7 +235,7 @@ preprocess <- function() {
 		
 		# rename columns 
 		colnames(dfm) <- c("Province_State", "Country_Region"
-				  , "Lat", "Long", "Date", "Value", "Status")
+				      , "Lat", "Long", "Date", "Value", "Status")
 		
 		# fix data types 
 		dfm$Value <- as.integer(dfm$Value)
@@ -316,143 +260,44 @@ dfm <- preprocess()
 str(dfm)
 
 
-### Data Cleanup
+## Data Cleanup
+
+### Location Granularity
+
+# recreating dataset at national level
+national <- unique(dfm$Country_Region[is.na(dfm$Province_State)])
+subnational <- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+
+nat_df <- dfm[dfm$Country_Region %in% national, ]
+sub_df <- dfm[dfm$Country_Region %in% subnational, ]
+
+nat_df <- as.data.frame(nat_df %>%
+						select(Country_Region, Status, Date, Value))
+
+# aggregate countries with subnational data to national level
+sub_df <- as.data.frame(sub_df %>%
+					    select(Country_Region, Status, Date, Value) %>%
+					    group_by(Country_Region, Status, Date) %>% 
+					    summarise('Value'=sum(Value)))
+						
+dfm <- rbind(nat_df, sub_df) 
+
+dfm <- as.data.frame(dfm %>% 
+					arrange(Country_Region, Status, desc(Date)))
 
 
-nrow(dfm)
-length(dfm)
 
-
-# Before preprocessing
-dfm[dfm$Country_Region == "US" & 
-      dfm$Province_State == "Westchester County, NY" & 
-      dfm$Status == "confirmed" & 
-      as.character(dfm$Date) > "2020-03-01"
-    , !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
-
-
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei <- dfm[dfm$Country_Region == "China" 
-			& dfm$Province_State == "Hubei" 
-			& dfm$Status == "confirmed", ]
-			
-westchester <- dfm[dfm$Country_Region == "US" 
-					& dfm$Province_State == "Westchester County, NY" 
-					& dfm$Status == "confirmed", ]
-
-mult_factor <- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-		     main="Hubei Province, China vs Westchester County, NY",
-             ylab="Confirmed Cases (Hubei)"))
-					 
-par(new = TRUE)
-with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-legend("topleft",
-       legend=c("Hubei", "Westchester"),
-       lty=1, lwd=1, col=c("red3", "black"))
-
-
-### Impute missing values
-
-# impute NAs with latest cumulative value
-# NAs are 0-values at the end of a cumulative time series
-# which I impute with the last cumulative value available in the series 
-# UPDATE: I wrote a message requesting NAs and as of 03-23 NAs appeared in the dataset,
-# unclear if it is from my request but I just adapted the code to reflect this
-Ndays <- length(unique(dfm$Date))
-Lastdate <- unique(dfm$Date)[1]
-
-for (i in 1:(nrow(dfm))) {
-
-	# if today's date shows 0 as Value OR NA
-	if (dfm$Date[i] == Lastdate & (dfm$Value[i] == 0 | is.na(dfm$Value[i]))) {
-
-		# for each subsequent row in a given series 
-		# starting at the ith row and ending in the penultimate row of the series 
-		# (since we're comparing with the ith+1 row and starting the count at i 
-		# we need to subtract 2)
-		for (j in i:(i+(Ndays-2))) {
-		
-			# if the value of the jth+1 row is 0 (OR NA), continue
-			# if the value of the jth+1 row is not NA and is > 0
-			if ( 
-			    (is.na(dfm$Value[j]) | dfm$Value[j] == 0) & 
-			    (!is.na(dfm$Value[j+1]) & dfm$Value[j+1] > 0) 
-			   ) {
-	
-				# ... for k (j to i) previous 0 values in that time series 
-				for (k in j:i) {
-				
-					# substitute them with the jth+1 positive valuee 
-					dfm$Value[k] <- dfm$Value[j+1]
-					
-				}
-			}		
-		}			
-	} 
-}
-
-# example 2 - fixed
-dfm[dfm$Country_Region == "US" 
-    & dfm$Province_State == "Westchester County, NY" 
-    & dfm$Status == "confirmed" 
-    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
-
-
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei <- dfm[dfm$Country_Region == "China" 
-			& dfm$Province_State == "Hubei" 
-			& dfm$Status == "confirmed", ]
-			
-westchester <- dfm[dfm$Country_Region == "US" 
-					& dfm$Province_State == "Westchester County, NY" 
-					& dfm$Status == "confirmed", ]
-
-mult_factor <- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-		     main="Hubei Province, China vs Westchester County, NY",
-             ylab="Confirmed Cases (Hubei)"))
-					 
-par(new = TRUE)
-with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-legend("topleft",
-       legend=c("Hubei", "Westchester"),
-       lty=1, lwd=1, col=c("red3", "black"))
-
-
-### Location Granularity Cleanup
- 
-
-# TO DO
-
-
-### Exploratory Data Analysis {#eda-link}
+## Exploratory Data Analysis {#eda-link}
 
 # subset to current counts 
 current <- data.frame(dfm %>%
-						select(Country_Region, Province_State, Date, Value, Status) %>% 
-						filter(Date == unique(dfm$Date)[1]))
-
-# order current counts by status and then descending counts 
-current_ordered <- current[order(current$Status, -current$Value), ]
+					  filter(Date == unique(dfm$Date)[1])) %>%
+					  arrange(Status, desc(Value))
 
 # subset to world totals 
 totals <- data.frame(current %>% 
-						select(Country_Region, Province_State, Date, Value, Status) %>% 
-						group_by(Status) %>%
-						summarise('total'=sum(Value)))
-
-colnames(totals)
+					 group_by(Status) %>%
+					 summarise('total'=sum(Value)))
 
 
 #' | `r colnames(totals)[1]` | `r colnames(totals)[2]` |
@@ -464,33 +309,83 @@ colnames(totals)
 #'   
 #' Table: Current Grand Totals
 
+
 ### Time Series Plots per Status and Location
- 
-colnames(totals)[1]
-colnames(totals)[2]
-totals$Status[1]
-totals$total[1]
-totals$Status[2]
-totals$total[2]
-totals$Status[3]
-totals$total[3]
 
-# subset to Italy fatalities
-Italy <- dfm[dfm$Country_Region == "Italy" & dfm$Status == "fatal", ]
+# function to create an xts series given dataframe, country, and status
+create_xts_series <- function(dfm, country, status) {
+  
+	dfm <- dfm[dfm$Country_Region == country & dfm$Status == status, ]
+	series <- xts(dfm$Value, order.by = dfm$Date)
+	series
+}
 
-# create time series object
-dfmSeries <- xts(x = Italy$Value
-                ,order.by = Italy$Date
-				        ,title = "Italy")
+# Confirmed 
+US <- create_xts_series(dfm, "US", "confirmed")
+Italy <- create_xts_series(dfm, "Italy", "confirmed")
+China <- create_xts_series(dfm, "China", "confirmed")
+Spain <- create_xts_series(dfm, "Spain", "confirmed")
+Germany <- create_xts_series(dfm, "Germany", "confirmed")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
 				 
-Italy_interactive <- dygraph(dfmSeries
-						                 ,main="Italy"
-						                 ,xlab=""
-						                 ,ylab="Number of Fatalities") %>% 
-						                 dyOptions(colors = rgb(1,0,0,alpha=0.8)) %>%
-						                 dyOptions(stackedGraph = TRUE) %>% 						  
-						                 dyRangeSelector()
-Italy_interactive
+dfm_interactive <- dygraph(seriesObject
+						   ,main="US Overtakes Italy and China in Confirmed Cases"
+						   ,xlab=""
+						   ,ylab="Number of Confirmed Cases") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+
+dfm_interactive
+
+# Fatalities
+US <- create_xts_series(dfm, "US", "fatal")
+Italy <- create_xts_series(dfm, "Italy", "fatal")
+China <- create_xts_series(dfm, "China", "fatal")
+Spain <- create_xts_series(dfm, "Spain", "fatal")
+Germany <- create_xts_series(dfm, "Germany", "fatal")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="Italy Leads in Fatalities"
+						   ,xlab=""
+						   ,ylab="Number of Fatalities") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
+# Recovered
+US <- create_xts_series(dfm, "US", "recovered")
+Italy <- create_xts_series(dfm, "Italy", "recovered")
+China <- create_xts_series(dfm, "China", "recovered")
+Spain <- create_xts_series(dfm, "Spain", "recovered")
+Germany <- create_xts_series(dfm, "Germany", "recovered")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="China Leads in Recoveries"
+						   ,xlab=""
+						   ,ylab="Number of Recoveries") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
+# Recovered - other four countries
+seriesObject <- cbind(US, Italy, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="Italy Leads in Recoveries"
+						   ,xlab=""
+						   ,ylab="Number of Recoveries") %>% 
+						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
 ```
 
 

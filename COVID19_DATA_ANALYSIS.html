@@ -6067,108 +6067,52 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Coronavirus Data Analysis</h1>
 <h4 class="author"><em>Marcelo Sanches</em></h4>
-<h4 class="date"><em>3/21/2020</em></h4>
+<h4 class="date"><em>3/27/2020</em></h4>
 
 </div>
 
 
-<div id="coronavirus-data-analysis" class="section level2">
-<h2>Coronavirus Data Analysis</h2>
 <p>This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at <a href="https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases">Novel Coronavirus 2019 Cases.</a></p>
+<div id="contents-link" class="section level2">
+<h2>Contents</h2>
+<ul>
+<li><a href="#preprocess-link">Data Pre-Processing</a></li>
+<li><a href="#cleanup-link">Data Cleanup</a></li>
+<li><a href="#eda-link">Exploratory Data Analysis</a></li>
+<li><a href="#codeappendix-link">Code Appendix</a></li>
+</ul>
 <hr />
-<div id="preprocess-link" class="section level3">
-<h3>Data Pre-Processing</h3>
+</div>
+<div id="preprocess-link" class="section level2">
+<h2>Data Pre-Processing</h2>
 <p>The <code>preprocess</code> function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs various pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the <a href="#codeappendix-link">Code Appendix.</a></p>
 <pre class="r"><code># read in RDS file 
 dfm &lt;- preprocess()
-
 str(dfm)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    93186 obs. of  7 variables:
+<pre><code>## &#39;data.frame&#39;:    48378 obs. of  7 variables:
 ##  $ Province_State: chr  NA NA NA NA ...
 ##  $ Country_Region: chr  &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; ...
 ##  $ Lat           : num  33 33 33 33 33 33 33 33 33 33 ...
 ##  $ Long          : num  65 65 65 65 65 65 65 65 65 65 ...
-##  $ Date          : Date, format: &quot;2020-03-23&quot; &quot;2020-03-22&quot; ...
-##  $ Value         : int  40 40 24 24 22 22 22 21 16 11 ...
+##  $ Date          : Date, format: &quot;2020-03-27&quot; &quot;2020-03-26&quot; ...
+##  $ Value         : int  110 94 84 74 40 40 24 24 22 22 ...
 ##  $ Status        : Factor w/ 3 levels &quot;confirmed&quot;,&quot;fatal&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>There are 93186 rows and 7 columns. There’s a ‘Status’ column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. “confirmed”). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country.</p>
+<p>There are 48378 rows and 7 columns. There’s a ‘Status’ column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. “confirmed”). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country, and also varies per day depending on how the dataset is built.</p>
 <hr />
+<p><span style="float:right">Back to <a href="#contents-link">Contents</a></span></p>
 </div>
-<div id="cleanup-link" class="section level3">
-<h3>Data Cleanup</h3>
-<p>The time series data is cumulative, but pulling current totals isn’t qutie as simple as subsetting the dataset to the most current date. Given a cumulative time series, the data show zeroes after positive values. These ending zeroes should be treated as <code>NA</code> values and need to be imputed.</p>
-<ul>
-<li>UPDATE: On 03-21 I sent a message to the dataset owner praising their efforts and thanking them for making the data publicly available. I also suggested they code these zeroes as missing values. As of 03-23 <code>NA</code> values started to appear in the data - this might be unrelated. We now have zeroes mixed in with missing values and need to account for both.</li>
-</ul>
-<pre class="r"><code># Before preprocessing
-dfm[dfm$Country_Region == &quot;US&quot; &amp; dfm$Province_State == &quot;Westchester County, NY&quot; &amp; dfm$Status == &quot;confirmed&quot;
-    &amp; as.character(dfm$Date) &gt; &quot;2020-03-01&quot;, !colnames(dfm) %in% c(&quot;Country.Region&quot;,&quot;Lat&quot;,&quot;Long&quot;), ]</code></pre>
-<pre><code>##               Province_State Country_Region       Date Value    Status
-## 30319 Westchester County, NY             US 2020-03-23    NA confirmed
-## 30320 Westchester County, NY             US 2020-03-22     0 confirmed
-## 30321 Westchester County, NY             US 2020-03-21     0 confirmed
-## 30322 Westchester County, NY             US 2020-03-20     0 confirmed
-## 30323 Westchester County, NY             US 2020-03-19     0 confirmed
-## 30324 Westchester County, NY             US 2020-03-18     0 confirmed
-## 30325 Westchester County, NY             US 2020-03-17     0 confirmed
-## 30326 Westchester County, NY             US 2020-03-16     0 confirmed
-## 30327 Westchester County, NY             US 2020-03-15     0 confirmed
-## 30328 Westchester County, NY             US 2020-03-14     0 confirmed
-## 30329 Westchester County, NY             US 2020-03-13     0 confirmed
-## 30330 Westchester County, NY             US 2020-03-12     0 confirmed
-## 30331 Westchester County, NY             US 2020-03-11     0 confirmed
-## 30332 Westchester County, NY             US 2020-03-10     0 confirmed
-## 30333 Westchester County, NY             US 2020-03-09    98 confirmed
-## 30334 Westchester County, NY             US 2020-03-08    83 confirmed
-## 30335 Westchester County, NY             US 2020-03-07    57 confirmed
-## 30336 Westchester County, NY             US 2020-03-06    19 confirmed
-## 30337 Westchester County, NY             US 2020-03-05    18 confirmed
-## 30338 Westchester County, NY             US 2020-03-04    10 confirmed
-## 30339 Westchester County, NY             US 2020-03-03     1 confirmed
-## 30340 Westchester County, NY             US 2020-03-02     0 confirmed</code></pre>
-<p>In this plot I compare the cumulative curve for confirmed cases in Hubei Province (China) with that of Westchester County, NY, which has this anomaly. The number of confirmed cases in Westchester is much smaller so I adjusted the y axes (note values):</p>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-</div>
-<div id="impute-missing-values" class="section level3">
-<h3>Impute missing values</h3>
-<p>The simplest imputation strategy is to replace all the zeroes and <code>NA</code> values after positive values with the latest cumulative value. This is the result of the imputation for Westchester County, NY:</p>
-<pre><code>##               Province_State Country_Region       Date Value    Status
-## 30319 Westchester County, NY             US 2020-03-23    98 confirmed
-## 30320 Westchester County, NY             US 2020-03-22    98 confirmed
-## 30321 Westchester County, NY             US 2020-03-21    98 confirmed
-## 30322 Westchester County, NY             US 2020-03-20    98 confirmed
-## 30323 Westchester County, NY             US 2020-03-19    98 confirmed
-## 30324 Westchester County, NY             US 2020-03-18    98 confirmed
-## 30325 Westchester County, NY             US 2020-03-17    98 confirmed
-## 30326 Westchester County, NY             US 2020-03-16    98 confirmed
-## 30327 Westchester County, NY             US 2020-03-15    98 confirmed
-## 30328 Westchester County, NY             US 2020-03-14    98 confirmed
-## 30329 Westchester County, NY             US 2020-03-13    98 confirmed
-## 30330 Westchester County, NY             US 2020-03-12    98 confirmed
-## 30331 Westchester County, NY             US 2020-03-11    98 confirmed
-## 30332 Westchester County, NY             US 2020-03-10    98 confirmed
-## 30333 Westchester County, NY             US 2020-03-09    98 confirmed
-## 30334 Westchester County, NY             US 2020-03-08    83 confirmed
-## 30335 Westchester County, NY             US 2020-03-07    57 confirmed
-## 30336 Westchester County, NY             US 2020-03-06    19 confirmed
-## 30337 Westchester County, NY             US 2020-03-05    18 confirmed
-## 30338 Westchester County, NY             US 2020-03-04    10 confirmed
-## 30339 Westchester County, NY             US 2020-03-03     1 confirmed
-## 30340 Westchester County, NY             US 2020-03-02     0 confirmed</code></pre>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>There are still a lot of <code>NA</code> values on 03-23 so I will for now just dump those:</p>
-<pre class="r"><code>dfm &lt;- dfm[!is.na(dfm$Value), ]</code></pre>
+<div id="cleanup-link" class="section level2">
+<h2>Data Cleanup</h2>
+<div id="location-granularity" class="section level3">
+<h3>Location Granularity</h3>
+<p>The data’s location variables have several issues. The <code>Country_Region</code> variable represents a larger area while the <code>Province_State</code> represents more granular areas. There are a few countries which include the subnational provinces or states, and others that do not. In the US, the granularity sometimes arrives at county level (Mar 27 UPDATE: this has not been true in recent days.)</p>
+<p>All these differences represent a problem when grouping by a certain area. This can be visualized in <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins’ dashboard</a>: the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing. I will delve into subnational data at another time, so I recreated the dataset at the national level (see <a href="#codeappendix-link">Code Appendix</a> for details).</p>
 <hr />
+<p><span style="float:right">Back to <a href="#contents-link">Contents</a></span></p>
 </div>
-<div id="location-granularity-cleanup" class="section level3">
-<h3>Location Granularity Cleanup</h3>
-<p>The data’s location variables have several issues. The <code>Country_Region</code> variable represents a larger area while the <code>Province_State</code> represents more granular areas. There are a few countries which include the sub-national provinces or states, and others that do not. In the US, the granularity sometimes arrives at county levels.</p>
-<p>All these differences represent a problem when grouping by a certain area. This can be visualized in <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins’ dashboard</a>: the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing.</p>
-<p>This would require extensive cleanup - to be done in the near future…</p>
-<hr />
 </div>
-<div id="eda-link" class="section level3">
-<h3>Exploratory Data Analysis</h3>
+<div id="eda-link" class="section level2">
+<h2>Exploratory Data Analysis</h2>
 <table>
 <caption>Current Grand Totals</caption>
 <thead>
@@ -6180,15 +6124,15 @@ dfm[dfm$Country_Region == &quot;US&quot; &amp; dfm$Province_State == &quot;Westc
 <tbody>
 <tr class="odd">
 <td align="center">confirmed</td>
-<td align="center">336666</td>
+<td align="center">656967</td>
 </tr>
 <tr class="even">
 <td align="center">fatal</td>
-<td align="center">14669</td>
+<td align="center">30609</td>
 </tr>
 <tr class="odd">
 <td align="center">recovered</td>
-<td align="center">98364</td>
+<td align="center">137092</td>
 </tr>
 <tr class="even">
 <td align="center"></td>
@@ -6196,17 +6140,26 @@ dfm[dfm$Country_Region == &quot;US&quot; &amp; dfm$Province_State == &quot;Westc
 </tr>
 </tbody>
 </table>
-</div>
 <div id="time-series-plots-per-status-and-location" class="section level3">
 <h3>Time Series Plots per Status and Location</h3>
-<p>Since Italy is leading in fatalities, I wanted to get a sense for how fast the numbers increase. Exponential graphs are difficult for humans to grasp. Playing around with this interactive plot can enlighten us - it looks like it took from Feb 21 to Mar 11 to get from one to 800 deaths, and a mere ten days later on Mar 21, there are 800 deaths reported daily.</p>
-<div id="htmlwidget-fb65a9c68391b10d3a50" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-fb65a9c68391b10d3a50">{"x":{"attrs":{"title":"Italy","xlabel":"","ylabel":"Number of Fatalities","labels":["day","V1"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"colors":["#FF0000CC"],"stackedGraph":true,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,5476]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<p>This interactive time series speaks for itself: the US has overtaken Italy and China in number of confirmed cases in the last two days.</p>
+<div id="htmlwidget-570902a41ee4299ca652" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-570902a41ee4299ca652">{"x":{"attrs":{"title":"US Overtakes Italy and China in Confirmed Cases","xlabel":"","ylabel":"Number of Confirmed Cases","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[1,1,2,2,5,5,5,5,5,7,8,8,11,11,11,11,11,11,11,11,12,12,13,13,13,13,13,13,13,13,15,15,15,51,51,57,58,60,68,74,98,118,149,217,262,402,518,583,959,1281,1663,2179,2727,3499,4632,6421,7783,13677,19100,25489,33276,43847,53740,65778,83836,101657],[0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,20,62,155,229,322,453,655,888,1128,1694,2036,2502,3089,3858,4636,5883,7375,9172,10149,12462,12462,17660,21157,24747,27980,31506,35713,41035,47021,53578,59138,63927,69176,74386,80589,86498],[548,643,920,1406,2075,2877,5509,6087,8141,9802,11891,16630,19716,23707,27440,30587,34110,36814,39829,42354,44386,44759,59895,66358,68413,70513,72434,74211,74619,75077,75550,77001,77022,77241,77754,78166,78600,78928,79356,79932,80136,80261,80386,80537,80690,80770,80823,80860,80887,80921,80932,80945,80977,81003,81033,81058,81102,81156,81250,81305,81435,81498,81591,81661,81782,81897],[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,13,15,32,45,84,120,165,222,259,400,500,673,1073,1695,2277,2277,5232,6391,7798,9942,11748,13910,17963,20410,25374,28768,35136,39885,49515,57786,65719],[0,0,0,0,0,1,4,4,4,5,8,10,12,12,12,12,13,13,14,14,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,27,46,48,79,130,159,196,262,482,670,799,1040,1176,1457,1908,2078,3675,4585,5795,7272,9257,12327,15320,19848,22213,24873,29056,32986,37323,43938,50871]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<p>This is the same visualization using the data on fatalities:</p>
+<div id="htmlwidget-cee8b54cce57a34002dc" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cee8b54cce57a34002dc">{"x":{"attrs":{"title":"Italy Leads in Fatalities","xlabel":"","ylabel":"Number of Fatalities","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,6,7,11,12,14,17,21,22,28,36,40,47,54,63,85,108,118,200,244,307,417,557,706,942,1209,1581],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,6077,6820,7503,8215,9134],[17,18,26,42,56,82,131,133,171,213,259,361,425,491,563,633,718,805,905,1012,1112,1117,1369,1521,1663,1766,1864,2003,2116,2238,2238,2443,2445,2595,2665,2717,2746,2790,2837,2872,2914,2947,2983,3015,3044,3072,3100,3123,3139,3161,3172,3180,3193,3203,3217,3230,3241,3249,3253,3259,3274,3274,3281,3285,3291,3296],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,5,10,17,28,35,54,55,133,195,289,342,533,623,830,1043,1375,1772,2311,2808,3647,4365,5138],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,7,9,11,17,24,28,44,67,84,94,123,157,206,267,342]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<p>This is the same visualization using the data on recoveries:</p>
+<div id="htmlwidget-e77f49762c55609f180d" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e77f49762c55609f180d">{"x":{"attrs":{"title":"China Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950],[28,30,36,39,49,58,101,120,135,214,275,463,614,843,1115,1477,1999,2596,3219,3918,4636,5082,6217,7977,9298,10755,12462,14206,15962,18014,18704,22699,23187,25015,27676,30084,32930,36329,39320,42162,44854,47450,50001,52292,53944,55539,57388,58804,60181,61644,62901,64196,65660,67017,67910,68798,69755,70535,71266,71857,72362,72814,73280,73773,74181,74720],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<p>Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:</p>
+<div id="htmlwidget-408ac5880389640f3669" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-408ac5880389640f3669">{"x":{"attrs":{"title":"After China, Italy Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
 <hr />
+<p><span style="float:right">Back to <a href="#contents-link">Contents</a></span></p>
 </div>
 <div id="codeappendix-link" class="section level3">
 <h3>Code Appendix</h3>
-<pre class="r"><code>### Setup
+<pre class="r"><code>## Setup
 
 rm(list = ls())
 options(scipen=999)
@@ -6223,11 +6176,11 @@ install_packages &lt;- function(package){
 
 
 # install packages  
-packages &lt;- c(&quot;dygraphs&quot;,&quot;tidyverse&quot;,&quot;xts&quot;)
+packages &lt;- c(&quot;dygraphs&quot;, &quot;tidyverse&quot;, &quot;xts&quot;, &quot;RColorBrewer&quot;)
 suppressPackageStartupMessages(install_packages(packages))
 
 
-### Data Pre-Processing
+## Data Pre-Processing
 
 
 # preprocessing function
@@ -6247,26 +6200,28 @@ preprocess &lt;- function() {
     if (!file.exists(file_name)) {
 
         # create URLs
-        http_header &lt;- &quot;https://data.humdata.org/hxlproxy/data/download/time_series-ncov-&quot;
+        http_header &lt;- &quot;https://data.humdata.org/hxlproxy/data/download/time_series_covid19_&quot;
         
-        url_body &lt;- paste0(&quot;?dest=data_edit&amp;filter01=explode&amp;explode-header-att01=date&amp;explode-&quot;
-                  ,&quot;value-att01=value&amp;filter02=rename&amp;rename-oldtag02=%23affected%2Bdate&quot;
-                  ,&quot;&amp;rename-newtag02=%23date&amp;rename-header02=Date&amp;filter03=rename&amp;rename&quot;
-                  ,&quot;-oldtag03=%23affected%2Bvalue&amp;rename-newtag03=%23affected%2Binfected&quot;
-                  ,&quot;%2Bvalue%2Bnum&amp;rename-header03=Value&amp;filter04=clean&amp;clean-date-tags04&quot;
-                  ,&quot;=%23date&amp;filter05=sort&amp;sort-tags05=%23date&amp;sort-reverse05=on&amp;filter06&quot;
-                  ,&quot;=sort&amp;sort-tags06=%23country%2Bname%2C%23adm1%2Bname&amp;tagger-match-all&quot;
-                  ,&quot;=on&amp;tagger-default-tag=%23affected%2Blabel&amp;tagger-01-header=province%&quot;
-                  ,&quot;2Fstate&amp;tagger-01-tag=%23adm1%2Bname&amp;tagger-02-header=country%2Fregion&quot;
-                  ,&quot;&amp;tagger-02-tag=%23country%2Bname&amp;tagger-03-header=lat&amp;tagger-03-tag=%&quot;
-                  ,&quot;23geo%2Blat&amp;tagger-04-header=long&amp;tagger-04-tag=%23geo%2Blon&amp;header-&quot;
-                  ,&quot;row=1&amp;url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2F&quot;
-                  ,&quot;COVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2F&quot;
-                  ,&quot;time_series_19-covid-&quot;)
+        url_body &lt;- paste0(&quot;_narrow.csv?dest=data_edit&amp;filter01=explode&amp;explode-header-att01=&quot;
+                          ,&quot;date&amp;explode-value-att01=value&amp;filter02=rename&amp;rename-oldtag02=%23&quot;
+                          ,&quot;affected%2Bdate&amp;rename-newtag02=%23date&amp;rename-header02=Date&amp;filter&quot;
+                          ,&quot;03=rename&amp;rename-oldtag03=%23affected%2Bvalue&amp;rename-newtag03=%23af&quot;
+                          ,&quot;fected%2Binfected%2Bvalue%2Bnum&amp;rename-header03=Value&amp;filter04=clea&quot;
+                          ,&quot;n&amp;clean-date-tags04=%23date&amp;filter05=sort&amp;sort-tags05=%23date&amp;sort-&quot;
+                          ,&quot;reverse05=on&amp;filter06=sort&amp;sort-tags06=%23country%2Bname%2C%23adm1%&quot;
+                          ,&quot;2Bname&amp;tagger-match-all=on&amp;tagger-default-tag=%23affected%2Blabel&amp;t&quot;
+                          ,&quot;agger-01-header=province%2Fstate&amp;tagger-01-tag=%23adm1%2Bname&amp;tagger&quot;
+                          ,&quot;-02-header=country%2Fregion&amp;tagger-02-tag=%23country%2Bname&amp;tagger-&quot;
+                          ,&quot;03-header=lat&amp;tagger-03-tag=%23geo%2Blat&amp;tagger-04-header=long&amp;tagge&quot;
+                          ,&quot;r-04-tag=%23geo%2Blon&amp;header-row=1&amp;url=https%3A%2F%2Fraw.githubuserc&quot;
+                          ,&quot;ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data&quot;
+                          ,&quot;%2Fcsse_covid_19_time_series%2Ftime_series_covid19_&quot;)
+
         
-        confirmed_URL  &lt;- paste0(http_header, &quot;Confirmed.csv&quot;, url_body, &quot;Confirmed.csv&quot;)
-        fatal_URL &lt;- paste0(http_header, &quot;Deaths.csv&quot;, url_body, &quot;Deaths.csv&quot;)
-        recovered_URL  &lt;- paste0(http_header, &quot;Recovered.csv&quot;, url_body, &quot;Recovered.csv&quot;)
+        
+        confirmed_URL  &lt;- paste0(http_header, &quot;confirmed_global&quot;, url_body, &quot;confirmed_global.csv&quot;)
+        fatal_URL &lt;- paste0(http_header, &quot;deaths_global&quot;, url_body, &quot;deaths_global.csv&quot;)
+        recovered_URL  &lt;- paste0(http_header, &quot;recovered_global&quot;, url_body, &quot;recovered_global.csv&quot;)
                                     
         # download
         download.file(confirmed_URL, destfile=paste0(dir_path, &quot;confirmed.csv&quot;))
@@ -6275,8 +6230,11 @@ preprocess &lt;- function() {
         
         # load csvs
         load_csv &lt;- function(filename) { 
-            filename &lt;- read.csv(paste0(dir_path, filename, &quot;.csv&quot;), header=TRUE
-                                , stringsAsFactors=FALSE, na.strings=&quot;&quot;)[-1, ]
+        
+            filename &lt;- read.csv(paste0(dir_path, filename, &quot;.csv&quot;)
+                                 , header=TRUE
+                                 , fileEncoding=&quot;UTF-8-BOM&quot;
+                                 , stringsAsFactors=FALSE, na.strings=&quot;&quot;)[-1, ]
             filename
         }
     
@@ -6301,7 +6259,7 @@ preprocess &lt;- function() {
         
         # rename columns 
         colnames(dfm) &lt;- c(&quot;Province_State&quot;, &quot;Country_Region&quot;
-                  , &quot;Lat&quot;, &quot;Long&quot;, &quot;Date&quot;, &quot;Value&quot;, &quot;Status&quot;)
+                      , &quot;Lat&quot;, &quot;Long&quot;, &quot;Date&quot;, &quot;Value&quot;, &quot;Status&quot;)
         
         # fix data types 
         dfm$Value &lt;- as.integer(dfm$Value)
@@ -6326,143 +6284,44 @@ dfm &lt;- preprocess()
 str(dfm)
 
 
-### Data Cleanup
+## Data Cleanup
+
+### Location Granularity
+
+# recreating dataset at national level
+national &lt;- unique(dfm$Country_Region[is.na(dfm$Province_State)])
+subnational &lt;- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+
+nat_df &lt;- dfm[dfm$Country_Region %in% national, ]
+sub_df &lt;- dfm[dfm$Country_Region %in% subnational, ]
+
+nat_df &lt;- as.data.frame(nat_df %&gt;%
+                        select(Country_Region, Status, Date, Value))
+
+# aggregate countries with subnational data to national level
+sub_df &lt;- as.data.frame(sub_df %&gt;%
+                        select(Country_Region, Status, Date, Value) %&gt;%
+                        group_by(Country_Region, Status, Date) %&gt;% 
+                        summarise(&#39;Value&#39;=sum(Value)))
+                        
+dfm &lt;- rbind(nat_df, sub_df) 
+
+dfm &lt;- as.data.frame(dfm %&gt;% 
+                    arrange(Country_Region, Status, desc(Date)))
 
 
-nrow(dfm)
-length(dfm)
 
-
-# Before preprocessing
-dfm[dfm$Country_Region == &quot;US&quot; &amp; 
-      dfm$Province_State == &quot;Westchester County, NY&quot; &amp; 
-      dfm$Status == &quot;confirmed&quot; &amp; 
-      as.character(dfm$Date) &gt; &quot;2020-03-01&quot;
-    , !colnames(dfm) %in% c(&quot;Country.Region&quot;,&quot;Lat&quot;,&quot;Long&quot;), ]
-
-
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei &lt;- dfm[dfm$Country_Region == &quot;China&quot; 
-            &amp; dfm$Province_State == &quot;Hubei&quot; 
-            &amp; dfm$Status == &quot;confirmed&quot;, ]
-            
-westchester &lt;- dfm[dfm$Country_Region == &quot;US&quot; 
-                    &amp; dfm$Province_State == &quot;Westchester County, NY&quot; 
-                    &amp; dfm$Status == &quot;confirmed&quot;, ]
-
-mult_factor &lt;- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type=&quot;l&quot;, col=&quot;red3&quot;, lwd=1,
-             main=&quot;Hubei Province, China vs Westchester County, NY&quot;,
-             ylab=&quot;Confirmed Cases (Hubei)&quot;))
-                     
-par(new = TRUE)
-with(westchester, plot(Date, Value, type=&quot;l&quot;, lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, &#39;Confirmed Cases (Westchester)&#39;)
-legend(&quot;topleft&quot;,
-       legend=c(&quot;Hubei&quot;, &quot;Westchester&quot;),
-       lty=1, lwd=1, col=c(&quot;red3&quot;, &quot;black&quot;))
-
-
-### Impute missing values
-
-# impute NAs with latest cumulative value
-# NAs are 0-values at the end of a cumulative time series
-# which I impute with the last cumulative value available in the series 
-# UPDATE: I wrote a message requesting NAs and as of 03-23 NAs appeared in the dataset,
-# unclear if it is from my request but I just adapted the code to reflect this
-Ndays &lt;- length(unique(dfm$Date))
-Lastdate &lt;- unique(dfm$Date)[1]
-
-for (i in 1:(nrow(dfm))) {
-
-    # if today&#39;s date shows 0 as Value OR NA
-    if (dfm$Date[i] == Lastdate &amp; (dfm$Value[i] == 0 | is.na(dfm$Value[i]))) {
-
-        # for each subsequent row in a given series 
-        # starting at the ith row and ending in the penultimate row of the series 
-        # (since we&#39;re comparing with the ith+1 row and starting the count at i 
-        # we need to subtract 2)
-        for (j in i:(i+(Ndays-2))) {
-        
-            # if the value of the jth+1 row is 0 (OR NA), continue
-            # if the value of the jth+1 row is not NA and is &gt; 0
-            if ( 
-                (is.na(dfm$Value[j]) | dfm$Value[j] == 0) &amp; 
-                (!is.na(dfm$Value[j+1]) &amp; dfm$Value[j+1] &gt; 0) 
-               ) {
-    
-                # ... for k (j to i) previous 0 values in that time series 
-                for (k in j:i) {
-                
-                    # substitute them with the jth+1 positive valuee 
-                    dfm$Value[k] &lt;- dfm$Value[j+1]
-                    
-                }
-            }       
-        }           
-    } 
-}
-
-# example 2 - fixed
-dfm[dfm$Country_Region == &quot;US&quot; 
-    &amp; dfm$Province_State == &quot;Westchester County, NY&quot; 
-    &amp; dfm$Status == &quot;confirmed&quot; 
-    &amp; as.character(dfm$Date) &gt; &quot;2020-03-01&quot;, !colnames(dfm) %in% c(&quot;Lat&quot;,&quot;Long&quot;)]
-
-
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei &lt;- dfm[dfm$Country_Region == &quot;China&quot; 
-            &amp; dfm$Province_State == &quot;Hubei&quot; 
-            &amp; dfm$Status == &quot;confirmed&quot;, ]
-            
-westchester &lt;- dfm[dfm$Country_Region == &quot;US&quot; 
-                    &amp; dfm$Province_State == &quot;Westchester County, NY&quot; 
-                    &amp; dfm$Status == &quot;confirmed&quot;, ]
-
-mult_factor &lt;- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type=&quot;l&quot;, col=&quot;red3&quot;, lwd=1,
-             main=&quot;Hubei Province, China vs Westchester County, NY&quot;,
-             ylab=&quot;Confirmed Cases (Hubei)&quot;))
-                     
-par(new = TRUE)
-with(westchester, plot(Date, Value, type=&quot;l&quot;, lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, &#39;Confirmed Cases (Westchester)&#39;)
-legend(&quot;topleft&quot;,
-       legend=c(&quot;Hubei&quot;, &quot;Westchester&quot;),
-       lty=1, lwd=1, col=c(&quot;red3&quot;, &quot;black&quot;))
-
-
-### Location Granularity Cleanup
- 
-
-# TO DO
-
-
-### Exploratory Data Analysis {#eda-link}
+## Exploratory Data Analysis {#eda-link}
 
 # subset to current counts 
 current &lt;- data.frame(dfm %&gt;%
-                        select(Country_Region, Province_State, Date, Value, Status) %&gt;% 
-                        filter(Date == unique(dfm$Date)[1]))
-
-# order current counts by status and then descending counts 
-current_ordered &lt;- current[order(current$Status, -current$Value), ]
+                      filter(Date == unique(dfm$Date)[1])) %&gt;%
+                      arrange(Status, desc(Value))
 
 # subset to world totals 
 totals &lt;- data.frame(current %&gt;% 
-                        select(Country_Region, Province_State, Date, Value, Status) %&gt;% 
-                        group_by(Status) %&gt;%
-                        summarise(&#39;total&#39;=sum(Value)))
-
-colnames(totals)
+                     group_by(Status) %&gt;%
+                     summarise(&#39;total&#39;=sum(Value)))
 
 
 #&#39; | `r colnames(totals)[1]` | `r colnames(totals)[2]` |
@@ -6474,33 +6333,83 @@ colnames(totals)
 #&#39;   
 #&#39; Table: Current Grand Totals
 
+
 ### Time Series Plots per Status and Location
- 
-colnames(totals)[1]
-colnames(totals)[2]
-totals$Status[1]
-totals$total[1]
-totals$Status[2]
-totals$total[2]
-totals$Status[3]
-totals$total[3]
 
-# subset to Italy fatalities
-Italy &lt;- dfm[dfm$Country_Region == &quot;Italy&quot; &amp; dfm$Status == &quot;fatal&quot;, ]
+# function to create an xts series given dataframe, country, and status
+create_xts_series &lt;- function(dfm, country, status) {
+  
+    dfm &lt;- dfm[dfm$Country_Region == country &amp; dfm$Status == status, ]
+    series &lt;- xts(dfm$Value, order.by = dfm$Date)
+    series
+}
 
-# create time series object
-dfmSeries &lt;- xts(x = Italy$Value
-                ,order.by = Italy$Date
-                        ,title = &quot;Italy&quot;)
+# Confirmed 
+US &lt;- create_xts_series(dfm, &quot;US&quot;, &quot;confirmed&quot;)
+Italy &lt;- create_xts_series(dfm, &quot;Italy&quot;, &quot;confirmed&quot;)
+China &lt;- create_xts_series(dfm, &quot;China&quot;, &quot;confirmed&quot;)
+Spain &lt;- create_xts_series(dfm, &quot;Spain&quot;, &quot;confirmed&quot;)
+Germany &lt;- create_xts_series(dfm, &quot;Germany&quot;, &quot;confirmed&quot;)
+
+seriesObject &lt;- cbind(US, Italy, China, Spain, Germany)
                  
-Italy_interactive &lt;- dygraph(dfmSeries
-                                         ,main=&quot;Italy&quot;
-                                         ,xlab=&quot;&quot;
-                                         ,ylab=&quot;Number of Fatalities&quot;) %&gt;% 
-                                         dyOptions(colors = rgb(1,0,0,alpha=0.8)) %&gt;%
-                                         dyOptions(stackedGraph = TRUE) %&gt;%                           
-                                         dyRangeSelector()
-Italy_interactive</code></pre>
+dfm_interactive &lt;- dygraph(seriesObject
+                           ,main=&quot;US Overtakes Italy and China in Confirmed Cases&quot;
+                           ,xlab=&quot;&quot;
+                           ,ylab=&quot;Number of Confirmed Cases&quot;) %&gt;% 
+                           dyOptions(colors = brewer.pal(5,&quot;Dark2&quot;)) %&gt;%                          
+                           dyRangeSelector()
+
+
+dfm_interactive
+
+# Fatalities
+US &lt;- create_xts_series(dfm, &quot;US&quot;, &quot;fatal&quot;)
+Italy &lt;- create_xts_series(dfm, &quot;Italy&quot;, &quot;fatal&quot;)
+China &lt;- create_xts_series(dfm, &quot;China&quot;, &quot;fatal&quot;)
+Spain &lt;- create_xts_series(dfm, &quot;Spain&quot;, &quot;fatal&quot;)
+Germany &lt;- create_xts_series(dfm, &quot;Germany&quot;, &quot;fatal&quot;)
+
+seriesObject &lt;- cbind(US, Italy, China, Spain, Germany)
+                 
+dfm_interactive &lt;- dygraph(seriesObject
+                           ,main=&quot;Italy Leads in Fatalities&quot;
+                           ,xlab=&quot;&quot;
+                           ,ylab=&quot;Number of Fatalities&quot;) %&gt;% 
+                           dyOptions(colors = brewer.pal(5,&quot;Dark2&quot;)) %&gt;%                          
+                           dyRangeSelector()
+
+dfm_interactive
+
+# Recovered
+US &lt;- create_xts_series(dfm, &quot;US&quot;, &quot;recovered&quot;)
+Italy &lt;- create_xts_series(dfm, &quot;Italy&quot;, &quot;recovered&quot;)
+China &lt;- create_xts_series(dfm, &quot;China&quot;, &quot;recovered&quot;)
+Spain &lt;- create_xts_series(dfm, &quot;Spain&quot;, &quot;recovered&quot;)
+Germany &lt;- create_xts_series(dfm, &quot;Germany&quot;, &quot;recovered&quot;)
+
+seriesObject &lt;- cbind(US, Italy, China, Spain, Germany)
+                 
+dfm_interactive &lt;- dygraph(seriesObject
+                           ,main=&quot;China Leads in Recoveries&quot;
+                           ,xlab=&quot;&quot;
+                           ,ylab=&quot;Number of Recoveries&quot;) %&gt;% 
+                           dyOptions(colors = brewer.pal(5,&quot;Dark2&quot;)) %&gt;%                          
+                           dyRangeSelector()
+
+dfm_interactive
+
+# Recovered - other four countries
+seriesObject &lt;- cbind(US, Italy, Spain, Germany)
+                 
+dfm_interactive &lt;- dygraph(seriesObject
+                           ,main=&quot;Italy Leads in Recoveries&quot;
+                           ,xlab=&quot;&quot;
+                           ,ylab=&quot;Number of Recoveries&quot;) %&gt;% 
+                           dyOptions(colors = brewer.pal(4,&quot;Dark2&quot;)) %&gt;%                          
+                           dyRangeSelector()
+
+dfm_interactive</code></pre>
 <pre class="r"><code># uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 #library(knitr)
 #options(knitr.purl.inline = TRUE)

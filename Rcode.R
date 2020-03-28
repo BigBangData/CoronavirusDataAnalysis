@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "3/21/2020"
+#' date: "3/27/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -29,7 +29,7 @@ install_packages <- function(package){
 
 
 # install packages  
-packages <- c("dygraphs","tidyverse","xts")
+packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer")
 suppressPackageStartupMessages(install_packages(packages))
 
 #' 
@@ -53,26 +53,27 @@ preprocess <- function() {
 	if (!file.exists(file_name)) {
 
 		# create URLs
-		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series-ncov-"
+		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series_covid19_"
 		
-		url_body <- paste0("?dest=data_edit&filter01=explode&explode-header-att01=date&explode-"
-				  ,"value-att01=value&filter02=rename&rename-oldtag02=%23affected%2Bdate"
-				  ,"&rename-newtag02=%23date&rename-header02=Date&filter03=rename&rename"
-				  ,"-oldtag03=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfected"
-				  ,"%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&clean-date-tags04"
-				  ,"=%23date&filter05=sort&sort-tags05=%23date&sort-reverse05=on&filter06"
-				  ,"=sort&sort-tags06=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all"
-				  ,"=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%"
-				  ,"2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion"
-				  ,"&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%"
-				  ,"23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-"
-				  ,"row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2F"
-				  ,"COVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2F"
-				  ,"time_series_19-covid-")
+		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode-header-att01="
+		                  ,"date&explode-value-att01=value&filter02=rename&rename-oldtag02=%23"
+		                  ,"affected%2Bdate&rename-newtag02=%23date&rename-header02=Date&filter"
+		                  ,"03=rename&rename-oldtag03=%23affected%2Bvalue&rename-newtag03=%23af"
+		                  ,"fected%2Binfected%2Bvalue%2Bnum&rename-header03=Value&filter04=clea"
+		                  ,"n&clean-date-tags04=%23date&filter05=sort&sort-tags05=%23date&sort-"
+		                  ,"reverse05=on&filter06=sort&sort-tags06=%23country%2Bname%2C%23adm1%"
+		                  ,"2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&t"
+		                  ,"agger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger"
+		                  ,"-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-"
+		                  ,"03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagge"
+		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
+		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
+		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
 		
-		confirmed_URL  <- paste0(http_header, "Confirmed.csv", url_body, "Confirmed.csv")
-		fatal_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
-		recovered_URL  <- paste0(http_header, "Recovered.csv", url_body, "Recovered.csv")
+		
+		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
+		fatal_URL <- paste0(http_header, "deaths_global", url_body, "deaths_global.csv")
+		recovered_URL  <- paste0(http_header, "recovered_global", url_body, "recovered_global.csv")
 									
 		# download
 		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
@@ -82,7 +83,8 @@ preprocess <- function() {
 		# load csvs
 		load_csv <- function(filename) { 
 			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
-								, stringsAsFactors=FALSE, na.strings="")[-1, ]
+			                     , fileEncoding="UTF-8-BOM"
+								           , stringsAsFactors=FALSE, na.strings="")[-1, ]
 			filename
 		}
 	
@@ -127,191 +129,97 @@ preprocess <- function() {
 
 
 #' 
-#' ## Coronavirus Data Analysis
+#' 
 #' 
 #' This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)
 #' 
+#' 
+#' ## Contents {#contents-link}
+#' 
+#' * [Data Pre-Processing](#preprocess-link)
+#' * [Data Cleanup](#cleanup-link)
+#' * [Exploratory Data Analysis](#eda-link)
+#' * [Code Appendix](#codeappendix-link)
+#' 
 #' ---
 #' 
-#' ### Data Pre-Processing {#preprocess-link}
+#' ## Data Pre-Processing {#preprocess-link}
 #' 
 #' The `preprocess` function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs various pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the [Code Appendix.](#codeappendix-link)
-#' 
 #' 
 #' 
 #' 
 ## ------------------------------------------------------------------------
 # read in RDS file 
 dfm <- preprocess()
-
 str(dfm)
 
 #' 
 #' 
-#' There are `r nrow(dfm)` rows and `r length(dfm)` columns. There's a 'Status' column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. "confirmed"). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country.
+#' There are `r nrow(dfm)` rows and `r length(dfm)` columns. There's a 'Status' column for the different stages, so the number of rows is 3 times the number of rows for a single status (ex. "confirmed"). Each single-status dataset is as long as the number of days in the time series (for a given day the data is pulled) times the number of countries and sub-national provinces or states. This number varies per country, and also varies per day depending on how the dataset is built. 
 #' 
 #' 
 #' ---
 #' 
-#' ### Data Cleanup  {#cleanup-link}
+#' [Back to [Contents](#contents-link)]{style="float:right"}
+#' 
+#' ## Data Cleanup  {#cleanup-link}
 #' 
 #' 
-#' The time series data is cumulative, but pulling current totals isn't qutie as simple as subsetting the dataset to the most current date. Given a cumulative time series, the data show zeroes after positive values. These ending zeroes should be treated as `NA` values and need to be imputed.
+#' ### Location Granularity 
 #' 
-#' * UPDATE: On 03-21 I sent a message to the dataset owner praising their efforts and thanking them for making the data publicly available. I also suggested they code these zeroes as missing values. As of 03-23 `NA` values started to appear in the data - this might be unrelated. We now have zeroes mixed in with missing values and need to account for both.
+#' The data's location variables have several issues. The `Country_Region` variable represents a larger area while the `Province_State` represents more granular areas. There are a few countries which include the subnational provinces or states, and others that do not. In the US, the granularity sometimes arrives at county level (Mar 27 UPDATE: this has not been true in recent days.)
+#' 
+#' All these differences represent a problem when grouping by a certain area. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing. I will delve into subnational data at another time, so I recreated the dataset at the national level (see [Code Appendix](#codeappendix-link) for details).
+#'  
+#' 
 #' 
 nrow(dfm)
 length(dfm)
-## ------------------------------------------------------------------------
-# Before preprocessing
-dfm[dfm$Country_Region == "US" & dfm$Province_State == "Westchester County, NY" & dfm$Status == "confirmed"
-    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
+## ----include=FALSE-------------------------------------------------------
+# recreating dataset at national level
+national <- unique(dfm$Country_Region[is.na(dfm$Province_State)])
+subnational <- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+
+nat_df <- dfm[dfm$Country_Region %in% national, ]
+sub_df <- dfm[dfm$Country_Region %in% subnational, ]
+
+nat_df <- as.data.frame(nat_df %>%
+						select(Country_Region, Status, Date, Value))
+
+# aggregate countries with subnational data to national level
+sub_df <- as.data.frame(sub_df %>%
+					    select(Country_Region, Status, Date, Value) %>%
+					    group_by(Country_Region, Status, Date) %>% 
+					    summarise('Value'=sum(Value)))
+						
+dfm <- rbind(nat_df, sub_df) 
+
+dfm <- as.data.frame(dfm %>% 
+					arrange(Country_Region, Status, desc(Date)))
 
 #' 
-#' 
-#' 
-#' In this plot I compare the cumulative curve for confirmed cases in Hubei Province (China) with that of Westchester County, NY, which has this anomaly. The number of confirmed cases in Westchester is much smaller so I adjusted the y axes (note values):
-#' 
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei <- dfm[dfm$Country_Region == "China" 
-			& dfm$Province_State == "Hubei" 
-			& dfm$Status == "confirmed", ]
-			
-westchester <- dfm[dfm$Country_Region == "US" 
-					& dfm$Province_State == "Westchester County, NY" 
-					& dfm$Status == "confirmed", ]
-
-mult_factor <- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-		     main="Hubei Province, China vs Westchester County, NY",
-             ylab="Confirmed Cases (Hubei)"))
-					 
-par(new = TRUE)
-with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-legend("topleft",
-       legend=c("Hubei", "Westchester"),
-       lty=1, lwd=1, col=c("red3", "black"))
-
-#' 
-#' 
-#' ### Impute missing values
-#' 
-#' The simplest imputation strategy is to replace all the zeroes and `NA` values after positive values with the latest cumulative value. This is the result of the imputation for Westchester County, NY:
-#' 
-#' 
-## ----echo=FALSE----------------------------------------------------------
-# impute NAs with latest cumulative value
-# NAs are 0-values at the end of a cumulative time series
-# which I impute with the last cumulative value available in the series 
-# UPDATE: I wrote a message requesting NAs and as of 03-23 NAs appeared in the dataset,
-# unclear if it is from my request but I just adapted the code to reflect this
-Ndays <- length(unique(dfm$Date))
-Lastdate <- unique(dfm$Date)[1]
-
-for (i in 1:(nrow(dfm))) {
-
-	# if today's date shows 0 as Value OR NA
-	if (dfm$Date[i] == Lastdate & (dfm$Value[i] == 0 | is.na(dfm$Value[i]))) {
-
-		# for each subsequent row in a given series 
-		# starting at the ith row and ending in the penultimate row of the series 
-		# (since we're comparing with the ith+1 row and starting the count at i 
-		# we need to subtract 2)
-		for (j in i:(i+(Ndays-2))) {
-		
-			# if the value of the jth+1 row is 0 (OR NA), continue
-			# if the value of the jth+1 row is not NA and is > 0
-			if ( 
-			    (is.na(dfm$Value[j]) | dfm$Value[j] == 0) & 
-			    (!is.na(dfm$Value[j+1]) & dfm$Value[j+1] > 0) 
-			   ) {
-	
-				# ... for k (j to i) previous 0 values in that time series 
-				for (k in j:i) {
-				
-					# substitute them with the jth+1 positive valuee 
-					dfm$Value[k] <- dfm$Value[j+1]
-					
-				}
-			}		
-		}			
-	} 
-}
-
-# example 2 - fixed
-dfm[dfm$Country_Region == "US" 
-    & dfm$Province_State == "Westchester County, NY" 
-    & dfm$Status == "confirmed" 
-    & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
-
-#' 
-#' 
-## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-hubei <- dfm[dfm$Country_Region == "China" 
-			& dfm$Province_State == "Hubei" 
-			& dfm$Status == "confirmed", ]
-			
-westchester <- dfm[dfm$Country_Region == "US" 
-					& dfm$Province_State == "Westchester County, NY" 
-					& dfm$Status == "confirmed", ]
-
-mult_factor <- max(hubei$Value)/max(westchester$Value)
-
-# plot
-par(mar = c(5,5,2,5))
-with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-		     main="Hubei Province, China vs Westchester County, NY",
-             ylab="Confirmed Cases (Hubei)"))
-					 
-par(new = TRUE)
-with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-axis(side = 4)
-mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-legend("topleft",
-       legend=c("Hubei", "Westchester"),
-       lty=1, lwd=1, col=c("red3", "black"))
-
 #' 
 #' 
 #' ---
 #' 
-#' ### Location Granularity Cleanup
-#' 
-#' The data's location variables have several issues. The `Country_Region` variable represents a larger area while the `Province_State` represents more granular areas. There are a few countries which include the sub-national provinces or states, and others that do not. In the US, the granularity sometimes arrives at county levels. 
-#' 
-#' All these differences represent a problem when grouping by a certain area. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing.
-#'  
-#' This would require extensive cleanup - to be done in the near future...
+#' [Back to [Contents](#contents-link)]{style="float:right"}
 #' 
 #' 
-#' ---
-#' 
-#' 
-#' ### Exploratory Data Analysis {#eda-link}
+#' ## Exploratory Data Analysis {#eda-link}
 #' 
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
 # subset to current counts 
 current <- data.frame(dfm %>%
-						select(Country_Region, Province_State, Date, Value, Status) %>% 
-						filter(Date == unique(dfm$Date)[1]))
-
-# order current counts by status and then descending counts 
-current_ordered <- current[order(current$Status, -current$Value), ]
+						filter(Date == unique(dfm$Date)[1])) %>%
+            arrange(Status, desc(Value))
 
 # subset to world totals 
 totals <- data.frame(current %>% 
-						select(Country_Region, Province_State, Date, Value, Status) %>% 
 						group_by(Status) %>%
 						summarise('total'=sum(Value)))
-
-colnames(totals)
 
 #' 
 #' 
@@ -328,7 +236,9 @@ colnames(totals)
 #' 
 #' ### Time Series Plots per Status and Location
 #' 
-#' Since Italy is leading in fatalities, I wanted to get a sense for how fast the numbers increase. Exponential graphs are difficult for humans to grasp. Playing around with this interactive plot can enlighten us - it looks like it took from Feb 21 to Mar 11 to get from one to 800 deaths, and a mere ten days later on Mar 21, there are 800 deaths reported daily.
+#' This interactive time series speaks for itself: the US has overtaken Italy and China in number of confirmed cases in the last two days.
+#' 
+#' 
 #' 
 colnames(totals)[1]
 colnames(totals)[2]
@@ -338,40 +248,108 @@ totals$Status[2]
 totals$total[2]
 totals$Status[3]
 totals$total[3]
-## ----echo=FALSE----------------------------------------------------------
-# subset to Italy fatalities
-Italy <- dfm[dfm$Country_Region == "Italy" & dfm$Status == "fatal", ]
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# function to create an xts series given dataframe, country, and status
+create_xts_series <- function(dfm, country, status) {
+	dfm <- dfm[dfm$Country_Region == country & dfm$Status == status, ]
+	series <- xts(dfm$Value, order.by = dfm$Date)
+	series
+}
 
-# create time series object
-dfmSeries <- xts(x = italy$Value
-                ,order.by = italy$Date
-				        ,title = "Italy")
+# Confirmed
+US <- create_xts_series(dfm, "US", "confirmed")
+Italy <- create_xts_series(dfm, "Italy", "confirmed")
+China <- create_xts_series(dfm, "China", "confirmed")
+Spain <- create_xts_series(dfm, "Spain", "confirmed")
+Germany <- create_xts_series(dfm, "Germany", "confirmed")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
 				 
-Italy_interactive <- dygraph(dfmSeries
-						                 ,main="Italy"
-						                 ,xlab=""
-						                 ,ylab="Number of Fatalities") %>% 
-						                 dyOptions(colors = rgb(1,0,0,alpha=0.8)) %>%
-						                 dyOptions(stackedGraph = TRUE) %>% 						  
-						                 dyRangeSelector()
-Italy_interactive
+dfm_interactive <- dygraph(seriesObject
+						   ,main="US Overtakes Italy and China in Confirmed Cases"
+						   ,xlab=""
+						   ,ylab="Number of Confirmed Cases") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+
+dfm_interactive
 
 #' 
 #' 
+#' This is the same visualization using the data on fatalities:
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Fatalities
+US <- create_xts_series(dfm, "US", "fatal")
+Italy <- create_xts_series(dfm, "Italy", "fatal")
+China <- create_xts_series(dfm, "China", "fatal")
+Spain <- create_xts_series(dfm, "Spain", "fatal")
+Germany <- create_xts_series(dfm, "Germany", "fatal")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="Italy Leads in Fatalities"
+						   ,xlab=""
+						   ,ylab="Number of Fatalities") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
 #' 
 #' 
+#' This is the same visualization using the data on recoveries:
 #' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Recovered
+US <- create_xts_series(dfm, "US", "recovered")
+Italy <- create_xts_series(dfm, "Italy", "recovered")
+China <- create_xts_series(dfm, "China", "recovered")
+Spain <- create_xts_series(dfm, "Spain", "recovered")
+Germany <- create_xts_series(dfm, "Germany", "recovered")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="China Leads in Recoveries"
+						   ,xlab=""
+						   ,ylab="Number of Recoveries") %>% 
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
+#' 
+#' Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Recovered - other four countries
+seriesObject <- cbind(US, Italy, Spain, Germany)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main="After China, Italy Leads in Recoveries"
+						   ,xlab=""
+						   ,ylab="Number of Recoveries") %>% 
+						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
 #' 
 #' 
 #' 
 #' ---
+#' 
+#' [Back to [Contents](#contents-link)]{style="float:right"}
 #' 
 #' ### Code Appendix {#codeappendix-link}
 #' 
 ## ----eval=FALSE----------------------------------------------------------
 ## 
 ## 
-## ### Setup
+## ## Setup
 ## 
 ## rm(list = ls())
 ## options(scipen=999)
@@ -388,11 +366,11 @@ Italy_interactive
 ## 
 ## 
 ## # install packages
-## packages <- c("dygraphs","tidyverse","xts")
+## packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer")
 ## suppressPackageStartupMessages(install_packages(packages))
 ## 
 ## 
-## ### Data Pre-Processing
+## ## Data Pre-Processing
 ## 
 ## 
 ## # preprocessing function
@@ -412,26 +390,28 @@ Italy_interactive
 ## 	if (!file.exists(file_name)) {
 ## 
 ## 		# create URLs
-## 		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series-ncov-"
+## 		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series_covid19_"
 ## 		
-## 		url_body <- paste0("?dest=data_edit&filter01=explode&explode-header-att01=date&explode-"
-## 				  ,"value-att01=value&filter02=rename&rename-oldtag02=%23affected%2Bdate"
-## 				  ,"&rename-newtag02=%23date&rename-header02=Date&filter03=rename&rename"
-## 				  ,"-oldtag03=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfected"
-## 				  ,"%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&clean-date-tags04"
-## 				  ,"=%23date&filter05=sort&sort-tags05=%23date&sort-reverse05=on&filter06"
-## 				  ,"=sort&sort-tags06=%23country%2Bname%2C%23adm1%2Bname&tagger-match-all"
-## 				  ,"=on&tagger-default-tag=%23affected%2Blabel&tagger-01-header=province%"
-## 				  ,"2Fstate&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2Fregion"
-## 				  ,"&tagger-02-tag=%23country%2Bname&tagger-03-header=lat&tagger-03-tag=%"
-## 				  ,"23geo%2Blat&tagger-04-header=long&tagger-04-tag=%23geo%2Blon&header-"
-## 				  ,"row=1&url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2F"
-## 				  ,"COVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2F"
-## 				  ,"time_series_19-covid-")
+## 		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode-header-att01="
+## 		                  ,"date&explode-value-att01=value&filter02=rename&rename-oldtag02=%23"
+## 		                  ,"affected%2Bdate&rename-newtag02=%23date&rename-header02=Date&filter"
+## 		                  ,"03=rename&rename-oldtag03=%23affected%2Bvalue&rename-newtag03=%23af"
+## 		                  ,"fected%2Binfected%2Bvalue%2Bnum&rename-header03=Value&filter04=clea"
+## 		                  ,"n&clean-date-tags04=%23date&filter05=sort&sort-tags05=%23date&sort-"
+## 		                  ,"reverse05=on&filter06=sort&sort-tags06=%23country%2Bname%2C%23adm1%"
+## 		                  ,"2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&t"
+## 		                  ,"agger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger"
+## 		                  ,"-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-"
+## 		                  ,"03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagge"
+## 		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
+## 		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
+## 		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
+## 
 ## 		
-## 		confirmed_URL  <- paste0(http_header, "Confirmed.csv", url_body, "Confirmed.csv")
-## 		fatal_URL <- paste0(http_header, "Deaths.csv", url_body, "Deaths.csv")
-## 		recovered_URL  <- paste0(http_header, "Recovered.csv", url_body, "Recovered.csv")
+## 		
+## 		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
+## 		fatal_URL <- paste0(http_header, "deaths_global", url_body, "deaths_global.csv")
+## 		recovered_URL  <- paste0(http_header, "recovered_global", url_body, "recovered_global.csv")
 ## 									
 ## 		# download
 ## 		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
@@ -440,8 +420,11 @@ Italy_interactive
 ## 		
 ## 		# load csvs
 ## 		load_csv <- function(filename) {
-## 			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
-## 								, stringsAsFactors=FALSE, na.strings="")[-1, ]
+## 		
+## 			filename <- read.csv(paste0(dir_path, filename, ".csv")
+## 								 , header=TRUE
+## 								 , fileEncoding="UTF-8-BOM"
+## 								 , stringsAsFactors=FALSE, na.strings="")[-1, ]
 ## 			filename
 ## 		}
 ## 	
@@ -466,7 +449,7 @@ Italy_interactive
 ## 		
 ## 		# rename columns
 ## 		colnames(dfm) <- c("Province_State", "Country_Region"
-## 				  , "Lat", "Long", "Date", "Value", "Status")
+## 				      , "Lat", "Long", "Date", "Value", "Status")
 ## 		
 ## 		# fix data types
 ## 		dfm$Value <- as.integer(dfm$Value)
@@ -491,140 +474,44 @@ Italy_interactive
 ## str(dfm)
 ## 
 ## 
-## ### Data Cleanup
+## ## Data Cleanup
+## 
+## ### Location Granularity
+## 
+## # recreating dataset at national level
+## national <- unique(dfm$Country_Region[is.na(dfm$Province_State)])
+## subnational <- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+## 
+## nat_df <- dfm[dfm$Country_Region %in% national, ]
+## sub_df <- dfm[dfm$Country_Region %in% subnational, ]
+## 
+## nat_df <- as.data.frame(nat_df %>%
+## 						select(Country_Region, Status, Date, Value))
+## 
+## # aggregate countries with subnational data to national level
+## sub_df <- as.data.frame(sub_df %>%
+## 					    select(Country_Region, Status, Date, Value) %>%
+## 					    group_by(Country_Region, Status, Date) %>%
+## 					    summarise('Value'=sum(Value)))
+## 						
+## dfm <- rbind(nat_df, sub_df)
+## 
+## dfm <- as.data.frame(dfm %>%
+## 					arrange(Country_Region, Status, desc(Date)))
 ## 
 ## 
-## nrow(dfm)
-## length(dfm)
 ## 
-## 
-## # Before preprocessing
-## dfm[dfm$Country_Region == "US" & dfm$Province_State == "Westchester County, NY" & dfm$Status == "confirmed"
-##     & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Country.Region","Lat","Long"), ]
-## 
-## 
-## ## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-## hubei <- dfm[dfm$Country_Region == "China"
-## 			& dfm$Province_State == "Hubei"
-## 			& dfm$Status == "confirmed", ]
-## 			
-## westchester <- dfm[dfm$Country_Region == "US"
-## 					& dfm$Province_State == "Westchester County, NY"
-## 					& dfm$Status == "confirmed", ]
-## 
-## mult_factor <- max(hubei$Value)/max(westchester$Value)
-## 
-## # plot
-## par(mar = c(5,5,2,5))
-## with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-## 		     main="Hubei Province, China vs Westchester County, NY",
-##              ylab="Confirmed Cases (Hubei)"))
-## 					
-## par(new = TRUE)
-## with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-## axis(side = 4)
-## mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-## legend("topleft",
-##        legend=c("Hubei", "Westchester"),
-##        lty=1, lwd=1, col=c("red3", "black"))
-## 
-## 
-## ### Impute missing values
-## 
-## # impute NAs with latest cumulative value
-## # NAs are 0-values at the end of a cumulative time series
-## # which I impute with the last cumulative value available in the series
-## # UPDATE: I wrote a message requesting NAs and as of 03-23 NAs appeared in the dataset,
-## # unclear if it is from my request but I just adapted the code to reflect this
-## Ndays <- length(unique(dfm$Date))
-## Lastdate <- unique(dfm$Date)[1]
-## 
-## for (i in 1:(nrow(dfm))) {
-## 
-## 	# if today's date shows 0 as Value OR NA
-## 	if (dfm$Date[i] == Lastdate & (dfm$Value[i] == 0 | is.na(dfm$Value[i]))) {
-## 
-## 		# for each subsequent row in a given series
-## 		# starting at the ith row and ending in the penultimate row of the series
-## 		# (since we're comparing with the ith+1 row and starting the count at i
-## 		# we need to subtract 2)
-## 		for (j in i:(i+(Ndays-2))) {
-## 		
-## 			# if the value of the jth+1 row is 0 (OR NA), continue
-## 			# if the value of the jth+1 row is not NA and is > 0
-## 			if (
-## 			    (is.na(dfm$Value[j]) | dfm$Value[j] == 0) &
-## 			    (!is.na(dfm$Value[j+1]) & dfm$Value[j+1] > 0)
-## 			   ) {
-## 	
-## 				# ... for k (j to i) previous 0 values in that time series
-## 				for (k in j:i) {
-## 				
-## 					# substitute them with the jth+1 positive valuee
-## 					dfm$Value[k] <- dfm$Value[j+1]
-## 					
-## 				}
-## 			}		
-## 		}			
-## 	}
-## }
-## 
-## # example 2 - fixed
-## dfm[dfm$Country_Region == "US"
-##     & dfm$Province_State == "Westchester County, NY"
-##     & dfm$Status == "confirmed"
-##     & as.character(dfm$Date) > "2020-03-01", !colnames(dfm) %in% c("Lat","Long")]
-## 
-## 
-## ## ----fig.height=4, fig.width=9, echo=FALSE-------------------------------
-## hubei <- dfm[dfm$Country_Region == "China"
-## 			& dfm$Province_State == "Hubei"
-## 			& dfm$Status == "confirmed", ]
-## 			
-## westchester <- dfm[dfm$Country_Region == "US"
-## 					& dfm$Province_State == "Westchester County, NY"
-## 					& dfm$Status == "confirmed", ]
-## 
-## mult_factor <- max(hubei$Value)/max(westchester$Value)
-## 
-## # plot
-## par(mar = c(5,5,2,5))
-## with(hubei, plot(Date, Value, type="l", col="red3", lwd=1,
-## 		     main="Hubei Province, China vs Westchester County, NY",
-##              ylab="Confirmed Cases (Hubei)"))
-## 					
-## par(new = TRUE)
-## with(westchester, plot(Date, Value, type="l", lwd=1, axes=FALSE, xlab=NA, ylab=NA))
-## axis(side = 4)
-## mtext(side = 4, line = 3, 'Confirmed Cases (Westchester)')
-## legend("topleft",
-##        legend=c("Hubei", "Westchester"),
-##        lty=1, lwd=1, col=c("red3", "black"))
-## 
-## 
-## ### Location Granularity Cleanup
-## 
-## 
-## # TO DO
-## 
-## 
-## ### Exploratory Data Analysis {#eda-link}
+## ## Exploratory Data Analysis {#eda-link}
 ## 
 ## # subset to current counts
 ## current <- data.frame(dfm %>%
-## 						select(Country_Region, Province_State, Date, Value, Status) %>%
-## 						filter(Date == unique(dfm$Date)[1]))
-## 
-## # order current counts by status and then descending counts
-## current_ordered <- current[order(current$Status, -current$Value), ]
+## 					  filter(Date == unique(dfm$Date)[1])) %>%
+## 					  arrange(Status, desc(Value))
 ## 
 ## # subset to world totals
 ## totals <- data.frame(current %>%
-## 						select(Country_Region, Province_State, Date, Value, Status) %>%
-## 						group_by(Status) %>%
-## 						summarise('total'=sum(Value)))
-## 
-## colnames(totals)
+## 					 group_by(Status) %>%
+## 					 summarise('total'=sum(Value)))
 ## 
 ## 
 ## #' | `r colnames(totals)[1]` | `r colnames(totals)[2]` |
@@ -636,43 +523,92 @@ Italy_interactive
 ## #'
 ## #' Table: Current Grand Totals
 ## 
+## 
 ## ### Time Series Plots per Status and Location
 ## 
-## colnames(totals)[1]
-## colnames(totals)[2]
-## totals$Status[1]
-## totals$total[1]
-## totals$Status[2]
-## totals$total[2]
-## totals$Status[3]
-## totals$total[3]
+## # function to create an xts series given dataframe, country, and status
+## create_xts_series <- function(dfm, country, status) {
 ## 
-## # subset to Italy fatalities
-## Italy <- dfm[dfm$Country_Region == "Italy" & dfm$Status == "fatal", ]
+## 	dfm <- dfm[dfm$Country_Region == country & dfm$Status == status, ]
+## 	series <- xts(dfm$Value, order.by = dfm$Date)
+## 	series
+## }
 ## 
-## # create time series object
-## dfmSeries <- xts(x = italy$Value
-##                 ,order.by = italy$Date
-## 				        ,title = "Italy")
+## # Confirmed
+## US <- create_xts_series(dfm, "US", "confirmed")
+## Italy <- create_xts_series(dfm, "Italy", "confirmed")
+## China <- create_xts_series(dfm, "China", "confirmed")
+## Spain <- create_xts_series(dfm, "Spain", "confirmed")
+## Germany <- create_xts_series(dfm, "Germany", "confirmed")
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany)
 ## 				
-## Italy_interactive <- dygraph(dfmSeries
-## 						                 ,main="Italy"
-## 						                 ,xlab=""
-## 						                 ,ylab="Number of Fatalities") %>%
-## 						                 dyOptions(colors = rgb(1,0,0,alpha=0.8)) %>%
-## 						                 dyOptions(stackedGraph = TRUE) %>% 						
-## 						                 dyRangeSelector()
-## Italy_interactive
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main="US Overtakes Italy and China in Confirmed Cases"
+## 						   ,xlab=""
+## 						   ,ylab="Number of Confirmed Cases") %>%
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyRangeSelector()
 ## 
+## 
+## dfm_interactive
+## 
+## # Fatalities
+## US <- create_xts_series(dfm, "US", "fatal")
+## Italy <- create_xts_series(dfm, "Italy", "fatal")
+## China <- create_xts_series(dfm, "China", "fatal")
+## Spain <- create_xts_series(dfm, "Spain", "fatal")
+## Germany <- create_xts_series(dfm, "Germany", "fatal")
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany)
+## 				
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main="Italy Leads in Fatalities"
+## 						   ,xlab=""
+## 						   ,ylab="Number of Fatalities") %>%
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
+## 
+## # Recovered
+## US <- create_xts_series(dfm, "US", "recovered")
+## Italy <- create_xts_series(dfm, "Italy", "recovered")
+## China <- create_xts_series(dfm, "China", "recovered")
+## Spain <- create_xts_series(dfm, "Spain", "recovered")
+## Germany <- create_xts_series(dfm, "Germany", "recovered")
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany)
+## 				
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main="China Leads in Recoveries"
+## 						   ,xlab=""
+## 						   ,ylab="Number of Recoveries") %>%
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
+## 
+## # Recovered - other four countries
+## seriesObject <- cbind(US, Italy, Spain, Germany)
+## 				
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main="Italy Leads in Recoveries"
+## 						   ,xlab=""
+## 						   ,ylab="Number of Recoveries") %>%
+## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
 
 #' 
 #' 
 #' 
 ## ------------------------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-library(knitr)
-options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+#library(knitr)
+#options(knitr.purl.inline = TRUE)
+#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 
 #' 
 #' 

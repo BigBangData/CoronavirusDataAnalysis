@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "3/29/2020"
+#' date: "3/27/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -97,7 +97,7 @@ preprocess <- function() {
 		# add column identifying the dataset	
 		add_col <- function(dfm, name) {
 			dfm$Status <- rep(name, nrow(dfm))
-			dfm
+			dfmdfdf
 		}
 		
 		confirmed  <- add_col(confirmed, "confirmed")
@@ -189,13 +189,12 @@ country_level_df <- data.frame(dfm %>%
 							   summarise('Value'=sum(Value))) %>%
 							   arrange(Country_Region, Status, desc(Date))
 
-colnames(country_level_df) <- c("Country", "Status", "Date", "Count")
+colnames(country_level_df) <- c("Country", "Status", "Date", "Value")
 
 Ncountries <- length(unique(country_level_df$Country))
 Ndays <- length(unique(country_level_df$Date))
 
-# check: is the number of rows equal to the number of countries
-# times the number of days times 3 (statuses)?
+# check: is the number of rows equal to the number of countries times the number of days times 3 (statuses)?
 nrow(country_level_df) == Ncountries * Ndays * 3
 
 #' 
@@ -220,21 +219,19 @@ rbind(head(country_level_df)
 #' 
 #' 
 #' 
-#' **World Totals**
-#' 
 ## ----echo=FALSE----------------------------------------------------------
 # subset to current counts 
 current <- data.frame(country_level_df %>%
 						filter(Date == unique(country_level_df$Date)[1])) %>%
-            arrange(Status, desc(Count))
+            arrange(Status, desc(Value))
 
 # subset to world totals 
 totals <- data.frame(current %>% 
 						group_by(Status) %>%
-						summarise('total'=sum(Count)))
+						summarise('total'=sum(Value)))
 
 country_totals <- data.frame(current %>%
-                    select(Country, Status, Count) %>%
+                    select(Country, Status, Value) %>%
                     group_by(Country, Status))
 
 
@@ -243,44 +240,21 @@ kable(totals) %>%
     kable_styling(bootstrap_options = c("striped", "hover")
                   , full_width = FALSE)
 
-#' 
-#' 
-#' 
-#' **Top Confirmed Cases by Country**
-#' 
-#' 
-## ----echo=FALSE----------------------------------------------------------
-confirmed <- country_totals[country_totals$Status == "confirmed", c(1,3)]
-                        
 # top countries confirmed
-kable(confirmed[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
-
-#' 
-#' 
-#' 
-#' **Top Fatal Cases by Country**
-#' 
-## ----echo=FALSE----------------------------------------------------------
-fatal <- country_totals[country_totals$Status == "fatal", c(1,3)]
-      
+kable(country_totals[1:6, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+ 
 # top countries fatalities    
-kable(fatal[1:6, ]) %>% 
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
-
-#' 
-#' 
-#' **Top Recovered Cases by Country**
-#' 
-## ----echo=FALSE----------------------------------------------------------
-recovered <- country_totals[country_totals$Status == "recovered", c(1,3)]
+kable(country_totals[177:182, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
   
 # top countries recovered  
-kable(recovered[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                   , full_width = FALSE)
+kable(country_totals[353:358, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+        
 
 #' 
 #' 
@@ -302,7 +276,7 @@ kable(recovered[1:6, ]) %>%
 create_xts_series <- function(dfm, country, status) {
   
 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-	series <- xts(dfm$Count, order.by = dfm$Date)
+	series <- xts(dfm$Value, order.by = dfm$Date)
 	series
 }
 
@@ -379,7 +353,7 @@ dfm_interactive
 seriesObject <- cbind(US, Italy, Spain, Germany)
 				 
 dfm_interactive <- dygraph(seriesObject
-						   ,main="After China, Italy and Spain Lead in Recoveries"
+						   ,main="After China, Italy Leads in Recoveries"
 						   ,xlab=""
 						   ,ylab="Number of Recoveries") %>% 
 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						  
@@ -483,7 +457,7 @@ dfm_interactive
 ## 		# add column identifying the dataset	
 ## 		add_col <- function(dfm, name) {
 ## 			dfm$Status <- rep(name, nrow(dfm))
-## 			dfm
+## 			dfmdfdf
 ## 		}
 ## 		
 ## 		confirmed  <- add_col(confirmed, "confirmed")
@@ -535,7 +509,7 @@ dfm_interactive
 ## 							   summarise('Value'=sum(Value))) %>%
 ## 							   arrange(Country_Region, Status, desc(Date))
 ## 
-## colnames(country_level_df) <- c("Country", "Status", "Date", "Count")
+## colnames(country_level_df) <- c("Country", "Status", "Date", "Value")
 ## 
 ## Ncountries <- length(unique(country_level_df$Country))
 ## Ndays <- length(unique(country_level_df$Date))
@@ -553,15 +527,15 @@ dfm_interactive
 ## # subset to current counts
 ## current <- data.frame(country_level_df %>%
 ## 						filter(Date == unique(country_level_df$Date)[1])) %>%
-##             arrange(Status, desc(Count))
+##             arrange(Status, desc(Value))
 ## 
 ## # subset to world totals
 ## totals <- data.frame(current %>%
 ## 						group_by(Status) %>%
-## 						summarise('total'=sum(Count)))
+## 						summarise('total'=sum(Value)))
 ## 
 ## country_totals <- data.frame(current %>%
-##                     select(Country, Status, Count) %>%
+##                     select(Country, Status, Value) %>%
 ##                     group_by(Country, Status))
 ## 
 ## 
@@ -570,36 +544,28 @@ dfm_interactive
 ##     kable_styling(bootstrap_options = c("striped", "hover")
 ##                   , full_width = FALSE)
 ## 
-## ## ----echo=FALSE----------------------------------------------------------
-## confirmed <- country_totals[country_totals$Status == "confirmed", c(1,3)]
-## 
 ## # top countries confirmed
-## kable(confirmed[1:6, ]) %>%
-##       kable_styling(bootstrap_options = c("striped", "hover")
-##                     , full_width = FALSE)
-## 
-## ## ----echo=FALSE----------------------------------------------------------
-## fatal <- country_totals[country_totals$Status == "fatal", c(1,3)]
+## kable(country_totals[1:6, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
 ## 
 ## # top countries fatalities
-## kable(fatal[1:6, ]) %>%
-##       kable_styling(bootstrap_options = c("striped", "hover")
-##                     , full_width = FALSE)
-## 
-## ## ----echo=FALSE----------------------------------------------------------
-## recovered <- country_totals[country_totals$Status == "recovered", c(1,3)]
+## kable(country_totals[177:182, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
 ## 
 ## # top countries recovered
-## kable(recovered[1:6, ]) %>%
-##       kable_styling(bootstrap_options = c("striped", "hover")
-##                    , full_width = FALSE)
+## kable(country_totals[353:358, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
+## 
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # function to create an xts series given dataframe, country, and status
 ## create_xts_series <- function(dfm, country, status) {
 ## 
 ## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-## 	series <- xts(dfm$Count, order.by = dfm$Date)
+## 	series <- xts(dfm$Value, order.by = dfm$Date)
 ## 	series
 ## }
 ## 
@@ -616,7 +582,7 @@ dfm_interactive
 ## 						   ,main="US Overtakes Italy and China in Confirmed Cases"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## 
@@ -636,7 +602,7 @@ dfm_interactive
 ## 						   ,main="Italy Leads in Fatalities"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Fatalities") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
@@ -655,7 +621,7 @@ dfm_interactive
 ## 						   ,main="China Leads in Recoveries"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
@@ -665,10 +631,10 @@ dfm_interactive
 ## seriesObject <- cbind(US, Italy, Spain, Germany)
 ## 				
 ## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="After China, Italy and Spain Lead in Recoveries"
+## 						   ,main="After China, Italy Leads in Recoveries"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive

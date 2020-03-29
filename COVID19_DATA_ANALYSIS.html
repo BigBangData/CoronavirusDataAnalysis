@@ -6097,6 +6097,7 @@ $(document).ready(function () {
 <p>The <code>preprocess</code> function creates a local folder and pulls three csv files, one for each stage in tracking the coronavirus spread (confirmed, fatal, and recovered cases), performs various pre-processing steps to create one narrow and long dataset, saving it in compressed RDS format. See code in the <a href="#codeappendix-link">Code Appendix.</a></p>
 <pre class="r"><code># read in RDS file 
 dfm &lt;- preprocess()
+
 str(dfm)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    49915 obs. of  7 variables:
 ##  $ Province_State: chr  NA NA NA NA ...
@@ -6116,62 +6117,599 @@ str(dfm)</code></pre>
 <h3>Location Granularity</h3>
 <p>The data’s location variables have several issues. I will discard <code>Lat</code> and <code>Long</code> since I’m not doing any mapping. The variables <code>Country_Region</code> and <code>Province_State</code> are often loosely aggregated. This can be visualized in <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins’ dashboard</a>: the totals for fatalities are grouped by a mixture of countries and subnational geographic areas. The US is conspicuously missing as a country.</p>
 <p>Since subnational data is sparse, I’ll focus on country-level data. After some data analysis, I noticed that the anomalies will repond to one simple aggregation and I recreated the dataset at this national level. Canada is a prime example of bad data: notice how it lacks subnational data on recovered cases, but also, I doubt there’s a province in Canada called ‘Recovered’:</p>
-<pre class="r"><code># Canada provinces example
-data.frame(dfm[dfm$Country_Region == &quot;Canada&quot;, ] %&gt;% 
-           distinct(Country_Region, Province_State, Status))</code></pre>
-<pre><code>##    Country_Region            Province_State    Status
-## 1          Canada                   Alberta confirmed
-## 2          Canada          British Columbia confirmed
-## 3          Canada          Diamond Princess confirmed
-## 4          Canada            Grand Princess confirmed
-## 5          Canada                  Manitoba confirmed
-## 6          Canada             New Brunswick confirmed
-## 7          Canada Newfoundland and Labrador confirmed
-## 8          Canada     Northwest Territories confirmed
-## 9          Canada               Nova Scotia confirmed
-## 10         Canada                   Ontario confirmed
-## 11         Canada      Prince Edward Island confirmed
-## 12         Canada                    Quebec confirmed
-## 13         Canada                 Recovered confirmed
-## 14         Canada              Saskatchewan confirmed
-## 15         Canada                     Yukon confirmed
-## 16         Canada                   Alberta     fatal
-## 17         Canada          British Columbia     fatal
-## 18         Canada          Diamond Princess     fatal
-## 19         Canada            Grand Princess     fatal
-## 20         Canada                  Manitoba     fatal
-## 21         Canada             New Brunswick     fatal
-## 22         Canada Newfoundland and Labrador     fatal
-## 23         Canada     Northwest Territories     fatal
-## 24         Canada               Nova Scotia     fatal
-## 25         Canada                   Ontario     fatal
-## 26         Canada      Prince Edward Island     fatal
-## 27         Canada                    Quebec     fatal
-## 28         Canada                 Recovered     fatal
-## 29         Canada              Saskatchewan     fatal
-## 30         Canada                     Yukon     fatal
-## 31         Canada                      &lt;NA&gt; recovered</code></pre>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Country_Region
+</th>
+<th style="text-align:left;">
+Province_State
+</th>
+<th style="text-align:left;">
+Status
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Alberta
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+British Columbia
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Diamond Princess
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Grand Princess
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Manitoba
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+New Brunswick
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Newfoundland and Labrador
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Northwest Territories
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Nova Scotia
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Ontario
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Prince Edward Island
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Quebec
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Recovered
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Saskatchewan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Yukon
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Alberta
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+British Columbia
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Diamond Princess
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Grand Princess
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Manitoba
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+New Brunswick
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Newfoundland and Labrador
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Northwest Territories
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Nova Scotia
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Ontario
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Prince Edward Island
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Quebec
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Recovered
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Saskatchewan
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+Yukon
+</td>
+<td style="text-align:left;">
+fatal
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Canada
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+</tr>
+</tbody>
+</table>
 <p>The top and bottom rows for the final dataset:</p>
-<pre><code>##           Country    Status       Date Count
-## 1     Afghanistan confirmed 2020-03-28   110
-## 2     Afghanistan confirmed 2020-03-27   110
-## 3     Afghanistan confirmed 2020-03-26    94
-## 4     Afghanistan confirmed 2020-03-25    84
-## 5     Afghanistan confirmed 2020-03-24    74
-## 6     Afghanistan confirmed 2020-03-23    40
-## 35572    Zimbabwe recovered 2020-01-27     0
-## 35573    Zimbabwe recovered 2020-01-26     0
-## 35574    Zimbabwe recovered 2020-01-25     0
-## 35575    Zimbabwe recovered 2020-01-24     0
-## 35576    Zimbabwe recovered 2020-01-23     0
-## 35577    Zimbabwe recovered 2020-01-22     0</code></pre>
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Country
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:right;">
+Count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-28
+</td>
+<td style="text-align:right;">
+110
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-27
+</td>
+<td style="text-align:right;">
+110
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-26
+</td>
+<td style="text-align:right;">
+94
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-25
+</td>
+<td style="text-align:right;">
+84
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-24
+</td>
+<td style="text-align:right;">
+74
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+Afghanistan
+</td>
+<td style="text-align:left;">
+confirmed
+</td>
+<td style="text-align:left;">
+2020-03-23
+</td>
+<td style="text-align:right;">
+40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35572
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-27
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35573
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-26
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35574
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-25
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35575
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-24
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35576
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-23
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35577
+</td>
+<td style="text-align:left;">
+Zimbabwe
+</td>
+<td style="text-align:left;">
+recovered
+</td>
+<td style="text-align:left;">
+2020-01-22
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <p><span style="float:right">Back to <a href="#contents-link">Contents</a></span></p>
 </div>
 </div>
 <div id="eda-link" class="section level2">
 <h2>Exploratory Data Analysis</h2>
-<p><strong>World Totals</strong></p>
+<div id="world-totals" class="section level4">
+<h4>WORLD TOTALS</h4>
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -6210,250 +6748,26 @@ recovered
 </tr>
 </tbody>
 </table>
-<p><strong>Top Confirmed Cases by Country</strong></p>
-<table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Country
-</th>
-<th style="text-align:right;">
-Count
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-US
-</td>
-<td style="text-align:right;">
-121478
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Italy
-</td>
-<td style="text-align:right;">
-92472
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-China
-</td>
-<td style="text-align:right;">
-81999
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Spain
-</td>
-<td style="text-align:right;">
-73235
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Germany
-</td>
-<td style="text-align:right;">
-57695
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-France
-</td>
-<td style="text-align:right;">
-38105
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Top Fatal Cases by Country</strong></p>
-<table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-Country
-</th>
-<th style="text-align:right;">
-Count
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-178
-</td>
-<td style="text-align:left;">
-Italy
-</td>
-<td style="text-align:right;">
-10023
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-179
-</td>
-<td style="text-align:left;">
-Spain
-</td>
-<td style="text-align:right;">
-5982
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-180
-</td>
-<td style="text-align:left;">
-China
-</td>
-<td style="text-align:right;">
-3299
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-181
-</td>
-<td style="text-align:left;">
-Iran
-</td>
-<td style="text-align:right;">
-2517
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-182
-</td>
-<td style="text-align:left;">
-France
-</td>
-<td style="text-align:right;">
-2317
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-183
-</td>
-<td style="text-align:left;">
-US
-</td>
-<td style="text-align:right;">
-2026
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Top Recovered Cases by Country</strong></p>
-<table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:left;">
-Country
-</th>
-<th style="text-align:right;">
-Count
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-355
-</td>
-<td style="text-align:left;">
-China
-</td>
-<td style="text-align:right;">
-75100
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-356
-</td>
-<td style="text-align:left;">
-Italy
-</td>
-<td style="text-align:right;">
-12384
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-357
-</td>
-<td style="text-align:left;">
-Spain
-</td>
-<td style="text-align:right;">
-12285
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-358
-</td>
-<td style="text-align:left;">
-Iran
-</td>
-<td style="text-align:right;">
-11679
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-359
-</td>
-<td style="text-align:left;">
-Germany
-</td>
-<td style="text-align:right;">
-8481
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-360
-</td>
-<td style="text-align:left;">
-France
-</td>
-<td style="text-align:right;">
-5724
-</td>
-</tr>
-</tbody>
-</table>
+</div>
+<div id="top-countries-per-status" class="section level4">
+<h4>TOP COUNTRIES PER STATUS</h4>
+<p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --></p>
 <hr />
+</div>
 <div id="time-series-plots-per-status-and-location" class="section level3">
 <h3>Time Series Plots per Status and Location</h3>
 <p>This interactive time series speaks for itself: the US has overtaken Italy and China in number of confirmed cases in the last two days.</p>
-<div id="htmlwidget-673cc5faa361aa53cbd0" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-673cc5faa361aa53cbd0">{"x":{"attrs":{"title":"US Overtakes Italy and China in Confirmed Cases","xlabel":"","ylabel":"Number of Confirmed Cases","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[1,1,2,2,5,5,5,5,5,7,8,8,11,11,11,11,11,11,11,11,12,12,13,13,13,13,13,13,13,13,15,15,15,51,51,57,58,60,68,74,98,118,149,217,262,402,518,583,959,1281,1663,2179,2727,3499,4632,6421,7783,13677,19100,25489,33276,43847,53740,65778,83836,101657,121478],[0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,20,62,155,229,322,453,655,888,1128,1694,2036,2502,3089,3858,4636,5883,7375,9172,10149,12462,12462,17660,21157,24747,27980,31506,35713,41035,47021,53578,59138,63927,69176,74386,80589,86498,92472],[548,643,920,1406,2075,2877,5509,6087,8141,9802,11891,16630,19716,23707,27440,30587,34110,36814,39829,42354,44386,44759,59895,66358,68413,70513,72434,74211,74619,75077,75550,77001,77022,77241,77754,78166,78600,78928,79356,79932,80136,80261,80386,80537,80690,80770,80823,80860,80887,80921,80932,80945,80977,81003,81033,81058,81102,81156,81250,81305,81435,81498,81591,81661,81782,81897,81999],[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,13,15,32,45,84,120,165,222,259,400,500,673,1073,1695,2277,2277,5232,6391,7798,9942,11748,13910,17963,20410,25374,28768,35136,39885,49515,57786,65719,73235],[0,0,0,0,0,1,4,4,4,5,8,10,12,12,12,12,13,13,14,14,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,27,46,48,79,130,159,196,262,482,670,799,1040,1176,1457,1908,2078,3675,4585,5795,7272,9257,12327,15320,19848,22213,24873,29056,32986,37323,43938,50871,57695]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<div id="htmlwidget-e30fa0f62af61e907970" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e30fa0f62af61e907970">{"x":{"attrs":{"title":"US Overtakes Italy and China in Confirmed Cases","xlabel":"","ylabel":"Number of Confirmed Cases","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[1,1,2,2,5,5,5,5,5,7,8,8,11,11,11,11,11,11,11,11,12,12,13,13,13,13,13,13,13,13,15,15,15,51,51,57,58,60,68,74,98,118,149,217,262,402,518,583,959,1281,1663,2179,2727,3499,4632,6421,7783,13677,19100,25489,33276,43847,53740,65778,83836,101657,121478],[0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,20,62,155,229,322,453,655,888,1128,1694,2036,2502,3089,3858,4636,5883,7375,9172,10149,12462,12462,17660,21157,24747,27980,31506,35713,41035,47021,53578,59138,63927,69176,74386,80589,86498,92472],[548,643,920,1406,2075,2877,5509,6087,8141,9802,11891,16630,19716,23707,27440,30587,34110,36814,39829,42354,44386,44759,59895,66358,68413,70513,72434,74211,74619,75077,75550,77001,77022,77241,77754,78166,78600,78928,79356,79932,80136,80261,80386,80537,80690,80770,80823,80860,80887,80921,80932,80945,80977,81003,81033,81058,81102,81156,81250,81305,81435,81498,81591,81661,81782,81897,81999],[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,6,13,15,32,45,84,120,165,222,259,400,500,673,1073,1695,2277,2277,5232,6391,7798,9942,11748,13910,17963,20410,25374,28768,35136,39885,49515,57786,65719,73235],[0,0,0,0,0,1,4,4,4,5,8,10,12,12,12,12,13,13,14,14,16,16,16,16,16,16,16,16,16,16,16,16,16,16,17,27,46,48,79,130,159,196,262,482,670,799,1040,1176,1457,1908,2078,3675,4585,5795,7272,9257,12327,15320,19848,22213,24873,29056,32986,37323,43938,50871,57695]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
 <p>This is the same visualization using the data on fatalities:</p>
-<div id="htmlwidget-62edd30136ede2b32bce" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-62edd30136ede2b32bce">{"x":{"attrs":{"title":"Italy Leads in Fatalities","xlabel":"","ylabel":"Number of Fatalities","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,6,7,11,12,14,17,21,22,28,36,40,47,54,63,85,108,118,200,244,307,417,557,706,942,1209,1581,2026],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,6077,6820,7503,8215,9134,10023],[17,18,26,42,56,82,131,133,171,213,259,361,425,491,563,633,718,805,905,1012,1112,1117,1369,1521,1663,1766,1864,2003,2116,2238,2238,2443,2445,2595,2665,2717,2746,2790,2837,2872,2914,2947,2983,3015,3044,3072,3100,3123,3139,3161,3172,3180,3193,3203,3217,3230,3241,3249,3253,3259,3274,3274,3281,3285,3291,3296,3299],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,5,10,17,28,35,54,55,133,195,289,342,533,623,830,1043,1375,1772,2311,2808,3647,4365,5138,5982],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,7,9,11,17,24,28,44,67,84,94,123,157,206,267,342,433]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<div id="htmlwidget-c265d4a2c18774d554e1" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c265d4a2c18774d554e1">{"x":{"attrs":{"title":"Italy Leads in Fatalities","xlabel":"","ylabel":"Number of Fatalities","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,6,7,11,12,14,17,21,22,28,36,40,47,54,63,85,108,118,200,244,307,417,557,706,942,1209,1581,2026],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,7,10,12,17,21,29,34,52,79,107,148,197,233,366,463,631,827,827,1266,1441,1809,2158,2503,2978,3405,4032,4825,5476,6077,6820,7503,8215,9134,10023],[17,18,26,42,56,82,131,133,171,213,259,361,425,491,563,633,718,805,905,1012,1112,1117,1369,1521,1663,1766,1864,2003,2116,2238,2238,2443,2445,2595,2665,2717,2746,2790,2837,2872,2914,2947,2983,3015,3044,3072,3100,3123,3139,3161,3172,3180,3193,3203,3217,3230,3241,3249,3253,3259,3274,3274,3281,3285,3291,3296,3299],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,5,10,17,28,35,54,55,133,195,289,342,533,623,830,1043,1375,1772,2311,2808,3647,4365,5138,5982],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,7,9,11,17,24,28,44,67,84,94,123,157,206,267,342,433]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
 <p>This is the same visualization using the data on recoveries:</p>
-<div id="htmlwidget-90ff9deff02d9478338e" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-90ff9deff02d9478338e">{"x":{"attrs":{"title":"China Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869,1072],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950,12384],[28,30,36,39,49,58,101,120,135,214,275,463,614,843,1115,1477,1999,2596,3219,3918,4636,5082,6217,7977,9298,10755,12462,14206,15962,18014,18704,22699,23187,25015,27676,30084,32930,36329,39320,42162,44854,47450,50001,52292,53944,55539,57388,58804,60181,61644,62901,64196,65660,67017,67910,68798,69755,70535,71266,71857,72362,72814,73280,73773,74181,74720,75100],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357,12285],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658,8481]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<div id="htmlwidget-0703f7c6c82172271479" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0703f7c6c82172271479">{"x":{"attrs":{"title":"China Leads in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","China","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869,1072],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950,12384],[28,30,36,39,49,58,101,120,135,214,275,463,614,843,1115,1477,1999,2596,3219,3918,4636,5082,6217,7977,9298,10755,12462,14206,15962,18014,18704,22699,23187,25015,27676,30084,32930,36329,39320,42162,44854,47450,50001,52292,53944,55539,57388,58804,60181,61644,62901,64196,65660,67017,67910,68798,69755,70535,71266,71857,72362,72814,73280,73773,74181,74720,75100],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357,12285],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658,8481]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
 <p>Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:</p>
-<div id="htmlwidget-9c353c4b2be319f81c64" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9c353c4b2be319f81c64">{"x":{"attrs":{"title":"After China, Italy and Spain Lead in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869,1072],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950,12384],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357,12285],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658,8481]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
+<div id="htmlwidget-72326545d45d38cb75d4" style="width:864px;height:480px;" class="dygraphs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-72326545d45d38cb75d4">{"x":{"attrs":{"title":"After China, Italy and Spain Lead in Recoveries","xlabel":"","ylabel":"Number of Recoveries","labels":["day","US","Italy","Spain","Germany"],"legend":"auto","retainDateWindow":false,"axes":{"x":{"pixelsPerLabel":60,"drawAxis":true},"y":{"drawAxis":true}},"stackedGraph":false,"fillGraph":false,"fillAlpha":0.15,"stepPlot":false,"drawPoints":false,"pointSize":1,"drawGapEdgePoints":false,"connectSeparatedPoints":false,"strokeWidth":1,"strokeBorderColor":"white","colors":["#1B9E77","#D95F02","#7570B3","#E7298A"],"colorValue":0.5,"colorSaturation":1,"includeZero":false,"drawAxesAtZero":false,"logscale":false,"axisTickSize":3,"axisLineColor":"black","axisLineWidth":0.3,"axisLabelColor":"black","axisLabelFontSize":14,"axisLabelWidth":60,"drawGrid":true,"gridLineWidth":0.3,"rightGap":5,"digitsAfterDecimal":2,"labelsKMB":false,"labelsKMG2":false,"labelsUTC":false,"maxNumberWidth":6,"animatedZooms":false,"mobileDisableYTouch":true,"disableZoom":false,"showRangeSelector":true,"rangeSelectorHeight":40,"rangeSelectorPlotFillColor":" #A7B1C4","rangeSelectorPlotStrokeColor":"#808FAB","interactionModel":"Dygraph.Interaction.defaultModel"},"scale":"daily","annotations":[],"shadings":[],"events":[],"format":"date","data":[["2020-01-22T00:00:00.000Z","2020-01-23T00:00:00.000Z","2020-01-24T00:00:00.000Z","2020-01-25T00:00:00.000Z","2020-01-26T00:00:00.000Z","2020-01-27T00:00:00.000Z","2020-01-28T00:00:00.000Z","2020-01-29T00:00:00.000Z","2020-01-30T00:00:00.000Z","2020-01-31T00:00:00.000Z","2020-02-01T00:00:00.000Z","2020-02-02T00:00:00.000Z","2020-02-03T00:00:00.000Z","2020-02-04T00:00:00.000Z","2020-02-05T00:00:00.000Z","2020-02-06T00:00:00.000Z","2020-02-07T00:00:00.000Z","2020-02-08T00:00:00.000Z","2020-02-09T00:00:00.000Z","2020-02-10T00:00:00.000Z","2020-02-11T00:00:00.000Z","2020-02-12T00:00:00.000Z","2020-02-13T00:00:00.000Z","2020-02-14T00:00:00.000Z","2020-02-15T00:00:00.000Z","2020-02-16T00:00:00.000Z","2020-02-17T00:00:00.000Z","2020-02-18T00:00:00.000Z","2020-02-19T00:00:00.000Z","2020-02-20T00:00:00.000Z","2020-02-21T00:00:00.000Z","2020-02-22T00:00:00.000Z","2020-02-23T00:00:00.000Z","2020-02-24T00:00:00.000Z","2020-02-25T00:00:00.000Z","2020-02-26T00:00:00.000Z","2020-02-27T00:00:00.000Z","2020-02-28T00:00:00.000Z","2020-02-29T00:00:00.000Z","2020-03-01T00:00:00.000Z","2020-03-02T00:00:00.000Z","2020-03-03T00:00:00.000Z","2020-03-04T00:00:00.000Z","2020-03-05T00:00:00.000Z","2020-03-06T00:00:00.000Z","2020-03-07T00:00:00.000Z","2020-03-08T00:00:00.000Z","2020-03-09T00:00:00.000Z","2020-03-10T00:00:00.000Z","2020-03-11T00:00:00.000Z","2020-03-12T00:00:00.000Z","2020-03-13T00:00:00.000Z","2020-03-14T00:00:00.000Z","2020-03-15T00:00:00.000Z","2020-03-16T00:00:00.000Z","2020-03-17T00:00:00.000Z","2020-03-18T00:00:00.000Z","2020-03-19T00:00:00.000Z","2020-03-20T00:00:00.000Z","2020-03-21T00:00:00.000Z","2020-03-22T00:00:00.000Z","2020-03-23T00:00:00.000Z","2020-03-24T00:00:00.000Z","2020-03-25T00:00:00.000Z","2020-03-26T00:00:00.000Z","2020-03-27T00:00:00.000Z","2020-03-28T00:00:00.000Z"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,12,12,12,12,17,17,105,121,147,176,178,178,348,361,681,869,1072],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,1,3,45,46,46,83,149,160,276,414,523,589,622,724,724,1045,1045,1439,1966,2335,2749,2941,4025,4440,4440,6072,7024,7024,8326,9362,10361,10950,12384],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,30,30,32,32,183,183,193,517,517,530,1028,1081,1107,1588,2125,2575,2575,3794,5367,7015,9357,12285],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,12,12,12,14,14,14,14,14,15,16,16,16,16,16,16,16,16,17,18,18,18,18,25,25,46,46,46,67,67,105,113,180,233,266,266,3243,3547,5673,6658,8481]],"fixedtz":false,"tzone":"UTC"},"evals":["attrs.interactionModel"],"jsHooks":[]}</script>
 <hr />
 <p><span style="float:right">Back to <a href="#contents-link">Contents</a></span></p>
 </div>
@@ -6579,15 +6893,18 @@ preprocess &lt;- function() {
 ## ------------------------------------------------------------------------
 # read in RDS file 
 dfm &lt;- preprocess()
+
 str(dfm)
 
 
 nrow(dfm)
 length(dfm)
-## ------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # Canada provinces example
-data.frame(dfm[dfm$Country_Region == &quot;Canada&quot;, ] %&gt;% 
-           distinct(Country_Region, Province_State, Status))
+kable(data.frame(dfm[dfm$Country_Region == &quot;Canada&quot;, ]) %&gt;% 
+           distinct(Country_Region, Province_State, Status)) %&gt;%
+      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;)
+                  , full_width = FALSE)
 
 ## ----include=FALSE-------------------------------------------------------
 # country-level dataset
@@ -6608,53 +6925,68 @@ nrow(country_level_df) == Ncountries * Ndays * 3
 
 ## ----echo=FALSE----------------------------------------------------------
 # top and bottom rows for final dataset
-rbind(head(country_level_df)
-     ,tail(country_level_df))
-
-## ----echo=FALSE----------------------------------------------------------
-# subset to current counts 
-current &lt;- data.frame(country_level_df %&gt;%
-                        filter(Date == unique(country_level_df$Date)[1])) %&gt;%
-            arrange(Status, desc(Count))
-
-# subset to world totals 
-totals &lt;- data.frame(current %&gt;% 
-                        group_by(Status) %&gt;%
-                        summarise(&#39;total&#39;=sum(Count)))
-
-country_totals &lt;- data.frame(current %&gt;%
-                    select(Country, Status, Count) %&gt;%
-                    group_by(Country, Status))
-
-
-# world totals
-kable(totals) %&gt;%
-    kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)
+kable(rbind(head(country_level_df)
+     ,tail(country_level_df))) %&gt;%
+      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;)
                   , full_width = FALSE)
 
 ## ----echo=FALSE----------------------------------------------------------
-confirmed &lt;- country_totals[country_totals$Status == &quot;confirmed&quot;, c(1,3)]
-                        
-# top countries confirmed
-kable(confirmed[1:6, ]) %&gt;%
-      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)
-                    , full_width = FALSE)
+
+# subset to current counts 
+current_data &lt;- data.frame(country_level_df %&gt;%
+                    filter(Date == unique(country_level_df$Date)[1])) %&gt;%
+                    arrange(Status, desc(Count))
+
+# subset to world totals 
+world_totals &lt;- data.frame(current_data %&gt;% 
+                    group_by(Status) %&gt;%
+                    summarise(&#39;total&#39;=sum(Count)))
+
+kable(world_totals) %&gt;%
+      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), full_width = FALSE)
 
 ## ----echo=FALSE----------------------------------------------------------
-fatal &lt;- country_totals[country_totals$Status == &quot;fatal&quot;, c(1,3)]
-      
-# top countries fatalities    
-kable(fatal[1:6, ]) %&gt;% 
-      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)
-                    , full_width = FALSE)
 
-## ----echo=FALSE----------------------------------------------------------
-recovered &lt;- country_totals[country_totals$Status == &quot;recovered&quot;, c(1,3)]
-  
-# top countries recovered  
-kable(recovered[1:6, ]) %&gt;%
-      kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)
-                   , full_width = FALSE)
+
+# subset to country totals 
+country_totals &lt;- data.frame(current_data %&gt;%
+                        select(Country, Status, Count) %&gt;%
+                        group_by(Country, Status))
+    
+# subset to top counts  
+get_top_counts &lt;- function(dfm, coln) {
+    
+    dfm &lt;- dfm[dfm$Status == coln, c(1,3)][1:6,]
+    row.names(dfm) &lt;- 1:6
+    dfm
+}                   
+
+# separate by status 
+top_confirmed   &lt;- get_top_counts(country_totals, &quot;confirmed&quot;)
+top_fatal   &lt;- get_top_counts(country_totals, &quot;fatal&quot;)
+top_recovered   &lt;- get_top_counts(country_totals, &quot;recovered&quot;)
+
+# plot top countries per status 
+gg_plot &lt;- function(dfm, status, color) {
+
+    ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
+        geom_bar(stat=&quot;identity&quot;, fill=color) + 
+        ggtitle(paste0(&quot;Top &quot;, status, &quot; Cases by Country&quot;)) + 
+        xlab(&quot;&quot;) + ylab(paste0(&quot;Number of &quot;, status, &quot; Cases&quot;)) +
+        geom_text(aes(label=Count), vjust=1.6, color=&quot;white&quot;, size=3.5) +
+        theme_minimal()
+
+}
+
+# top confirmed
+gg_plot(top_confirmed, &quot;Confirmed&quot;, &quot;red3&quot;)
+
+# top fatal 
+gg_plot(top_fatal, &quot;Fatal&quot;, &quot;gray25&quot;)
+
+# top recovered
+gg_plot(top_recovered, &quot;Recovered&quot;, &quot;springgreen4&quot;)
+
 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # function to create an xts series given dataframe, country, and status

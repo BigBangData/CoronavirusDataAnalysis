@@ -152,6 +152,7 @@ The `preprocess` function creates a local folder and pulls three csv files, one 
 ```{r}
 # read in RDS file 
 dfm <- preprocess()
+
 str(dfm)
 ```
 
@@ -173,10 +174,12 @@ The data's location variables have several issues. I will discard `Lat` and `Lon
 Since subnational data is sparse, I'll focus on country-level data. After some data analysis, I noticed that the anomalies will repond to one simple aggregation and I recreated the dataset at this national level. Canada is a prime example of bad data: notice how it lacks subnational data on recovered cases, but also, I doubt there's a province in Canada called 'Recovered':
 
 
-```{r}
+```{r echo=FALSE}
 # Canada provinces example
-data.frame(dfm[dfm$Country_Region == "Canada", ] %>% 
-		   distinct(Country_Region, Province_State, Status))
+kable(data.frame(dfm[dfm$Country_Region == "Canada", ]) %>% 
+		   distinct(Country_Region, Province_State, Status)) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                  , full_width = FALSE)
 ```
 
 ```{r include=FALSE}
@@ -201,8 +204,10 @@ The top and bottom rows for the final dataset:
 
 ```{r echo=FALSE}
 # top and bottom rows for final dataset
-rbind(head(country_level_df)
-     ,tail(country_level_df))
+kable(rbind(head(country_level_df)
+     ,tail(country_level_df))) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                  , full_width = FALSE)
 ```
 
 
@@ -216,69 +221,71 @@ rbind(head(country_level_df)
 
 ## Exploratory Data Analysis {#eda-link}
 
+#### WORLD TOTALS
 
 
-**World Totals**
 
-``` {r echo=FALSE} 
+```{r echo=FALSE} 
+
 # subset to current counts 
-current <- data.frame(country_level_df %>%
-						filter(Date == unique(country_level_df$Date)[1])) %>%
-            arrange(Status, desc(Count))
+current_data <- data.frame(country_level_df %>%
+					filter(Date == unique(country_level_df$Date)[1])) %>%
+					arrange(Status, desc(Count))
 
 # subset to world totals 
-totals <- data.frame(current %>% 
-						group_by(Status) %>%
-						summarise('total'=sum(Count)))
+world_totals <- data.frame(current_data %>% 
+					group_by(Status) %>%
+					summarise('total'=sum(Count)))
 
-country_totals <- data.frame(current %>%
-                    select(Country, Status, Count) %>%
-                    group_by(Country, Status))
-
-
-# world totals
-kable(totals) %>%
-    kable_styling(bootstrap_options = c("striped", "hover")
-                  , full_width = FALSE)
+kable(world_totals) %>%
+      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
 
-
-**Top Confirmed Cases by Country**
-
+#### TOP COUNTRIES PER STATUS
 
 ```{r echo=FALSE}
-confirmed <- country_totals[country_totals$Status == "confirmed", c(1,3)]
-                        
-# top countries confirmed
-kable(confirmed[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
-```
 
 
+# subset to country totals 
+country_totals <- data.frame(current_data %>%
+						select(Country, Status, Count) %>%
+						group_by(Country, Status))
+	
+# subset to top counts 	
+get_top_counts <- function(dfm, coln) {
+	
+	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
+	row.names(dfm) <- 1:6
+	dfm
+}					
 
-**Top Fatal Cases by Country**
+# separate by status 
+top_confirmed 	<- get_top_counts(country_totals, "confirmed")
+top_fatal	<- get_top_counts(country_totals, "fatal")
+top_recovered 	<- get_top_counts(country_totals, "recovered")
 
-```{r echo=FALSE}
-fatal <- country_totals[country_totals$Status == "fatal", c(1,3)]
-      
-# top countries fatalities    
-kable(fatal[1:6, ]) %>% 
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
-```
+# plot top countries per status 
+gg_plot <- function(dfm, status, color) {
 
+	ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
+		geom_bar(stat="identity", fill=color) + 
+		ggtitle(paste0("Top ", status, " Cases by Country")) + 
+		xlab("") + ylab(paste0("Number of ", status, " Cases")) +
+		geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
+		theme_minimal()
 
-**Top Recovered Cases by Country**
+}
 
-```{r echo=FALSE}
-recovered <- country_totals[country_totals$Status == "recovered", c(1,3)]
-  
-# top countries recovered  
-kable(recovered[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                   , full_width = FALSE)
+# top confirmed
+gg_plot(top_confirmed, "Confirmed", "red3")
+
+# top fatal 
+gg_plot(top_fatal, "Fatal", "gray25")
+
+# top recovered
+gg_plot(top_recovered, "Recovered", "springgreen4")
+
 ```
 
 
@@ -515,15 +522,18 @@ preprocess <- function() {
 ## ------------------------------------------------------------------------
 # read in RDS file 
 dfm <- preprocess()
+
 str(dfm)
 
 
 nrow(dfm)
 length(dfm)
-## ------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # Canada provinces example
-data.frame(dfm[dfm$Country_Region == "Canada", ] %>% 
-		   distinct(Country_Region, Province_State, Status))
+kable(data.frame(dfm[dfm$Country_Region == "Canada", ]) %>% 
+		   distinct(Country_Region, Province_State, Status)) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                  , full_width = FALSE)
 
 ## ----include=FALSE-------------------------------------------------------
 # country-level dataset
@@ -544,53 +554,68 @@ nrow(country_level_df) == Ncountries * Ndays * 3
 
 ## ----echo=FALSE----------------------------------------------------------
 # top and bottom rows for final dataset
-rbind(head(country_level_df)
-     ,tail(country_level_df))
-
-## ----echo=FALSE----------------------------------------------------------
-# subset to current counts 
-current <- data.frame(country_level_df %>%
-						filter(Date == unique(country_level_df$Date)[1])) %>%
-            arrange(Status, desc(Count))
-
-# subset to world totals 
-totals <- data.frame(current %>% 
-						group_by(Status) %>%
-						summarise('total'=sum(Count)))
-
-country_totals <- data.frame(current %>%
-                    select(Country, Status, Count) %>%
-                    group_by(Country, Status))
-
-
-# world totals
-kable(totals) %>%
-    kable_styling(bootstrap_options = c("striped", "hover")
+kable(rbind(head(country_level_df)
+     ,tail(country_level_df))) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 
 ## ----echo=FALSE----------------------------------------------------------
-confirmed <- country_totals[country_totals$Status == "confirmed", c(1,3)]
-                        
-# top countries confirmed
-kable(confirmed[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
+
+# subset to current counts 
+current_data <- data.frame(country_level_df %>%
+					filter(Date == unique(country_level_df$Date)[1])) %>%
+					arrange(Status, desc(Count))
+
+# subset to world totals 
+world_totals <- data.frame(current_data %>% 
+					group_by(Status) %>%
+					summarise('total'=sum(Count)))
+
+kable(world_totals) %>%
+      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 
 ## ----echo=FALSE----------------------------------------------------------
-fatal <- country_totals[country_totals$Status == "fatal", c(1,3)]
-      
-# top countries fatalities    
-kable(fatal[1:6, ]) %>% 
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
 
-## ----echo=FALSE----------------------------------------------------------
-recovered <- country_totals[country_totals$Status == "recovered", c(1,3)]
-  
-# top countries recovered  
-kable(recovered[1:6, ]) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                   , full_width = FALSE)
+
+# subset to country totals 
+country_totals <- data.frame(current_data %>%
+						select(Country, Status, Count) %>%
+						group_by(Country, Status))
+	
+# subset to top counts 	
+get_top_counts <- function(dfm, coln) {
+	
+	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
+	row.names(dfm) <- 1:6
+	dfm
+}					
+
+# separate by status 
+top_confirmed 	<- get_top_counts(country_totals, "confirmed")
+top_fatal	<- get_top_counts(country_totals, "fatal")
+top_recovered 	<- get_top_counts(country_totals, "recovered")
+
+# plot top countries per status 
+gg_plot <- function(dfm, status, color) {
+
+	ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
+		geom_bar(stat="identity", fill=color) + 
+		ggtitle(paste0("Top ", status, " Cases by Country")) + 
+		xlab("") + ylab(paste0("Number of ", status, " Cases")) +
+		geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
+		theme_minimal()
+
+}
+
+# top confirmed
+gg_plot(top_confirmed, "Confirmed", "red3")
+
+# top fatal 
+gg_plot(top_fatal, "Fatal", "gray25")
+
+# top recovered
+gg_plot(top_recovered, "Recovered", "springgreen4")
+
 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # function to create an xts series given dataframe, country, and status
@@ -670,6 +695,7 @@ dfm_interactive <- dygraph(seriesObject
 						   dyRangeSelector()
 
 dfm_interactive
+
 
 ```
 

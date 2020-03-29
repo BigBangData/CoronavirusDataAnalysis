@@ -29,7 +29,7 @@ install_packages <- function(package){
 
 
 # install packages  
-packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer")
+packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer","kableExtra")
 suppressPackageStartupMessages(install_packages(packages))
 
 #' 
@@ -97,7 +97,7 @@ preprocess <- function() {
 		# add column identifying the dataset	
 		add_col <- function(dfm, name) {
 			dfm$Status <- rep(name, nrow(dfm))
-			dfm
+			dfmdfdf
 		}
 		
 		confirmed  <- add_col(confirmed, "confirmed")
@@ -168,36 +168,45 @@ str(dfm)
 #' 
 #' ### Location Granularity 
 #' 
-#' The data's location variables have several issues. The `Country_Region` variable represents a larger area while the `Province_State` represents more granular areas. There are a few countries which include the subnational provinces or states, and others that do not. In the US, the granularity sometimes arrives at county level (Mar 27 UPDATE: this has not been true in recent days.)
+#' The data's location variables have several issues. I will discard `Lat` and `Long` since I'm not doing any mapping. The variables `Country_Region` and `Province_State` are often loosely aggregated. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and subnational geographic areas. The US is conspicuously missing as a country. 
 #' 
-#' All these differences represent a problem when grouping by a certain area. This can be visualized in [Johns Hopkins' dashboard](https://coronavirus.jhu.edu/map.html): the totals for fatalities are grouped by a mixture of countries and sub-national geographic areas. The US is conspicuously missing. I will delve into subnational data at another time, so I recreated the dataset at the national level (see [Code Appendix](#codeappendix-link) for details).
-#'  
+#' Since subnational data is sparse, I'll focus on country-level data. After some data analysis, I noticed that the anomalies will repond to one simple aggregation and I recreated the dataset at this national level. Canada is a prime example of bad data: notice how it lacks subnational data on recovered cases, but also, I doubt there's a province in Canada called 'Recovered':
 #' 
 #' 
 nrow(dfm)
 length(dfm)
+## ------------------------------------------------------------------------
+# Canada provinces example
+data.frame(dfm[dfm$Country_Region == "Canada", ] %>% 
+		   distinct(Country_Region, Province_State, Status))
+
+#' 
 ## ----include=FALSE-------------------------------------------------------
-# recreating dataset at national level
-national <- unique(dfm$Country_Region[is.na(dfm$Province_State)])
-subnational <- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+# country-level dataset
+country_level_df <- data.frame(dfm %>%
+							   select(Country_Region, Status, Date, Value) %>%
+							   group_by(Country_Region, Status, Date) %>%
+							   summarise('Value'=sum(Value))) %>%
+							   arrange(Country_Region, Status, desc(Date))
 
-nat_df <- dfm[dfm$Country_Region %in% national, ]
-sub_df <- dfm[dfm$Country_Region %in% subnational, ]
+colnames(country_level_df) <- c("Country", "Status", "Date", "Value")
 
-nat_df <- as.data.frame(nat_df %>%
-						select(Country_Region, Status, Date, Value))
+Ncountries <- length(unique(country_level_df$Country))
+Ndays <- length(unique(country_level_df$Date))
 
-# aggregate countries with subnational data to national level
-sub_df <- as.data.frame(sub_df %>%
-					    select(Country_Region, Status, Date, Value) %>%
-					    group_by(Country_Region, Status, Date) %>% 
-					    summarise('Value'=sum(Value)))
-						
-dfm <- rbind(nat_df, sub_df) 
+# check: is the number of rows equal to the number of countries times the number of days times 3 (statuses)?
+nrow(country_level_df) == Ncountries * Ndays * 3
 
-dfm <- as.data.frame(dfm %>% 
-					arrange(Country_Region, Status, desc(Date)))
+#' 
+#' The top and bottom rows for the final dataset:
+#' 
+## ----echo=FALSE----------------------------------------------------------
+# top and bottom rows for final dataset
+rbind(head(country_level_df)
+     ,tail(country_level_df))
 
+#' 
+#' 
 #' 
 #' 
 #' 
@@ -210,10 +219,10 @@ dfm <- as.data.frame(dfm %>%
 #' 
 #' 
 #' 
-## ----include=FALSE-------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # subset to current counts 
-current <- data.frame(dfm %>%
-						filter(Date == unique(dfm$Date)[1])) %>%
+current <- data.frame(country_level_df %>%
+						filter(Date == unique(country_level_df$Date)[1])) %>%
             arrange(Status, desc(Value))
 
 # subset to world totals 
@@ -221,18 +230,40 @@ totals <- data.frame(current %>%
 						group_by(Status) %>%
 						summarise('total'=sum(Value)))
 
+country_totals <- data.frame(current %>%
+                    select(Country, Status, Value) %>%
+                    group_by(Country, Status))
+
+
+# world totals
+kable(totals) %>%
+    kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+
+# top countries confirmed
+kable(country_totals[1:6, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+ 
+# top countries fatalities    
+kable(country_totals[177:182, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+  
+# top countries recovered  
+kable(country_totals[353:358, ]) %>%
+     kable_styling(bootstrap_options = c("striped", "hover")
+                  , full_width = FALSE)
+        
+
 #' 
 #' 
 #' 
-#' | `r colnames(totals)[1]` | `r colnames(totals)[2]` |
-#' |:--------------------:|:-------------------:|
-#' | `r totals$Status[1]` | `r totals$total[1]` |
-#' | `r totals$Status[2]` | `r totals$total[2]` |
-#' | `r totals$Status[3]` | `r totals$total[3]` |
-#' |                     |                    |
+#' 
+#' ---
+#' 
 #'   
-#' Table: Current Grand Totals
-#' 
+#'   
 #' 
 #' ### Time Series Plots per Status and Location
 #' 
@@ -240,28 +271,21 @@ totals <- data.frame(current %>%
 #' 
 #' 
 #' 
-colnames(totals)[1]
-colnames(totals)[2]
-totals$Status[1]
-totals$total[1]
-totals$Status[2]
-totals$total[2]
-totals$Status[3]
-totals$total[3]
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # function to create an xts series given dataframe, country, and status
 create_xts_series <- function(dfm, country, status) {
-	dfm <- dfm[dfm$Country_Region == country & dfm$Status == status, ]
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
 	series <- xts(dfm$Value, order.by = dfm$Date)
 	series
 }
 
 # Confirmed
-US <- create_xts_series(dfm, "US", "confirmed")
-Italy <- create_xts_series(dfm, "Italy", "confirmed")
-China <- create_xts_series(dfm, "China", "confirmed")
-Spain <- create_xts_series(dfm, "Spain", "confirmed")
-Germany <- create_xts_series(dfm, "Germany", "confirmed")
+US <- create_xts_series(country_level_df, "US", "confirmed")
+Italy <- create_xts_series(country_level_df, "Italy", "confirmed")
+China <- create_xts_series(country_level_df, "China", "confirmed")
+Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
+Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
 
 seriesObject <- cbind(US, Italy, China, Spain, Germany)
 				 
@@ -281,11 +305,11 @@ dfm_interactive
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Fatalities
-US <- create_xts_series(dfm, "US", "fatal")
-Italy <- create_xts_series(dfm, "Italy", "fatal")
-China <- create_xts_series(dfm, "China", "fatal")
-Spain <- create_xts_series(dfm, "Spain", "fatal")
-Germany <- create_xts_series(dfm, "Germany", "fatal")
+US <- create_xts_series(country_level_df, "US", "fatal")
+Italy <- create_xts_series(country_level_df, "Italy", "fatal")
+China <- create_xts_series(country_level_df, "China", "fatal")
+Spain <- create_xts_series(country_level_df, "Spain", "fatal")
+Germany <- create_xts_series(country_level_df, "Germany", "fatal")
 
 seriesObject <- cbind(US, Italy, China, Spain, Germany)
 				 
@@ -304,11 +328,11 @@ dfm_interactive
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Recovered
-US <- create_xts_series(dfm, "US", "recovered")
-Italy <- create_xts_series(dfm, "Italy", "recovered")
-China <- create_xts_series(dfm, "China", "recovered")
-Spain <- create_xts_series(dfm, "Spain", "recovered")
-Germany <- create_xts_series(dfm, "Germany", "recovered")
+US <- create_xts_series(country_level_df, "US", "recovered")
+Italy <- create_xts_series(country_level_df, "Italy", "recovered")
+China <- create_xts_series(country_level_df, "China", "recovered")
+Spain <- create_xts_series(country_level_df, "Spain", "recovered")
+Germany <- create_xts_series(country_level_df, "Germany", "recovered")
 
 seriesObject <- cbind(US, Italy, China, Spain, Germany)
 				 
@@ -347,10 +371,11 @@ dfm_interactive
 #' ### Code Appendix {#codeappendix-link}
 #' 
 ## ----eval=FALSE----------------------------------------------------------
+## ## ----setup, include=FALSE------------------------------------------------
+## knitr::opts_chunk$set(echo = TRUE)
 ## 
-## 
-## ## Setup
-## 
+## ## ----include=FALSE-------------------------------------------------------
+## # setup
 ## rm(list = ls())
 ## options(scipen=999)
 ## 
@@ -366,12 +391,10 @@ dfm_interactive
 ## 
 ## 
 ## # install packages
-## packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer")
+## packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer","kableExtra")
 ## suppressPackageStartupMessages(install_packages(packages))
 ## 
-## 
-## ## Data Pre-Processing
-## 
+## ## ----include=FALSE-------------------------------------------------------
 ## 
 ## # preprocessing function
 ## preprocess <- function() {
@@ -406,7 +429,6 @@ dfm_interactive
 ## 		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
 ## 		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
 ## 		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
-## 
 ## 		
 ## 		
 ## 		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
@@ -420,11 +442,9 @@ dfm_interactive
 ## 		
 ## 		# load csvs
 ## 		load_csv <- function(filename) {
-## 		
-## 			filename <- read.csv(paste0(dir_path, filename, ".csv")
-## 								 , header=TRUE
-## 								 , fileEncoding="UTF-8-BOM"
-## 								 , stringsAsFactors=FALSE, na.strings="")[-1, ]
+## 			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
+## 			                     , fileEncoding="UTF-8-BOM"
+## 								           , stringsAsFactors=FALSE, na.strings="")[-1, ]
 ## 			filename
 ## 		}
 ## 	
@@ -437,7 +457,7 @@ dfm_interactive
 ## 		# add column identifying the dataset	
 ## 		add_col <- function(dfm, name) {
 ## 			dfm$Status <- rep(name, nrow(dfm))
-## 			dfm
+## 			dfmdfdf
 ## 		}
 ## 		
 ## 		confirmed  <- add_col(confirmed, "confirmed")
@@ -449,7 +469,7 @@ dfm_interactive
 ## 		
 ## 		# rename columns
 ## 		colnames(dfm) <- c("Province_State", "Country_Region"
-## 				      , "Lat", "Long", "Date", "Value", "Status")
+## 				  , "Lat", "Long", "Date", "Value", "Status")
 ## 		
 ## 		# fix data types
 ## 		dfm$Value <- as.integer(dfm$Value)
@@ -468,78 +488,93 @@ dfm_interactive
 ## }
 ## 
 ## 
+## ## ------------------------------------------------------------------------
 ## # read in RDS file
 ## dfm <- preprocess()
-## 
 ## str(dfm)
 ## 
 ## 
-## ## Data Cleanup
+## nrow(dfm)
+## length(dfm)
+## ## ------------------------------------------------------------------------
+## # Canada provinces example
+## data.frame(dfm[dfm$Country_Region == "Canada", ] %>%
+## 		   distinct(Country_Region, Province_State, Status))
 ## 
-## ### Location Granularity
+## ## ----include=FALSE-------------------------------------------------------
+## # country-level dataset
+## country_level_df <- data.frame(dfm %>%
+## 							   select(Country_Region, Status, Date, Value) %>%
+## 							   group_by(Country_Region, Status, Date) %>%
+## 							   summarise('Value'=sum(Value))) %>%
+## 							   arrange(Country_Region, Status, desc(Date))
 ## 
-## # recreating dataset at national level
-## national <- unique(dfm$Country_Region[is.na(dfm$Province_State)])
-## subnational <- unique(dfm$Country_Region[!is.na(dfm$Province_State)])
+## colnames(country_level_df) <- c("Country", "Status", "Date", "Value")
 ## 
-## nat_df <- dfm[dfm$Country_Region %in% national, ]
-## sub_df <- dfm[dfm$Country_Region %in% subnational, ]
+## Ncountries <- length(unique(country_level_df$Country))
+## Ndays <- length(unique(country_level_df$Date))
 ## 
-## nat_df <- as.data.frame(nat_df %>%
-## 						select(Country_Region, Status, Date, Value))
+## # check: is the number of rows equal to the number of countries
+## # times the number of days times 3 (statuses)?
+## nrow(country_level_df) == Ncountries * Ndays * 3
 ## 
-## # aggregate countries with subnational data to national level
-## sub_df <- as.data.frame(sub_df %>%
-## 					    select(Country_Region, Status, Date, Value) %>%
-## 					    group_by(Country_Region, Status, Date) %>%
-## 					    summarise('Value'=sum(Value)))
-## 						
-## dfm <- rbind(nat_df, sub_df)
+## ## ----echo=FALSE----------------------------------------------------------
+## # top and bottom rows for final dataset
+## rbind(head(country_level_df)
+##      ,tail(country_level_df))
 ## 
-## dfm <- as.data.frame(dfm %>%
-## 					arrange(Country_Region, Status, desc(Date)))
-## 
-## 
-## 
-## ## Exploratory Data Analysis {#eda-link}
-## 
+## ## ----echo=FALSE----------------------------------------------------------
 ## # subset to current counts
-## current <- data.frame(dfm %>%
-## 					  filter(Date == unique(dfm$Date)[1])) %>%
-## 					  arrange(Status, desc(Value))
+## current <- data.frame(country_level_df %>%
+## 						filter(Date == unique(country_level_df$Date)[1])) %>%
+##             arrange(Status, desc(Value))
 ## 
 ## # subset to world totals
 ## totals <- data.frame(current %>%
-## 					 group_by(Status) %>%
-## 					 summarise('total'=sum(Value)))
+## 						group_by(Status) %>%
+## 						summarise('total'=sum(Value)))
+## 
+## country_totals <- data.frame(current %>%
+##                     select(Country, Status, Value) %>%
+##                     group_by(Country, Status))
 ## 
 ## 
-## #' | `r colnames(totals)[1]` | `r colnames(totals)[2]` |
-## #' |:--------------------:|:-------------------:|
-## #' | `r totals$Status[1]` | `r totals$total[1]` |
-## #' | `r totals$Status[2]` | `r totals$total[2]` |
-## #' | `r totals$Status[3]` | `r totals$total[3]` |
-## #' |                     |                    |
-## #'
-## #' Table: Current Grand Totals
+## # world totals
+## kable(totals) %>%
+##     kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
+## 
+## # top countries confirmed
+## kable(country_totals[1:6, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
+## 
+## # top countries fatalities
+## kable(country_totals[177:182, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
+## 
+## # top countries recovered
+## kable(country_totals[353:358, ]) %>%
+##      kable_styling(bootstrap_options = c("striped", "hover")
+##                   , full_width = FALSE)
 ## 
 ## 
-## ### Time Series Plots per Status and Location
-## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # function to create an xts series given dataframe, country, and status
 ## create_xts_series <- function(dfm, country, status) {
 ## 
-## 	dfm <- dfm[dfm$Country_Region == country & dfm$Status == status, ]
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
 ## 	series <- xts(dfm$Value, order.by = dfm$Date)
 ## 	series
 ## }
 ## 
 ## # Confirmed
-## US <- create_xts_series(dfm, "US", "confirmed")
-## Italy <- create_xts_series(dfm, "Italy", "confirmed")
-## China <- create_xts_series(dfm, "China", "confirmed")
-## Spain <- create_xts_series(dfm, "Spain", "confirmed")
-## Germany <- create_xts_series(dfm, "Germany", "confirmed")
+## US <- create_xts_series(country_level_df, "US", "confirmed")
+## Italy <- create_xts_series(country_level_df, "Italy", "confirmed")
+## China <- create_xts_series(country_level_df, "China", "confirmed")
+## Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
+## Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
 ## 
 ## seriesObject <- cbind(US, Italy, China, Spain, Germany)
 ## 				
@@ -547,18 +582,19 @@ dfm_interactive
 ## 						   ,main="US Overtakes Italy and China in Confirmed Cases"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## 
 ## dfm_interactive
 ## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Fatalities
-## US <- create_xts_series(dfm, "US", "fatal")
-## Italy <- create_xts_series(dfm, "Italy", "fatal")
-## China <- create_xts_series(dfm, "China", "fatal")
-## Spain <- create_xts_series(dfm, "Spain", "fatal")
-## Germany <- create_xts_series(dfm, "Germany", "fatal")
+## US <- create_xts_series(country_level_df, "US", "fatal")
+## Italy <- create_xts_series(country_level_df, "Italy", "fatal")
+## China <- create_xts_series(country_level_df, "China", "fatal")
+## Spain <- create_xts_series(country_level_df, "Spain", "fatal")
+## Germany <- create_xts_series(country_level_df, "Germany", "fatal")
 ## 
 ## seriesObject <- cbind(US, Italy, China, Spain, Germany)
 ## 				
@@ -566,17 +602,18 @@ dfm_interactive
 ## 						   ,main="Italy Leads in Fatalities"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Fatalities") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
 ## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Recovered
-## US <- create_xts_series(dfm, "US", "recovered")
-## Italy <- create_xts_series(dfm, "Italy", "recovered")
-## China <- create_xts_series(dfm, "China", "recovered")
-## Spain <- create_xts_series(dfm, "Spain", "recovered")
-## Germany <- create_xts_series(dfm, "Germany", "recovered")
+## US <- create_xts_series(country_level_df, "US", "recovered")
+## Italy <- create_xts_series(country_level_df, "Italy", "recovered")
+## China <- create_xts_series(country_level_df, "China", "recovered")
+## Spain <- create_xts_series(country_level_df, "Spain", "recovered")
+## Germany <- create_xts_series(country_level_df, "Germany", "recovered")
 ## 
 ## seriesObject <- cbind(US, Italy, China, Spain, Germany)
 ## 				
@@ -584,31 +621,33 @@ dfm_interactive
 ## 						   ,main="China Leads in Recoveries"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
 ## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Recovered - other four countries
 ## seriesObject <- cbind(US, Italy, Spain, Germany)
 ## 				
 ## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Italy Leads in Recoveries"
+## 						   ,main="After China, Italy Leads in Recoveries"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
+## 
 
 #' 
 #' 
 #' 
 ## ------------------------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#library(knitr)
-#options(knitr.purl.inline = TRUE)
-#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+library(knitr)
+options(knitr.purl.inline = TRUE)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 
 #' 
 #' 

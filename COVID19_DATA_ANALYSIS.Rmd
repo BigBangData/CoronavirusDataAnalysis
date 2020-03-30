@@ -226,7 +226,6 @@ kable(rbind(head(country_level_df)
 
 
 ```{r echo=FALSE} 
-
 # subset to current counts 
 current_data <- data.frame(country_level_df %>%
 					filter(Date == unique(country_level_df$Date)[1])) %>%
@@ -245,8 +244,6 @@ kable(world_totals) %>%
 #### TOP COUNTRIES PER STATUS
 
 ```{r echo=FALSE}
-
-
 # subset to country totals 
 country_totals <- data.frame(current_data %>%
 						select(Country, Status, Count) %>%
@@ -392,6 +389,81 @@ dfm_interactive <- dygraph(seriesObject
 
 dfm_interactive
 ```
+
+#### Per Capita Analysis
+
+```
+ADD WORDS HERE
+
+```
+
+```{r include=FALSE}
+# read in prepared dataset of countries and populations
+country_population <- read.csv("COVID19_DATA/country_population.csv")
+		  
+# per capita analysis
+percap <- merge(country_level_df, country_population, by="Country")
+
+# percentage
+percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100 
+```
+
+
+Top 25 Confirmed Cases by Percentage of Population
+
+```{r echo=FALSE}
+# subset to current counts 
+current_data <- data.frame(percap %>%
+					filter(Date == unique(percap$Date)[1])) %>%
+					arrange(Status, desc(Pct))
+
+kable(current_data[1:25, ]) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+```
+
+
+
+
+```{r}	
+# subset to top counts 	
+get_top_pcts <- function(dfm, coln) {
+	
+	dfm <- dfm[dfm$Status == coln, c(1,6)][2:10,]
+	row.names(dfm) <- 1:9
+	dfm$Pct <- round(dfm$Pct, 4)
+	dfm
+}					
+
+# separate by status 
+top_confirmed 	<- get_top_pcts(current_data, "confirmed")
+top_fatal	<- get_top_pcts(current_data, "fatal")
+top_recovered 	<- get_top_pcts(current_data, "recovered")
+
+
+
+# plot top countries per status 
+gg_plot <- function(dfm, status, color) {
+
+	ggplot(data=dfm, aes(x=reorder(Country, Pct), y=Pct)) +
+		geom_bar(stat="identity", fill=color) + 
+		ggtitle(paste0("Top ", status, " Cases by Pct of Population")) + 
+		xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
+		geom_text(aes(label=Pct), hjust=1.6, color="white", size=3.5) +
+    coord_flip() + theme_minimal()
+
+}
+
+# top confirmed
+gg_plot(top_confirmed, "Confirmed", "red3")
+
+# top fatal 
+gg_plot(top_fatal, "Fatal", "gray25")
+
+# top recovered
+gg_plot(top_recovered, "Recovered", "springgreen4")
+
+```
+
 
 
 

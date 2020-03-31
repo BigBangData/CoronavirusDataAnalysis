@@ -302,7 +302,6 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 #' 
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# function to create an xts series given dataframe, country, and status
 create_xts_series <- function(dfm, country, status) {
   
 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
@@ -316,14 +315,16 @@ Italy <- create_xts_series(country_level_df, "Italy", "confirmed")
 China <- create_xts_series(country_level_df, "China", "confirmed")
 Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
 Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
+France <- create_xts_series(country_level_df, "France", "confirmed")
 
-seriesObject <- cbind(US, Italy, China, Spain, Germany)
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
 				 
 dfm_interactive <- dygraph(seriesObject
-						   ,main="US Overtakes Italy and China in Confirmed Cases"
+						   ,main="Top Countries - Confirmed Cases"
 						   ,xlab=""
 						   ,ylab="Number of Confirmed Cases") %>% 
-						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
 						   dyRangeSelector()
 
 
@@ -335,19 +336,20 @@ dfm_interactive
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Fatalities
-US <- create_xts_series(country_level_df, "US", "fatal")
 Italy <- create_xts_series(country_level_df, "Italy", "fatal")
-China <- create_xts_series(country_level_df, "China", "fatal")
 Spain <- create_xts_series(country_level_df, "Spain", "fatal")
-Germany <- create_xts_series(country_level_df, "Germany", "fatal")
+China <- create_xts_series(country_level_df, "China", "fatal")
+France <- create_xts_series(country_level_df, "France", "fatal")
+US <- create_xts_series(country_level_df, "US", "fatal")
+Iran <- create_xts_series(country_level_df, "Iran", "fatal")
 
-seriesObject <- cbind(US, Italy, China, Spain, Germany)
+seriesObject <- cbind(Italy, Spain, China, France, US, Iran)
 				 
 dfm_interactive <- dygraph(seriesObject
-						   ,main="Italy Leads in Fatalities"
+						   ,main="Top Countries - Fatal Cases"
 						   ,xlab=""
 						   ,ylab="Number of Fatalities") %>% 
-						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
 						   dyRangeSelector()
 
 dfm_interactive
@@ -358,19 +360,20 @@ dfm_interactive
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Recovered
-US <- create_xts_series(country_level_df, "US", "recovered")
-Italy <- create_xts_series(country_level_df, "Italy", "recovered")
 China <- create_xts_series(country_level_df, "China", "recovered")
 Spain <- create_xts_series(country_level_df, "Spain", "recovered")
+Italy <- create_xts_series(country_level_df, "Italy", "recovered")
+Iran <- create_xts_series(country_level_df, "Iran", "recovered")
 Germany <- create_xts_series(country_level_df, "Germany", "recovered")
+France <- create_xts_series(country_level_df, "France", "recovered")
 
-seriesObject <- cbind(US, Italy, China, Spain, Germany)
-				 
+seriesObject <- cbind(China, Spain, Italy, Iran, Germany, France)
+
 dfm_interactive <- dygraph(seriesObject
-						   ,main="China Leads in Recoveries"
+						   ,main="Top Countries - Recovered Cases"
 						   ,xlab=""
 						   ,ylab="Number of Recoveries") %>% 
-						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
+						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
 						   dyRangeSelector()
 
 dfm_interactive
@@ -379,17 +382,18 @@ dfm_interactive
 #' Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# Recovered - other four countries
-seriesObject <- cbind(US, Italy, Spain, Germany)
-				 
+# Recovered - after China
+seriesObject <- cbind(Spain, Italy, Iran, Germany, France)
+
 dfm_interactive <- dygraph(seriesObject
-						   ,main="After China, Italy and Spain Lead in Recoveries"
+						   ,main="Top Countries (after China) - Recovered Cases"
 						   ,xlab=""
 						   ,ylab="Number of Recoveries") %>% 
-						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						  
+						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
 						   dyRangeSelector()
 
 dfm_interactive
+
 
 #' 
 #' 
@@ -408,6 +412,9 @@ dfm_interactive
 # read in prepared dataset of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
+# TEST
+unique(country_level_df$Country)[!unique(country_level_df$Country) %in% country_population$Country]		
+
 # per capita analysis
 percap <- merge(country_level_df, country_population, by="Country")
 
@@ -698,7 +705,6 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-## # function to create an xts series given dataframe, country, and status
 ## create_xts_series <- function(dfm, country, status) {
 ## 
 ## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
@@ -712,14 +718,16 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## China <- create_xts_series(country_level_df, "China", "confirmed")
 ## Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
 ## Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
+## France <- create_xts_series(country_level_df, "France", "confirmed")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany)
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
 ## 				
 ## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="US Overtakes Italy and China in Confirmed Cases"
+## 						   ,main="Top Countries - Confirmed Cases"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
 ## 						   dyRangeSelector()
 ## 
 ## 
@@ -727,35 +735,50 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Fatalities
-## US <- create_xts_series(country_level_df, "US", "fatal")
 ## Italy <- create_xts_series(country_level_df, "Italy", "fatal")
-## China <- create_xts_series(country_level_df, "China", "fatal")
 ## Spain <- create_xts_series(country_level_df, "Spain", "fatal")
-## Germany <- create_xts_series(country_level_df, "Germany", "fatal")
+## China <- create_xts_series(country_level_df, "China", "fatal")
+## France <- create_xts_series(country_level_df, "France", "fatal")
+## US <- create_xts_series(country_level_df, "US", "fatal")
+## Iran <- create_xts_series(country_level_df, "Iran", "fatal")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany)
+## seriesObject <- cbind(Italy, Spain, China, France, US, Iran)
 ## 				
 ## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Italy Leads in Fatalities"
+## 						   ,main="Top Countries - Fatal Cases"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Fatalities") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
+## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Recovered
-## US <- create_xts_series(country_level_df, "US", "recovered")
-## Italy <- create_xts_series(country_level_df, "Italy", "recovered")
 ## China <- create_xts_series(country_level_df, "China", "recovered")
 ## Spain <- create_xts_series(country_level_df, "Spain", "recovered")
+## Italy <- create_xts_series(country_level_df, "Italy", "recovered")
+## Iran <- create_xts_series(country_level_df, "Iran", "recovered")
 ## Germany <- create_xts_series(country_level_df, "Germany", "recovered")
+## France <- create_xts_series(country_level_df, "France", "recovered")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany)
-## 				
+## seriesObject <- cbind(China, Spain, Italy, Iran, Germany, France)
+## 
 ## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="China Leads in Recoveries"
+## 						   ,main="Top Countries - Recovered Cases"
+## 						   ,xlab=""
+## 						   ,ylab="Number of Recoveries") %>%
+## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # Recovered - after China
+## seriesObject <- cbind(Spain, Italy, Iran, Germany, France)
+## 
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main="Top Countries (after China) - Recovered Cases"
 ## 						   ,xlab=""
 ## 						   ,ylab="Number of Recoveries") %>%
 ## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
@@ -763,23 +786,14 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## dfm_interactive
 ## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-## # Recovered - other four countries
-## seriesObject <- cbind(US, Italy, Spain, Germany)
-## 				
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="After China, Italy and Spain Lead in Recoveries"
-## 						   ,xlab=""
-## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(4,"Dark2")) %>%						
-## 						   dyRangeSelector()
-## 
-## dfm_interactive
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
 ## # read in prepared dataset of countries and populations
 ## country_population <- read.csv("COVID19_DATA/country_population.csv")
 ## 		
+## # TEST
+## unique(country_level_df$Country)[!unique(country_level_df$Country) %in% country_population$Country]		
+## 
 ## # per capita analysis
 ## percap <- merge(country_level_df, country_population, by="Country")
 ## 

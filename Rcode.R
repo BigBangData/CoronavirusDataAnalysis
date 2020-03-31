@@ -53,32 +53,42 @@ preprocess <- function() {
 	if (!file.exists(file_name)) {
 
 		# create URLs
-		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series_covid19_"
+		http_header <- paste0("https://data.humdata.org/hxlproxy/data/"
+		                      ,"download/time_series_covid19_")
 		
-		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode-header-att01="
-		                  ,"date&explode-value-att01=value&filter02=rename&rename-oldtag02=%23"
-		                  ,"affected%2Bdate&rename-newtag02=%23date&rename-header02=Date&filter"
-		                  ,"03=rename&rename-oldtag03=%23affected%2Bvalue&rename-newtag03=%23af"
-		                  ,"fected%2Binfected%2Bvalue%2Bnum&rename-header03=Value&filter04=clea"
-		                  ,"n&clean-date-tags04=%23date&filter05=sort&sort-tags05=%23date&sort-"
-		                  ,"reverse05=on&filter06=sort&sort-tags06=%23country%2Bname%2C%23adm1%"
-		                  ,"2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&t"
-		                  ,"agger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger"
-		                  ,"-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-"
-		                  ,"03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagge"
-		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
-		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
-		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
+		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode"
+		            ,"-header-att01=date&explode-value-att01=value&filter02=ren"
+		            ,"ame&rename-oldtag02=%23affected%2Bdate&rename-newtag02=%2"
+		            ,"3date&rename-header02=Date&filter03=rename&rename-oldtag0"
+		            ,"3=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfec"
+		            ,"ted%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&cl"
+		            ,"ean-date-tags04=%23date&filter05=sort&sort-tags05=%23date"
+		            ,"&sort-reverse05=on&filter06=sort&sort-tags06=%23country%2"
+		            ,"Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default"
+		            ,"-tag=%23affected%2Blabel&tagger-01-header=province%2Fstat"
+		            ,"e&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2"
+		            ,"Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header="
+		            ,"lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagg"
+		            ,"er-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw"
+		            ,".githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmast"
+		            ,"er%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftim"
+		            ,"e_series_covid19_")
 		
 		
-		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
-		fatal_URL <- paste0(http_header, "deaths_global", url_body, "deaths_global.csv")
-		recovered_URL  <- paste0(http_header, "recovered_global", url_body, "recovered_global.csv")
+		confirmed_URL  <- paste0(http_header, "confirmed_global"
+		                         , url_body, "confirmed_global.csv")
+		fatal_URL <- paste0(http_header, "deaths_global"
+		                    , url_body, "deaths_global.csv")
+		recovered_URL  <- paste0(http_header, "recovered_global"
+		                         , url_body, "recovered_global.csv")
 									
 		# download
-		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
-		download.file(fatal_URL, destfile=paste0(dir_path, "fatal.csv"))
-		download.file(recovered_URL, destfile=paste0(dir_path, "recovered.csv"))
+		download.file(confirmed_URL
+		              , destfile=paste0(dir_path, "confirmed.csv"))
+		download.file(fatal_URL
+		              , destfile=paste0(dir_path, "fatal.csv"))
+		download.file(recovered_URL
+		              , destfile=paste0(dir_path, "recovered.csv"))
 		
 		# load csvs
 		load_csv <- function(filename) { 
@@ -100,9 +110,9 @@ preprocess <- function() {
 			dfm
 		}
 		
-		confirmed  <- add_col(confirmed, "confirmed")
-		fatal <- add_col(fatal, "fatal")
-		recovered  <- add_col(recovered, "recovered")
+		confirmed  <- add_col(confirmed, "Confirmed")
+		fatal <- add_col(fatal, "Fatal")
+		recovered  <- add_col(recovered, "Recovered")
 		
 		# join (union actually) into one dataset 
 		dfm <- rbind(confirmed, fatal, recovered, make.row.names=FALSE)
@@ -238,8 +248,10 @@ world_totals <- data.frame(current_data %>%
 					group_by(Status) %>%
 					summarise('total'=sum(Count)))
 
+
 kable(world_totals) %>%
-      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+      kable_styling(bootstrap_options = c("striped", "hover")
+                    , full_width = FALSE)
 
 #' 
 #' 
@@ -260,9 +272,9 @@ get_top_counts <- function(dfm, coln) {
 }					
 
 # separate by status 
-top_confirmed 	<- get_top_counts(country_totals, "confirmed")
-top_fatal	<- get_top_counts(country_totals, "fatal")
-top_recovered 	<- get_top_counts(country_totals, "recovered")
+top_confirmed 	<- get_top_counts(country_totals, "Confirmed")
+top_fatal	<- get_top_counts(country_totals, "Fatal")
+top_recovered 	<- get_top_counts(country_totals, "Recovered")
 
 # plot top countries per status 
 gg_plot <- function(dfm, status, color) {
@@ -276,6 +288,10 @@ gg_plot <- function(dfm, status, color) {
 
 }
 
+#' 
+#' 
+#' 
+## ------------------------------------------------------------------------
 # top confirmed
 gg_plot(top_confirmed, "Confirmed", "red3")
 
@@ -301,7 +317,7 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 #' 
 #' 
 #' 
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## ----include=FALSE-------------------------------------------------------
 create_xts_series <- function(dfm, country, status) {
   
 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
@@ -309,91 +325,60 @@ create_xts_series <- function(dfm, country, status) {
 	series
 }
 
+create_seriesObject <- function(dfm, countries, status) {
+  
+  seriesObject <- NULL
+  for (i in 1:length(countries)) {
+    seriesObject <- cbind(seriesObject
+                          , create_xts_series(dfm, countries[i]
+                          , status))
+  }
+  
+  names(seriesObject) <- countries
+  seriesObject
+}
+
+
+plot_interactive_df <- function(dfm, status_df, status) {
+  
+  seriesObject <- create_seriesObject(dfm, status_df$Country, status)
+  
+  interactive_df <- dygraph(seriesObject
+                            , main=paste0("Top Countries - "
+                                          , status, " Cases")
+                            , xlab=""
+                            , ylab=paste0("Number of "
+                                          , status, " cases")) %>%
+                             dyOptions(
+                                colors=brewer.pal(
+                                  length(status_df$Country)
+                                                    ,"Dark2")) %>%
+                             dyRangeSelector()
+  interactive_df
+}
+
+#' 
+#' 
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# INTERACTIVE PLOTS - COUNT
 # Confirmed
-US <- create_xts_series(country_level_df, "US", "confirmed")
-Italy <- create_xts_series(country_level_df, "Italy", "confirmed")
-China <- create_xts_series(country_level_df, "China", "confirmed")
-Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
-Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
-France <- create_xts_series(country_level_df, "France", "confirmed")
+plot_interactive_df(country_level_df, top_confirmed, "Confirmed")
 
+# Fatal
+plot_interactive_df(country_level_df, top_fatal, "Fatal")
 
-seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-				 
-dfm_interactive <- dygraph(seriesObject
-						   ,main="Top Countries - Confirmed Cases"
-						   ,xlab=""
-						   ,ylab="Number of Confirmed Cases") %>% 
-						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-
-dfm_interactive
-
-#' 
-#' 
-#' This is the same visualization using the data on fatalities:
-#' 
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# Fatalities
-Italy <- create_xts_series(country_level_df, "Italy", "fatal")
-Spain <- create_xts_series(country_level_df, "Spain", "fatal")
-China <- create_xts_series(country_level_df, "China", "fatal")
-France <- create_xts_series(country_level_df, "France", "fatal")
-US <- create_xts_series(country_level_df, "US", "fatal")
-Iran <- create_xts_series(country_level_df, "Iran", "fatal")
-
-seriesObject <- cbind(Italy, Spain, China, France, US, Iran)
-				 
-dfm_interactive <- dygraph(seriesObject
-						   ,main="Top Countries - Fatal Cases"
-						   ,xlab=""
-						   ,ylab="Number of Fatalities") %>% 
-						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-dfm_interactive
-
-#' 
-#' 
-#' This is the same visualization using the data on recoveries:
-#' 
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Recovered
-China <- create_xts_series(country_level_df, "China", "recovered")
-Spain <- create_xts_series(country_level_df, "Spain", "recovered")
-Italy <- create_xts_series(country_level_df, "Italy", "recovered")
-Iran <- create_xts_series(country_level_df, "Iran", "recovered")
-Germany <- create_xts_series(country_level_df, "Germany", "recovered")
-France <- create_xts_series(country_level_df, "France", "recovered")
+plot_interactive_df(country_level_df, top_recovered, "Recovered")
 
-seriesObject <- cbind(China, Spain, Italy, Iran, Germany, France)
-
-dfm_interactive <- dygraph(seriesObject
-						   ,main="Top Countries - Recovered Cases"
-						   ,xlab=""
-						   ,ylab="Number of Recoveries") %>% 
-						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-dfm_interactive
-
+#' 
+#' 
 #' 
 #' Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Recovered - after China
-seriesObject <- cbind(Spain, Italy, Iran, Germany, France)
-
-dfm_interactive <- dygraph(seriesObject
-						   ,main="Top Countries (after China) - Recovered Cases"
-						   ,xlab=""
-						   ,ylab="Number of Recoveries") %>% 
-						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-dfm_interactive
-
+plot_interactive_df(country_level_df, top_recovered[2:6, ], "Recovered")
 
 #' 
 #' 
@@ -413,7 +398,8 @@ dfm_interactive
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
 # TEST
-unique(country_level_df$Country)[!unique(country_level_df$Country) %in% country_population$Country]		
+current_countries <- unique(country_level_df$Country)
+current_countries[!current_countries %in% country_population$Country]
 
 # per capita analysis
 percap <- merge(country_level_df, country_population, by="Country")
@@ -432,7 +418,8 @@ current_data <- data.frame(percap %>%
 					arrange(Status, desc(Pct))
 
 kable(current_data[1:25, ]) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                , full_width = FALSE)
 
 #' 
 #' 
@@ -452,9 +439,9 @@ get_top_pcts <- function(dfm, coln) {
 }					
 
 # separate by status 
-top_confirmed 	<- get_top_pcts(current_data, "confirmed")
-top_fatal	<- get_top_pcts(current_data, "fatal")
-top_recovered 	<- get_top_pcts(current_data, "recovered")
+top_confirmed 	<- get_top_pcts(current_data, "Confirmed")
+top_fatal	<- get_top_pcts(current_data, "Fatal")
+top_recovered 	<- get_top_pcts(current_data, "Recovered")
 
 # plot top countries per status 
 gg_plot <- function(dfm, status, color) {
@@ -470,6 +457,7 @@ gg_plot <- function(dfm, status, color) {
 
 #' 
 #' 
+#' 
 ## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
 # top confirmed
 gg_plot(top_confirmed, "Confirmed", "red3")
@@ -481,6 +469,122 @@ gg_plot(top_fatal, "Fatal", "gray25")
 gg_plot(top_recovered, "Recovered", "springgreen4")
 
 
+#' 
+#' ---
+#' 
+#' 
+#' ### Time Series by Percentage - Linear & Log 
+#' 
+#' ```
+#' IN PROGRESS...
+#' 
+#' ADD: Fatalities, Recovered
+#' 
+#' DO: Number of NEW Cases per TOTAL Confirmed Cases, Linear/Log.
+#' 
+#' ```
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+# Generalizing Functions
+#create_xts_series <- function(dfm, country, status, scale) {
+#  
+#	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+#	
+#	series <- ifelse(scale == "linear"
+#	                , series <- xts(dfm$Pct, order.by = dfm$Date)
+#	                , series <- xts(log(dfm$Pct), order.by = dfm$Date)
+#	                )
+#	series
+#}
+#
+#
+#create_seriesObject <- function(dfm, status_df, status, scale) {
+#  
+#  seriesObject <- NULL
+#  for (i in 1:6) {
+#    
+#    seriesObject <- cbind(seriesObject
+#                          , create_xts_series(dfm
+#                                              , status_df$Country[i]
+#                                              , status
+#                                              , scale)
+#                          )
+#  }
+#  
+#  names(seriesObject) <- status_df$Country[1:6]
+#  seriesObject
+#}
+
+
+#' 
+#' 
+#' 
+#' 
+#' 
+#' 
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Confirmed Linear 
+create_xts_series <- function(dfm, country, status) {
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+	series <- xts(dfm$Pct, order.by = dfm$Date)
+	series
+}
+
+# Confirmed
+US <- create_xts_series(percap, "US", "Confirmed")
+Italy <- create_xts_series(percap, "Italy", "Confirmed")
+China <- create_xts_series(percap, "China", "Confirmed")
+Spain <- create_xts_series(percap, "Spain", "Confirmed")
+Germany <- create_xts_series(percap, "Germany", "Confirmed")
+France <- create_xts_series(percap, "France", "Confirmed")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main=paste0("Top Countries - Confirmed Cases"
+										," by Percentage of Population (Log)")
+						   ,xlab=""
+						   ,ylab="Log of Percentage of Confirmed Cases") %>% 
+						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
+#' 
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Confirmed Log 
+create_xts_series <- function(dfm, country, status) {
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+	series <- xts(log(dfm$Pct), order.by = dfm$Date)
+	series
+}
+
+# Confirmed
+US <- create_xts_series(percap, "US", "Confirmed")
+Italy <- create_xts_series(percap, "Italy", "Confirmed")
+China <- create_xts_series(percap, "China", "Confirmed")
+Spain <- create_xts_series(percap, "Spain", "Confirmed")
+Germany <- create_xts_series(percap, "Germany", "Confirmed")
+France <- create_xts_series(percap, "France", "Confirmed")
+
+seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
+				 
+dfm_interactive <- dygraph(seriesObject
+						   ,main=paste0("Top Countries - Confirmed Cases"
+										," by Percentage of Population (Log)")
+						   ,xlab=""
+						   ,ylab="Log of Percentage of Confirmed Cases") %>% 
+						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
+						   dyRangeSelector()
+
+dfm_interactive
+
+#' 
 #' 
 #' 
 #' 
@@ -534,32 +638,42 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 	if (!file.exists(file_name)) {
 ## 
 ## 		# create URLs
-## 		http_header <- "https://data.humdata.org/hxlproxy/data/download/time_series_covid19_"
+## 		http_header <- paste0("https://data.humdata.org/hxlproxy/data/"
+## 		                      ,"download/time_series_covid19_")
 ## 		
-## 		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode-header-att01="
-## 		                  ,"date&explode-value-att01=value&filter02=rename&rename-oldtag02=%23"
-## 		                  ,"affected%2Bdate&rename-newtag02=%23date&rename-header02=Date&filter"
-## 		                  ,"03=rename&rename-oldtag03=%23affected%2Bvalue&rename-newtag03=%23af"
-## 		                  ,"fected%2Binfected%2Bvalue%2Bnum&rename-header03=Value&filter04=clea"
-## 		                  ,"n&clean-date-tags04=%23date&filter05=sort&sort-tags05=%23date&sort-"
-## 		                  ,"reverse05=on&filter06=sort&sort-tags06=%23country%2Bname%2C%23adm1%"
-## 		                  ,"2Bname&tagger-match-all=on&tagger-default-tag=%23affected%2Blabel&t"
-## 		                  ,"agger-01-header=province%2Fstate&tagger-01-tag=%23adm1%2Bname&tagger"
-## 		                  ,"-02-header=country%2Fregion&tagger-02-tag=%23country%2Bname&tagger-"
-## 		                  ,"03-header=lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagge"
-## 		                  ,"r-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw.githubuserc"
-## 		                  ,"ontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data"
-## 		                  ,"%2Fcsse_covid_19_time_series%2Ftime_series_covid19_")
+## 		url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode"
+## 		            ,"-header-att01=date&explode-value-att01=value&filter02=ren"
+## 		            ,"ame&rename-oldtag02=%23affected%2Bdate&rename-newtag02=%2"
+## 		            ,"3date&rename-header02=Date&filter03=rename&rename-oldtag0"
+## 		            ,"3=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfec"
+## 		            ,"ted%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&cl"
+## 		            ,"ean-date-tags04=%23date&filter05=sort&sort-tags05=%23date"
+## 		            ,"&sort-reverse05=on&filter06=sort&sort-tags06=%23country%2"
+## 		            ,"Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default"
+## 		            ,"-tag=%23affected%2Blabel&tagger-01-header=province%2Fstat"
+## 		            ,"e&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2"
+## 		            ,"Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header="
+## 		            ,"lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagg"
+## 		            ,"er-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw"
+## 		            ,".githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmast"
+## 		            ,"er%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftim"
+## 		            ,"e_series_covid19_")
 ## 		
 ## 		
-## 		confirmed_URL  <- paste0(http_header, "confirmed_global", url_body, "confirmed_global.csv")
-## 		fatal_URL <- paste0(http_header, "deaths_global", url_body, "deaths_global.csv")
-## 		recovered_URL  <- paste0(http_header, "recovered_global", url_body, "recovered_global.csv")
+## 		confirmed_URL  <- paste0(http_header, "confirmed_global"
+## 		                         , url_body, "confirmed_global.csv")
+## 		fatal_URL <- paste0(http_header, "deaths_global"
+## 		                    , url_body, "deaths_global.csv")
+## 		recovered_URL  <- paste0(http_header, "recovered_global"
+## 		                         , url_body, "recovered_global.csv")
 ## 									
 ## 		# download
-## 		download.file(confirmed_URL, destfile=paste0(dir_path, "confirmed.csv"))
-## 		download.file(fatal_URL, destfile=paste0(dir_path, "fatal.csv"))
-## 		download.file(recovered_URL, destfile=paste0(dir_path, "recovered.csv"))
+## 		download.file(confirmed_URL
+## 		              , destfile=paste0(dir_path, "confirmed.csv"))
+## 		download.file(fatal_URL
+## 		              , destfile=paste0(dir_path, "fatal.csv"))
+## 		download.file(recovered_URL
+## 		              , destfile=paste0(dir_path, "recovered.csv"))
 ## 		
 ## 		# load csvs
 ## 		load_csv <- function(filename) {
@@ -581,9 +695,9 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 			dfm
 ## 		}
 ## 		
-## 		confirmed  <- add_col(confirmed, "confirmed")
-## 		fatal <- add_col(fatal, "fatal")
-## 		recovered  <- add_col(recovered, "recovered")
+## 		confirmed  <- add_col(confirmed, "Confirmed")
+## 		fatal <- add_col(fatal, "Fatal")
+## 		recovered  <- add_col(recovered, "Recovered")
 ## 		
 ## 		# join (union actually) into one dataset
 ## 		dfm <- rbind(confirmed, fatal, recovered, make.row.names=FALSE)
@@ -660,8 +774,10 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 					group_by(Status) %>%
 ## 					summarise('total'=sum(Count)))
 ## 
+## 
 ## kable(world_totals) %>%
-##       kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+##       kable_styling(bootstrap_options = c("striped", "hover")
+##                     , full_width = FALSE)
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # subset to country totals
@@ -678,9 +794,9 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## }					
 ## 
 ## # separate by status
-## top_confirmed 	<- get_top_counts(country_totals, "confirmed")
-## top_fatal	<- get_top_counts(country_totals, "fatal")
-## top_recovered 	<- get_top_counts(country_totals, "recovered")
+## top_confirmed 	<- get_top_counts(country_totals, "Confirmed")
+## top_fatal	<- get_top_counts(country_totals, "Fatal")
+## top_recovered 	<- get_top_counts(country_totals, "Recovered")
 ## 
 ## # plot top countries per status
 ## gg_plot <- function(dfm, status, color) {
@@ -694,6 +810,7 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## }
 ## 
+## ## ------------------------------------------------------------------------
 ## # top confirmed
 ## gg_plot(top_confirmed, "Confirmed", "red3")
 ## 
@@ -704,7 +821,7 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## ## ----include=FALSE-------------------------------------------------------
 ## create_xts_series <- function(dfm, country, status) {
 ## 
 ## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
@@ -712,87 +829,60 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 	series
 ## }
 ## 
+## create_seriesObject <- function(dfm, countries, status) {
+## 
+##   seriesObject <- NULL
+##   for (i in 1:length(countries)) {
+##     seriesObject <- cbind(seriesObject
+##                           , create_xts_series(dfm, countries[i]
+##                           , status))
+##   }
+## 
+##   names(seriesObject) <- countries
+##   seriesObject
+## }
+## 
+## 
+## plot_interactive_df <- function(dfm, status_df, status) {
+## 
+##   seriesObject <- create_seriesObject(dfm, status_df$Country, status)
+## 
+##   interactive_df <- dygraph(seriesObject
+##                             , main=paste0("Top Countries - "
+##                                           , status, " Cases")
+##                             , xlab=""
+##                             , ylab=paste0("Number of "
+##                                           , status, " cases")) %>%
+##                              dyOptions(
+##                                 colors=brewer.pal(
+##                                   length(status_df$Country)
+##                                                     ,"Dark2")) %>%
+##                              dyRangeSelector()
+##   interactive_df
+## }
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # INTERACTIVE PLOTS - COUNT
 ## # Confirmed
-## US <- create_xts_series(country_level_df, "US", "confirmed")
-## Italy <- create_xts_series(country_level_df, "Italy", "confirmed")
-## China <- create_xts_series(country_level_df, "China", "confirmed")
-## Spain <- create_xts_series(country_level_df, "Spain", "confirmed")
-## Germany <- create_xts_series(country_level_df, "Germany", "confirmed")
-## France <- create_xts_series(country_level_df, "France", "confirmed")
+## plot_interactive_df(country_level_df, top_confirmed, "Confirmed")
 ## 
+## # Fatal
+## plot_interactive_df(country_level_df, top_fatal, "Fatal")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-## 				
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Top Countries - Confirmed Cases"
-## 						   ,xlab=""
-## 						   ,ylab="Number of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
-## 						   dyRangeSelector()
-## 
-## 
-## dfm_interactive
-## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-## # Fatalities
-## Italy <- create_xts_series(country_level_df, "Italy", "fatal")
-## Spain <- create_xts_series(country_level_df, "Spain", "fatal")
-## China <- create_xts_series(country_level_df, "China", "fatal")
-## France <- create_xts_series(country_level_df, "France", "fatal")
-## US <- create_xts_series(country_level_df, "US", "fatal")
-## Iran <- create_xts_series(country_level_df, "Iran", "fatal")
-## 
-## seriesObject <- cbind(Italy, Spain, China, France, US, Iran)
-## 				
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Top Countries - Fatal Cases"
-## 						   ,xlab=""
-## 						   ,ylab="Number of Fatalities") %>%
-## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
-## 						   dyRangeSelector()
-## 
-## dfm_interactive
-## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Recovered
-## China <- create_xts_series(country_level_df, "China", "recovered")
-## Spain <- create_xts_series(country_level_df, "Spain", "recovered")
-## Italy <- create_xts_series(country_level_df, "Italy", "recovered")
-## Iran <- create_xts_series(country_level_df, "Iran", "recovered")
-## Germany <- create_xts_series(country_level_df, "Germany", "recovered")
-## France <- create_xts_series(country_level_df, "France", "recovered")
-## 
-## seriesObject <- cbind(China, Spain, Italy, Iran, Germany, France)
-## 
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Top Countries - Recovered Cases"
-## 						   ,xlab=""
-## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
-## 						   dyRangeSelector()
-## 
-## dfm_interactive
+## plot_interactive_df(country_level_df, top_recovered, "Recovered")
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Recovered - after China
-## seriesObject <- cbind(Spain, Italy, Iran, Germany, France)
-## 
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main="Top Countries (after China) - Recovered Cases"
-## 						   ,xlab=""
-## 						   ,ylab="Number of Recoveries") %>%
-## 						   dyOptions(colors = brewer.pal(5,"Dark2")) %>%						
-## 						   dyRangeSelector()
-## 
-## dfm_interactive
-## 
+## plot_interactive_df(country_level_df, top_recovered[2:6, ], "Recovered")
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
 ## # read in prepared dataset of countries and populations
 ## country_population <- read.csv("COVID19_DATA/country_population.csv")
 ## 		
 ## # TEST
-## unique(country_level_df$Country)[!unique(country_level_df$Country) %in% country_population$Country]		
+## current_countries <- unique(country_level_df$Country)
+## current_countries[!current_countries %in% country_population$Country]
 ## 
 ## # per capita analysis
 ## percap <- merge(country_level_df, country_population, by="Country")
@@ -807,7 +897,8 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 					arrange(Status, desc(Pct))
 ## 
 ## kable(current_data[1:25, ]) %>%
-##   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+##   kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                 , full_width = FALSE)
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
 ## # subset to top counts 	
@@ -820,9 +911,9 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## }					
 ## 
 ## # separate by status
-## top_confirmed 	<- get_top_pcts(current_data, "confirmed")
-## top_fatal	<- get_top_pcts(current_data, "fatal")
-## top_recovered 	<- get_top_pcts(current_data, "recovered")
+## top_confirmed 	<- get_top_pcts(current_data, "Confirmed")
+## top_fatal	<- get_top_pcts(current_data, "Fatal")
+## top_recovered 	<- get_top_pcts(current_data, "Recovered")
 ## 
 ## # plot top countries per status
 ## gg_plot <- function(dfm, status, color) {
@@ -846,6 +937,96 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## # top recovered
 ## gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # Generalizing Functions
+## #create_xts_series <- function(dfm, country, status, scale) {
+## #
+## #	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## #	
+## #	series <- ifelse(scale == "linear"
+## #	                , series <- xts(dfm$Pct, order.by = dfm$Date)
+## #	                , series <- xts(log(dfm$Pct), order.by = dfm$Date)
+## #	                )
+## #	series
+## #}
+## #
+## #
+## #create_seriesObject <- function(dfm, status_df, status, scale) {
+## #
+## #  seriesObject <- NULL
+## #  for (i in 1:6) {
+## #
+## #    seriesObject <- cbind(seriesObject
+## #                          , create_xts_series(dfm
+## #                                              , status_df$Country[i]
+## #                                              , status
+## #                                              , scale)
+## #                          )
+## #  }
+## #
+## #  names(seriesObject) <- status_df$Country[1:6]
+## #  seriesObject
+## #}
+## 
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # Confirmed Linear
+## create_xts_series <- function(dfm, country, status) {
+## 
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## 	series <- xts(dfm$Pct, order.by = dfm$Date)
+## 	series
+## }
+## 
+## # Confirmed
+## US <- create_xts_series(percap, "US", "Confirmed")
+## Italy <- create_xts_series(percap, "Italy", "Confirmed")
+## China <- create_xts_series(percap, "China", "Confirmed")
+## Spain <- create_xts_series(percap, "Spain", "Confirmed")
+## Germany <- create_xts_series(percap, "Germany", "Confirmed")
+## France <- create_xts_series(percap, "France", "Confirmed")
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
+## 				
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main=paste0("Top Countries - Confirmed Cases"
+## 										," by Percentage of Population (Log)")
+## 						   ,xlab=""
+## 						   ,ylab="Log of Percentage of Confirmed Cases") %>%
+## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # Confirmed Log
+## create_xts_series <- function(dfm, country, status) {
+## 
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## 	series <- xts(log(dfm$Pct), order.by = dfm$Date)
+## 	series
+## }
+## 
+## # Confirmed
+## US <- create_xts_series(percap, "US", "Confirmed")
+## Italy <- create_xts_series(percap, "Italy", "Confirmed")
+## China <- create_xts_series(percap, "China", "Confirmed")
+## Spain <- create_xts_series(percap, "Spain", "Confirmed")
+## Germany <- create_xts_series(percap, "Germany", "Confirmed")
+## France <- create_xts_series(percap, "France", "Confirmed")
+## 
+## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
+## 				
+## dfm_interactive <- dygraph(seriesObject
+## 						   ,main=paste0("Top Countries - Confirmed Cases"
+## 										," by Percentage of Population (Log)")
+## 						   ,xlab=""
+## 						   ,ylab="Log of Percentage of Confirmed Cases") %>%
+## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
+## 						   dyRangeSelector()
+## 
+## dfm_interactive
 ## 
 ## 
 

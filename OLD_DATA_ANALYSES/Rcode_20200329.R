@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "3/30/2020"
+#' date: "3/29/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -228,6 +228,7 @@ kable(rbind(head(country_level_df)
 #' 
 #' 
 ## ----echo=FALSE----------------------------------------------------------
+
 # subset to current counts 
 current_data <- data.frame(country_level_df %>%
 					filter(Date == unique(country_level_df$Date)[1])) %>%
@@ -246,6 +247,8 @@ kable(world_totals) %>%
 #' #### TOP COUNTRIES PER STATUS
 #' 
 ## ----echo=FALSE----------------------------------------------------------
+
+
 # subset to country totals 
 country_totals <- data.frame(current_data %>%
 						select(Country, Status, Count) %>%
@@ -391,90 +394,6 @@ dfm_interactive <- dygraph(seriesObject
 
 dfm_interactive
 
-#' 
-#' 
-#' ---
-#' 
-#' #### Per Capita Analysis
-#' 
-#' 
-#' Raw counts only tell part of the story. Since the probability of, say, being diagnosed with COVID-19 is somewhat dependent on the percentage of people in a country that were diagnosed with the disease, the raw count divided by the population of a country would provide a better estimate of how one country compares to another. 
-#' 
-#' For example, the number of confirmed cases in the US is much higher now than any other country, yet because there are roughly 322 million people in the US, it still ranks 25th in terms of percentage of confirmed cases.
-#' 
-#' 
-#' 
-## ----include=FALSE-------------------------------------------------------
-# read in prepared dataset of countries and populations
-country_population <- read.csv("COVID19_DATA/country_population.csv")
-		  
-# per capita analysis
-percap <- merge(country_level_df, country_population, by="Country")
-
-# percentage
-percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100 
-
-#' 
-#' 
-#' **Top 25 Confirmed Cases by Percentage of Population**
-#' 
-## ----echo=FALSE----------------------------------------------------------
-# subset to current counts 
-current_data <- data.frame(percap %>%
-					filter(Date == unique(percap$Date)[1])) %>%
-					arrange(Status, desc(Pct))
-
-kable(current_data[1:25, ]) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
-
-#' 
-#' 
-#' Since the Diamond Princess is not a country and it dominates the percentages so much in all statuses, I'm removing it from consideration in the plots below.
-#' 
-#' 
-#' 
-#' 
-## ----include=FALSE-------------------------------------------------------
-# subset to top counts 	
-get_top_pcts <- function(dfm, coln) {
-	
-	dfm <- dfm[dfm$Status == coln, c(1,6)][2:12,]
-	row.names(dfm) <- 1:11
-	dfm$Pct <- round(dfm$Pct, 4)
-	dfm
-}					
-
-# separate by status 
-top_confirmed 	<- get_top_pcts(current_data, "confirmed")
-top_fatal	<- get_top_pcts(current_data, "fatal")
-top_recovered 	<- get_top_pcts(current_data, "recovered")
-
-# plot top countries per status 
-gg_plot <- function(dfm, status, color) {
-
-	ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
-		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top ", status, " Cases by Pct of Population")) + 
-		xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
-		geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
-    theme_minimal()
-
-}
-
-#' 
-#' 
-## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
-# top confirmed
-gg_plot(top_confirmed, "Confirmed", "red3")
-
-# top fatal 
-gg_plot(top_fatal, "Fatal", "gray25")
-
-# top recovered
-gg_plot(top_recovered, "Recovered", "springgreen4")
-
-
-#' 
 #' 
 #' 
 #' 
@@ -643,6 +562,7 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ##                   , full_width = FALSE)
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
+## 
 ## # subset to current counts
 ## current_data <- data.frame(country_level_df %>%
 ## 					filter(Date == unique(country_level_df$Date)[1])) %>%
@@ -657,6 +577,8 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ##       kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
+## 
+## 
 ## # subset to country totals
 ## country_totals <- data.frame(current_data %>%
 ## 						select(Country, Status, Count) %>%
@@ -775,63 +697,6 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 						   dyRangeSelector()
 ## 
 ## dfm_interactive
-## 
-## ## ----include=FALSE-------------------------------------------------------
-## # read in prepared dataset of countries and populations
-## country_population <- read.csv("COVID19_DATA/country_population.csv")
-## 		
-## # per capita analysis
-## percap <- merge(country_level_df, country_population, by="Country")
-## 
-## # percentage
-## percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100
-## 
-## ## ----echo=FALSE----------------------------------------------------------
-## # subset to current counts
-## current_data <- data.frame(percap %>%
-## 					filter(Date == unique(percap$Date)[1])) %>%
-## 					arrange(Status, desc(Pct))
-## 
-## kable(current_data[1:25, ]) %>%
-##   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
-## 
-## ## ----include=FALSE-------------------------------------------------------
-## # subset to top counts 	
-## get_top_pcts <- function(dfm, coln) {
-## 	
-## 	dfm <- dfm[dfm$Status == coln, c(1,6)][2:12,]
-## 	row.names(dfm) <- 1:11
-## 	dfm$Pct <- round(dfm$Pct, 4)
-## 	dfm
-## }					
-## 
-## # separate by status
-## top_confirmed 	<- get_top_pcts(current_data, "confirmed")
-## top_fatal	<- get_top_pcts(current_data, "fatal")
-## top_recovered 	<- get_top_pcts(current_data, "recovered")
-## 
-## # plot top countries per status
-## gg_plot <- function(dfm, status, color) {
-## 
-## 	ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
-## 		geom_bar(stat="identity", fill=color) +
-## 		ggtitle(paste0("Top ", status, " Cases by Pct of Population")) +
-## 		xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
-## 		geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
-##     theme_minimal()
-## 
-## }
-## 
-## ## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
-## # top confirmed
-## gg_plot(top_confirmed, "Confirmed", "red3")
-## 
-## # top fatal
-## gg_plot(top_fatal, "Fatal", "gray25")
-## 
-## # top recovered
-## gg_plot(top_recovered, "Recovered", "springgreen4")
-## 
 ## 
 ## 
 

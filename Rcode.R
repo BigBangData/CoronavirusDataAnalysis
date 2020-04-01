@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "3/30/2020"
+#' date: "3/31/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -348,12 +348,14 @@ plot_interactive_df <- function(dfm, status_df, status) {
                                           , status, " Cases")
                             , xlab=""
                             , ylab=paste0("Number of "
-                                          , status, " cases")) %>%
-                             dyOptions(
-                                colors=brewer.pal(
-                                  length(status_df$Country)
-                                                    ,"Dark2")) %>%
-                             dyRangeSelector()
+                                          , status, " Cases")
+                            ) %>%
+                    dyOptions(colors=brewer.pal(
+                                       length(status_df$Country)
+                                       ,"Dark2")
+                            ) %>%
+                    dyRangeSelector() %>%
+                    dyLegend(width = 750)
   interactive_df
 }
 
@@ -401,11 +403,19 @@ country_population <- read.csv("COVID19_DATA/country_population.csv")
 current_countries <- unique(country_level_df$Country)
 current_countries[!current_countries %in% country_population$Country]
 
+#' 
+#' 
+## ------------------------------------------------------------------------
 # per capita analysis
 percap <- merge(country_level_df, country_population, by="Country")
 
 # percentage
 percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100 
+
+# reorder by Country, Status, and Date descending
+percap <- data.frame(percap %>% 
+                     arrange(Country, Status, desc(Date)))
+          
 
 #' 
 #' 
@@ -475,117 +485,136 @@ gg_plot(top_recovered, "Recovered", "springgreen4")
 #' 
 #' ### Time Series by Percentage - Linear & Log 
 #' 
-#' ```
-#' IN PROGRESS...
 #' 
-#' ADD: Fatalities, Recovered
-#' 
-#' DO: Number of NEW Cases per TOTAL Confirmed Cases, Linear/Log.
-#' 
-#' ```
+#' Following are time series plots of percentages in linear and (natural) log scales for the top six countries in each category.
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
+
 # Generalizing Functions
-#create_xts_series <- function(dfm, country, status, scale) {
-#  
-#	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-#	
-#	series <- ifelse(scale == "linear"
-#	                , series <- xts(dfm$Pct, order.by = dfm$Date)
-#	                , series <- xts(log(dfm$Pct), order.by = dfm$Date)
-#	                )
-#	series
-#}
-#
-#
-#create_seriesObject <- function(dfm, status_df, status, scale) {
-#  
-#  seriesObject <- NULL
-#  for (i in 1:6) {
-#    
-#    seriesObject <- cbind(seriesObject
-#                          , create_xts_series(dfm
-#                                              , status_df$Country[i]
-#                                              , status
-#                                              , scale)
-#                          )
-#  }
-#  
-#  names(seriesObject) <- status_df$Country[1:6]
-#  seriesObject
-#}
+create_xts_series <- function(dfm, country, status, scale_) {
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+	
+	series <- if (scale_ == "Linear") {
+				xts(dfm$Pct, order.by = dfm$Date)
+			} else {
+			  xts(log(dfm$Pct), order.by = dfm$Date)
+	        }
+	series
+}
 
 
-#' 
-#' 
-#' 
-#' 
+create_seriesObject <- function(dfm, status_df, status, scale_) {
+  
+  seriesObject <- NULL
+  for (i in 1:6) {
+    
+    seriesObject <- cbind(seriesObject
+                          , create_xts_series(dfm
+                                              , status_df$Country[i]
+                                              , status
+                                              , scale_)
+                          )
+  }
+  
+  names(seriesObject) <- status_df$Country[1:6]
+  seriesObject
+}
+
+
+plot_interactive_df <- function(dfm, status_df, status, scale_) {
+  
+  seriesObject <- create_seriesObject(dfm
+									  , status_df
+									  , status
+									  , scale_)
+  
+  ylab_txt <- if (scale_ == "Linear") {
+					""
+				} else {
+				    "Log "
+				}
+  
+  interactive_df <- dygraph(seriesObject
+                            , main=paste0("Top Countries - "
+                                          , status, " Cases ("
+										  , scale_, " Scale)")
+                            , xlab=""
+                            , ylab=paste0(ylab_txt, "Percentage Of "
+                                          , status, " Cases")
+						                ) %>%
+                    dyOptions(colors=brewer.pal(6, "Dark2")
+							              ) %>%
+                    dyRangeSelector() %>%
+                    dyLegend(width = 750)
+  interactive_df
+}
+
 #' 
 #' 
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# Confirmed Linear 
-create_xts_series <- function(dfm, country, status) {
-  
-	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-	series <- xts(dfm$Pct, order.by = dfm$Date)
-	series
+# Confirmed Cases 
+plot_interactive_df(percap, top_confirmed, "Confirmed", "Linear")
+plot_interactive_df(percap, top_confirmed, "Confirmed", "Log")
+
+# Fatal Cases 
+plot_interactive_df(percap, top_fatal, "Fatal", "Linear")
+plot_interactive_df(percap, top_fatal, "Fatal", "Log")
+
+# Recovered Cases
+plot_interactive_df(percap, top_recovered, "Recovered", "Linear")
+plot_interactive_df(percap, top_recovered, "Recovered", "Log")
+
+
+#' 
+#' 
+#' 
+#' ---
+#' 
+#' 
+#' 
+#' ### Proportion of New Cases Compared to Total Confirmed Cases
+#' 
+#' 
+#' The most interesting plots perpahs would show how the disease is progressing. For this, we need to know how many new confirmed cases pop up every day, compared to the total number of confirmed cases. As a side note, confirmed cases also count fatalities and recoveries. Since at the time a case is confirmed it is generally about two weeks old, also note that we are looking into the past, not what is happening right now. Further, the number of confirmed cases is well below the actual number of cases, and varies depending on location and their ability to conduct testing. 
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+# Calculate new cases
+percap$NewCases <- NULL 
+
+for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+	
+	for (j in i:(i+Ndays-1)) {
+		percap$NewCases[j] <- percap$Count[j] - percap$Count[j+1]
+	}
+	
+	if (i > 1) {
+		percap$NewCases[i-1] <- 0
+	}
 }
 
-# Confirmed
-US <- create_xts_series(percap, "US", "Confirmed")
-Italy <- create_xts_series(percap, "Italy", "Confirmed")
-China <- create_xts_series(percap, "China", "Confirmed")
-Spain <- create_xts_series(percap, "Spain", "Confirmed")
-Germany <- create_xts_series(percap, "Germany", "Confirmed")
-France <- create_xts_series(percap, "France", "Confirmed")
-
-seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-				 
-dfm_interactive <- dygraph(seriesObject
-						   ,main=paste0("Top Countries - Confirmed Cases"
-										," by Percentage of Population (Log)")
-						   ,xlab=""
-						   ,ylab="Log of Percentage of Confirmed Cases") %>% 
-						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-dfm_interactive
+percap$NewCases[nrow(percap)] <- 0
+percap$NewCases <- as.integer(percap$NewCases)
 
 #' 
 #' 
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# Confirmed Log 
-create_xts_series <- function(dfm, country, status) {
-  
-	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-	series <- xts(log(dfm$Pct), order.by = dfm$Date)
-	series
-}
-
-# Confirmed
-US <- create_xts_series(percap, "US", "Confirmed")
-Italy <- create_xts_series(percap, "Italy", "Confirmed")
-China <- create_xts_series(percap, "China", "Confirmed")
-Spain <- create_xts_series(percap, "Spain", "Confirmed")
-Germany <- create_xts_series(percap, "Germany", "Confirmed")
-France <- create_xts_series(percap, "France", "Confirmed")
-
-seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-				 
-dfm_interactive <- dygraph(seriesObject
-						   ,main=paste0("Top Countries - Confirmed Cases"
-										," by Percentage of Population (Log)")
-						   ,xlab=""
-						   ,ylab="Log of Percentage of Confirmed Cases") %>% 
-						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						  
-						   dyRangeSelector()
-
-dfm_interactive
+#' **New Cases in the US:**
+#' 
+## ------------------------------------------------------------------------
+kable(percap[percap$Country == "US", ]) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                , full_width = FALSE)
 
 #' 
+#' ```
+#' TO DO:
 #' 
+#' Plot number of new cases per total confirmed cases, linear and log scales.
+#' 
+#' ```
 #' 
 #' 
 #' 
@@ -852,12 +881,14 @@ dfm_interactive
 ##                                           , status, " Cases")
 ##                             , xlab=""
 ##                             , ylab=paste0("Number of "
-##                                           , status, " cases")) %>%
-##                              dyOptions(
-##                                 colors=brewer.pal(
-##                                   length(status_df$Country)
-##                                                     ,"Dark2")) %>%
-##                              dyRangeSelector()
+##                                           , status, " Cases")
+##                             ) %>%
+##                     dyOptions(colors=brewer.pal(
+##                                        length(status_df$Country)
+##                                        ,"Dark2")
+##                             ) %>%
+##                     dyRangeSelector() %>%
+##                     dyLegend(width = 750)
 ##   interactive_df
 ## }
 ## 
@@ -884,11 +915,17 @@ dfm_interactive
 ## current_countries <- unique(country_level_df$Country)
 ## current_countries[!current_countries %in% country_population$Country]
 ## 
+## ## ------------------------------------------------------------------------
 ## # per capita analysis
 ## percap <- merge(country_level_df, country_population, by="Country")
 ## 
 ## # percentage
 ## percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100
+## 
+## # reorder by Country, Status, and Date descending
+## percap <- data.frame(percap %>%
+##                      arrange(Country, Status, desc(Date)))
+## 
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # subset to current counts
@@ -939,94 +976,104 @@ dfm_interactive
 ## 
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
+## 
 ## # Generalizing Functions
-## #create_xts_series <- function(dfm, country, status, scale) {
-## #
-## #	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-## #	
-## #	series <- ifelse(scale == "linear"
-## #	                , series <- xts(dfm$Pct, order.by = dfm$Date)
-## #	                , series <- xts(log(dfm$Pct), order.by = dfm$Date)
-## #	                )
-## #	series
-## #}
-## #
-## #
-## #create_seriesObject <- function(dfm, status_df, status, scale) {
-## #
-## #  seriesObject <- NULL
-## #  for (i in 1:6) {
-## #
-## #    seriesObject <- cbind(seriesObject
-## #                          , create_xts_series(dfm
-## #                                              , status_df$Country[i]
-## #                                              , status
-## #                                              , scale)
-## #                          )
-## #  }
-## #
-## #  names(seriesObject) <- status_df$Country[1:6]
-## #  seriesObject
-## #}
-## 
-## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-## # Confirmed Linear
-## create_xts_series <- function(dfm, country, status) {
+## create_xts_series <- function(dfm, country, status, scale_) {
 ## 
 ## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-## 	series <- xts(dfm$Pct, order.by = dfm$Date)
+## 	
+## 	series <- if (scale_ == "Linear") {
+## 				xts(dfm$Pct, order.by = dfm$Date)
+## 			} else {
+## 			  xts(log(dfm$Pct), order.by = dfm$Date)
+## 	        }
 ## 	series
 ## }
 ## 
-## # Confirmed
-## US <- create_xts_series(percap, "US", "Confirmed")
-## Italy <- create_xts_series(percap, "Italy", "Confirmed")
-## China <- create_xts_series(percap, "China", "Confirmed")
-## Spain <- create_xts_series(percap, "Spain", "Confirmed")
-## Germany <- create_xts_series(percap, "Germany", "Confirmed")
-## France <- create_xts_series(percap, "France", "Confirmed")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-## 				
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main=paste0("Top Countries - Confirmed Cases"
-## 										," by Percentage of Population (Log)")
-## 						   ,xlab=""
-## 						   ,ylab="Log of Percentage of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
-## 						   dyRangeSelector()
+## create_seriesObject <- function(dfm, status_df, status, scale_) {
 ## 
-## dfm_interactive
+##   seriesObject <- NULL
+##   for (i in 1:6) {
 ## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-## # Confirmed Log
-## create_xts_series <- function(dfm, country, status) {
+##     seriesObject <- cbind(seriesObject
+##                           , create_xts_series(dfm
+##                                               , status_df$Country[i]
+##                                               , status
+##                                               , scale_)
+##                           )
+##   }
 ## 
-## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-## 	series <- xts(log(dfm$Pct), order.by = dfm$Date)
-## 	series
+##   names(seriesObject) <- status_df$Country[1:6]
+##   seriesObject
 ## }
 ## 
-## # Confirmed
-## US <- create_xts_series(percap, "US", "Confirmed")
-## Italy <- create_xts_series(percap, "Italy", "Confirmed")
-## China <- create_xts_series(percap, "China", "Confirmed")
-## Spain <- create_xts_series(percap, "Spain", "Confirmed")
-## Germany <- create_xts_series(percap, "Germany", "Confirmed")
-## France <- create_xts_series(percap, "France", "Confirmed")
 ## 
-## seriesObject <- cbind(US, Italy, China, Spain, Germany, France)
-## 				
-## dfm_interactive <- dygraph(seriesObject
-## 						   ,main=paste0("Top Countries - Confirmed Cases"
-## 										," by Percentage of Population (Log)")
-## 						   ,xlab=""
-## 						   ,ylab="Log of Percentage of Confirmed Cases") %>%
-## 						   dyOptions(colors = brewer.pal(6,"Dark2")) %>%						
-## 						   dyRangeSelector()
+## plot_interactive_df <- function(dfm, status_df, status, scale_) {
 ## 
-## dfm_interactive
+##   seriesObject <- create_seriesObject(dfm
+## 									  , status_df
+## 									  , status
+## 									  , scale_)
+## 
+##   ylab_txt <- if (scale_ == "Linear") {
+## 					""
+## 				} else {
+## 				    "Log "
+## 				}
+## 
+##   interactive_df <- dygraph(seriesObject
+##                             , main=paste0("Top Countries - "
+##                                           , status, " Cases ("
+## 										  , scale_, " Scale)")
+##                             , xlab=""
+##                             , ylab=paste0(ylab_txt, "Percentage Of "
+##                                           , status, " Cases")
+## 						                ) %>%
+##                     dyOptions(colors=brewer.pal(6, "Dark2")
+## 							              ) %>%
+##                     dyRangeSelector() %>%
+##                     dyLegend(width = 750)
+##   interactive_df
+## }
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # Confirmed Cases
+## plot_interactive_df(percap, top_confirmed, "Confirmed", "Linear")
+## plot_interactive_df(percap, top_confirmed, "Confirmed", "Log")
+## 
+## # Fatal Cases
+## plot_interactive_df(percap, top_fatal, "Fatal", "Linear")
+## plot_interactive_df(percap, top_fatal, "Fatal", "Log")
+## 
+## # Recovered Cases
+## plot_interactive_df(percap, top_recovered, "Recovered", "Linear")
+## plot_interactive_df(percap, top_recovered, "Recovered", "Log")
+## 
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # Calculate new cases
+## percap$NewCases <- NULL
+## 
+## for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## 	
+## 	for (j in i:(i+Ndays-1)) {
+## 		percap$NewCases[j] <- percap$Count[j] - percap$Count[j+1]
+## 	}
+## 	
+## 	if (i > 1) {
+## 		percap$NewCases[i-1] <- 0
+## 	}
+## }
+## 
+## percap$NewCases[nrow(percap)] <- 0
+## percap$NewCases <- as.integer(percap$NewCases)
+## 
+## ## ------------------------------------------------------------------------
+## kable(percap[percap$Country == "US", ]) %>%
+##   kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                 , full_width = FALSE)
+## 
 ## 
 ## 
 
@@ -1037,7 +1084,7 @@ dfm_interactive
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
 
 #' 
 #' 

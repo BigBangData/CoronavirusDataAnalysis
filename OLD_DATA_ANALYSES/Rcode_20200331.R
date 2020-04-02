@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "04/01/2020"
+#' date: "3/31/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -94,7 +94,7 @@ preprocess <- function() {
 		load_csv <- function(filename) { 
 			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
 			                     , fileEncoding="UTF-8-BOM"
-								 , stringsAsFactors=FALSE, na.strings="")[-1, ]
+								           , stringsAsFactors=FALSE, na.strings="")[-1, ]
 			filename
 		}
 	
@@ -246,7 +246,7 @@ current_data <- data.frame(country_level_df %>%
 # subset to world totals 
 world_totals <- data.frame(current_data %>% 
 					group_by(Status) %>%
-					summarise('Total'=sum(Count)))
+					summarise('total'=sum(Count)))
 
 
 kable(world_totals) %>%
@@ -291,15 +291,15 @@ gg_plot <- function(dfm, status, color) {
 #' 
 #' 
 #' 
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## ------------------------------------------------------------------------
 # top confirmed
-gg_plot(top_confirmed, "Confirmed", "#D6604D") 
+gg_plot(top_confirmed, "Confirmed", "red3")
 
 # top fatal 
 gg_plot(top_fatal, "Fatal", "gray25")
 
 # top recovered
-gg_plot(top_recovered, "Recovered", "#74C476")
+gg_plot(top_recovered, "Recovered", "springgreen4")
 
 
 #' 
@@ -350,13 +350,10 @@ plot_interactive_df <- function(dfm, status_df, status) {
                             , ylab=paste0("Number of "
                                           , status, " Cases")
                             ) %>%
-					          dyAxis("x", drawGrid = FALSE) %>%
                     dyOptions(colors=brewer.pal(
                                        length(status_df$Country)
                                        ,"Dark2")
-                            , axisLineWidth = 1.5,
-							              , axisLineColor = "navy"
-							              , gridLineColor = "lightblue") %>%	
+                            ) %>%
                     dyRangeSelector() %>%
                     dyLegend(width = 750)
   interactive_df
@@ -394,7 +391,7 @@ plot_interactive_df(country_level_df, top_recovered[2:6, ], "Recovered")
 #' 
 #' Raw counts only tell part of the story. Since the probability of, say, being diagnosed with COVID-19 is somewhat dependent on the percentage of people in a country that were diagnosed with the disease, the raw count divided by the population of a country would provide a better estimate of how one country compares to another. 
 #' 
-#' For example, the number of confirmed cases in the US is much higher now than any other country, yet because there are roughly 322 million people in the US, it ranks lower than most smaller countries in percentage of confirmed cases.
+#' For example, the number of confirmed cases in the US is much higher now than any other country, yet because there are roughly 322 million people in the US, it still ranks 25th in terms of percentage of confirmed cases.
 #' 
 #' 
 #' 
@@ -408,7 +405,7 @@ current_countries[!current_countries %in% country_population$Country]
 
 #' 
 #' 
-## ----include=FALSE-------------------------------------------------------
+## ------------------------------------------------------------------------
 # per capita analysis
 percap <- merge(country_level_df, country_population, by="Country")
 
@@ -473,13 +470,13 @@ gg_plot <- function(dfm, status, color) {
 #' 
 ## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
 # top confirmed
-gg_plot(top_confirmed, "Confirmed", "#D6604D")
+gg_plot(top_confirmed, "Confirmed", "red3")
 
 # top fatal 
 gg_plot(top_fatal, "Fatal", "gray25")
 
 # top recovered
-gg_plot(top_recovered, "Recovered", "#74C476")
+gg_plot(top_recovered, "Recovered", "springgreen4")
 
 
 #' 
@@ -525,6 +522,7 @@ create_seriesObject <- function(dfm, status_df, status, scale_) {
   seriesObject
 }
 
+
 plot_interactive_df <- function(dfm, status_df, status, scale_) {
   
   seriesObject <- create_seriesObject(dfm
@@ -537,25 +535,21 @@ plot_interactive_df <- function(dfm, status_df, status, scale_) {
 				} else {
 				    "Log "
 				}
-  ylab_lab <- paste0(ylab_txt, "Percentage Of ", status, " Cases")
-  main_title <- paste0("Top Countries - ", status
-					 , " Cases (", scale_, " Scale)")
-				
-  interactive_df <- dygraph(seriesObject, main = main_title) %>% 
-					dyAxis("x", drawGrid = FALSE) %>%							
-					dyAxis("y", label = ylab_lab) %>%
+  
+  interactive_df <- dygraph(seriesObject
+                            , main=paste0("Top Countries - "
+                                          , status, " Cases ("
+										  , scale_, " Scale)")
+                            , xlab=""
+                            , ylab=paste0(ylab_txt, "Percentage Of "
+                                          , status, " Cases")
+						                ) %>%
                     dyOptions(colors=brewer.pal(6, "Dark2")
-							 , axisLineWidth = 1.5,
-							 , axisLineColor = "navy"
-							 , gridLineColor = "lightblue") %>%			
+							              ) %>%
                     dyRangeSelector() %>%
                     dyLegend(width = 750)
   interactive_df
 }
-
-# avoid NaNs in Log plots
-percap$Pct[percap$Pct == 0] <- 1/1e8
-
 
 #' 
 #' 
@@ -607,18 +601,20 @@ percap$NewCases <- as.integer(percap$NewCases)
 
 #' 
 #' 
-#' **Recent New Confirmed Cases in the US**
+#' **New Cases in the US:**
 #' 
-## ----echo=FALSE----------------------------------------------------------
-kable(percap[percap$Country == "US", ][1:10,]) %>%
+## ------------------------------------------------------------------------
+kable(percap[percap$Country == "US", ]) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                 , full_width = FALSE)
 
 #' 
+#' ```
+#' TO DO:
 #' 
+#' Plot number of new cases per total confirmed cases, linear and log scales.
 #' 
-#' 
-#' 
+#' ```
 #' 
 #' 
 #' 
@@ -712,7 +708,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## 		load_csv <- function(filename) {
 ## 			filename <- read.csv(paste0(dir_path, filename, ".csv"), header=TRUE
 ## 			                     , fileEncoding="UTF-8-BOM"
-## 								 , stringsAsFactors=FALSE, na.strings="")[-1, ]
+## 								           , stringsAsFactors=FALSE, na.strings="")[-1, ]
 ## 			filename
 ## 		}
 ## 	
@@ -805,7 +801,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## # subset to world totals
 ## world_totals <- data.frame(current_data %>%
 ## 					group_by(Status) %>%
-## 					summarise('Total'=sum(Count)))
+## 					summarise('total'=sum(Count)))
 ## 
 ## 
 ## kable(world_totals) %>%
@@ -843,15 +839,15 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## 
 ## }
 ## 
-## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## ## ------------------------------------------------------------------------
 ## # top confirmed
-## gg_plot(top_confirmed, "Confirmed", "#D6604D")
+## gg_plot(top_confirmed, "Confirmed", "red3")
 ## 
 ## # top fatal
 ## gg_plot(top_fatal, "Fatal", "gray25")
 ## 
 ## # top recovered
-## gg_plot(top_recovered, "Recovered", "#74C476")
+## gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
@@ -887,13 +883,10 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ##                             , ylab=paste0("Number of "
 ##                                           , status, " Cases")
 ##                             ) %>%
-## 					          dyAxis("x", drawGrid = FALSE) %>%
 ##                     dyOptions(colors=brewer.pal(
 ##                                        length(status_df$Country)
 ##                                        ,"Dark2")
-##                             , axisLineWidth = 1.5,
-## 							              , axisLineColor = "navy"
-## 							              , gridLineColor = "lightblue") %>%	
+##                             ) %>%
 ##                     dyRangeSelector() %>%
 ##                     dyLegend(width = 750)
 ##   interactive_df
@@ -922,7 +915,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## current_countries <- unique(country_level_df$Country)
 ## current_countries[!current_countries %in% country_population$Country]
 ## 
-## ## ----include=FALSE-------------------------------------------------------
+## ## ------------------------------------------------------------------------
 ## # per capita analysis
 ## percap <- merge(country_level_df, country_population, by="Country")
 ## 
@@ -973,13 +966,13 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## 
 ## ## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
 ## # top confirmed
-## gg_plot(top_confirmed, "Confirmed", "#D6604D")
+## gg_plot(top_confirmed, "Confirmed", "red3")
 ## 
 ## # top fatal
 ## gg_plot(top_fatal, "Fatal", "gray25")
 ## 
 ## # top recovered
-## gg_plot(top_recovered, "Recovered", "#74C476")
+## gg_plot(top_recovered, "Recovered", "springgreen4")
 ## 
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
@@ -1015,6 +1008,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ##   seriesObject
 ## }
 ## 
+## 
 ## plot_interactive_df <- function(dfm, status_df, status, scale_) {
 ## 
 ##   seriesObject <- create_seriesObject(dfm
@@ -1027,25 +1021,21 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## 				} else {
 ## 				    "Log "
 ## 				}
-##   ylab_lab <- paste0(ylab_txt, "Percentage Of ", status, " Cases")
-##   main_title <- paste0("Top Countries - ", status
-## 					 , " Cases (", scale_, " Scale)")
-## 				
-##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
-## 					dyAxis("x", drawGrid = FALSE) %>%							
-## 					dyAxis("y", label = ylab_lab) %>%
+## 
+##   interactive_df <- dygraph(seriesObject
+##                             , main=paste0("Top Countries - "
+##                                           , status, " Cases ("
+## 										  , scale_, " Scale)")
+##                             , xlab=""
+##                             , ylab=paste0(ylab_txt, "Percentage Of "
+##                                           , status, " Cases")
+## 						                ) %>%
 ##                     dyOptions(colors=brewer.pal(6, "Dark2")
-## 							 , axisLineWidth = 1.5,
-## 							 , axisLineColor = "navy"
-## 							 , gridLineColor = "lightblue") %>%			
+## 							              ) %>%
 ##                     dyRangeSelector() %>%
 ##                     dyLegend(width = 750)
 ##   interactive_df
 ## }
-## 
-## # avoid NaNs in Log plots
-## percap$Pct[percap$Pct == 0] <- 1/1e8
-## 
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Confirmed Cases
@@ -1079,10 +1069,13 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## percap$NewCases[nrow(percap)] <- 0
 ## percap$NewCases <- as.integer(percap$NewCases)
 ## 
-## ## ----echo=FALSE----------------------------------------------------------
-## kable(percap[percap$Country == "US", ][1:10,]) %>%
+## ## ------------------------------------------------------------------------
+## kable(percap[percap$Country == "US", ]) %>%
 ##   kable_styling(bootstrap_options = c("striped", "hover", "condensed")
 ##                 , full_width = FALSE)
+## 
+## 
+## 
 
 #' 
 #' 
@@ -1091,7 +1084,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
 
 #' 
 #' 

@@ -255,7 +255,7 @@ kable(world_totals) %>%
 
 #' 
 #' 
-#' #### TOP TEN COUNTRIES PER STATUS
+#' #### TOP COUNTRIES PER STATUS
 #' 
 ## ----echo=FALSE----------------------------------------------------------
 # subset to country totals 
@@ -264,41 +264,42 @@ country_totals <- data.frame(current_data %>%
 						group_by(Country, Status))
 	
 # subset to top counts 	
-get_top10_counts <- function(dfm, coln) {
+get_top_counts <- function(dfm, coln) {
 	
-	dfm <- dfm[dfm$Status == coln, c(1,3)][1:10,]
-	row.names(dfm) <- 1:10
+	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
+	row.names(dfm) <- 1:6
 	dfm
 }					
 
 # separate by status 
-top10_confirmed 	<- get_top10_counts(country_totals, "Confirmed")
-top10_fatal	<- get_top10_counts(country_totals, "Fatal")
-top10_recovered 	<- get_top10_counts(country_totals, "Recovered")
+top_confirmed 	<- get_top_counts(country_totals, "Confirmed")
+top_fatal	<- get_top_counts(country_totals, "Fatal")
+top_recovered 	<- get_top_counts(country_totals, "Recovered")
 
 # plot top countries per status 
 gg_plot <- function(dfm, status, color) {
 
 	ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
 		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top Ten Countries - ", status, " Cases")) + 
+		ggtitle(paste0("Top ", status, " Cases by Country")) + 
 		xlab("") + ylab(paste0("Number of ", status, " Cases")) +
 		geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
-    theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+		theme_minimal()
+
 }
 
 #' 
 #' 
 #' 
-## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # top confirmed
-gg_plot(top10_confirmed, "Confirmed", "#D6604D") 
+gg_plot(top_confirmed, "Confirmed", "#D6604D") 
 
 # top fatal 
-gg_plot(top10_fatal, "Fatal", "gray25")
+gg_plot(top_fatal, "Fatal", "gray25")
 
 # top recovered
-gg_plot(top10_recovered, "Recovered", "#74C476")
+gg_plot(top_recovered, "Recovered", "#74C476")
 
 
 #' 
@@ -308,148 +309,82 @@ gg_plot(top10_recovered, "Recovered", "#74C476")
 #' ---
 #' 
 #'   
+#'   
 #' 
 #' ### Time Series Plots per Status and Location
 #' 
 #' This interactive time series speaks for itself: the US has overtaken Italy and China in number of confirmed cases in the last two days.
 #' 
 #' 
-## ----include=FALSE-------------------------------------------------------
-# subset to top 6 counts 	
-get_top6_counts <- function(dfm, coln) {
-	
-	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
-	row.names(dfm) <- 1:6
-	dfm
-}		
-
-top6_confirmed 	<- get_top6_counts(country_totals, "Confirmed")
-top6_fatal	<- get_top6_counts(country_totals, "Fatal")
-top6_recovered 	<- get_top6_counts(country_totals, "Recovered")
-
-
-#' 
-#' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
-# functions for plotting interactive time series
-
-# arg values:
-# dfm = the dataframe
-# country = country name - passed as a vector in next function
-# status = Confirmed, Fatal, Recovered
-# scale_ = Linear, Log
-# type = Count, Pct 
-
-create_xts_series <- function(dfm, country, status, scale_, type) {
+create_xts_series <- function(dfm, country, status) {
   
 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-	
-	if (type == "Count") {
-	  
-	  series <- if (scale_ == "Linear") {
-	  			xts(dfm$Count, order.by = dfm$Date)
-	  		} else {
-	  		  xts(log(dfm$Count), order.by = dfm$Date)
-	  		}
-	
-	} else {
-	  
-	  series <- if (scale_ == "Linear") {
-	  			xts(dfm$Pct, order.by = dfm$Date)
-	  		} else {
-	  		  xts(log(dfm$Pct), order.by = dfm$Date)
-	  		}	  
-	}
+	series <- xts(dfm$Count, order.by = dfm$Date)
 	series
 }
 
-
-create_seriesObject <- function(dfm, status_df, status, scale_, type) {
+create_seriesObject <- function(dfm, countries, status) {
   
   seriesObject <- NULL
-  for (i in 1:6) {
-    
+  for (i in 1:length(countries)) {
     seriesObject <- cbind(seriesObject
-                          , create_xts_series(dfm
-                                              , status_df$Country[i]
-                                              , status
-                                              , scale_
-                                              , type)
-                          )
+                          , create_xts_series(dfm, countries[i]
+                          , status))
   }
   
-  names(seriesObject) <- status_df$Country[1:6]
+  names(seriesObject) <- countries
   seriesObject
 }
 
-plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
+
+plot_interactive_df <- function(dfm, status_df, status) {
   
-  seriesObject <- create_seriesObject(dfm
-									  , status_df
-									  , status
-									  , scale_
-									  , type)
+  seriesObject <- create_seriesObject(dfm, status_df$Country, status)
   
-  if (type == "Count") {
-    ylab_txt <- if (scale_ == "Linear") {
-	  				"Number Of "
-	  			} else {
-	  			  "Log Count - "
-	  			}
-  } else {
-    ylab_txt <- if (scale_ == "Linear") {
-	  				"Percentage Of "
-	  			} else {
-	  			  "Log Percentage - "
-	  			}   
-  }
-  
-  ylab_lab <- paste0(ylab_txt, status, " Cases")
-  main_title <- paste0("Top Six Countries - ", status
-					 , " Cases (", scale_, " Scale)")
-  
-  interactive_df <- dygraph(seriesObject, main = main_title) %>% 
-					dyAxis("x", drawGrid = FALSE) %>%							
-					dyAxis("y", label = ylab_lab) %>%
-					dyOptions(colors=brewer.pal(6, "Dark2")
-							, axisLineWidth = 1.5
-							, axisLineColor = "navy"
-							, gridLineColor = "lightblue") %>%			
-					dyRangeSelector() %>%
-					dyLegend(width = 750)
-  
+  interactive_df <- dygraph(seriesObject
+                            , main=paste0("Top Countries - "
+                                          , status, " Cases")
+                            , xlab=""
+                            , ylab=paste0("Number of "
+                                          , status, " Cases")
+                            ) %>%
+					          dyAxis("x", drawGrid = FALSE) %>%
+                    dyOptions(colors=brewer.pal(
+                                       length(status_df$Country)
+                                       ,"Dark2")
+                            , axisLineWidth = 1.5,
+							              , axisLineColor = "navy"
+							              , gridLineColor = "lightblue") %>%	
+                    dyRangeSelector() %>%
+                    dyLegend(width = 750)
   interactive_df
 }
 
 #' 
 #' 
 #' 
-#' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# INTERACTIVE PLOTS - COUNT 
-
+# INTERACTIVE PLOTS - COUNT
 # Confirmed
-plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
-                    , "Confirmed", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
-                    , "Confirmed", "Log", "Count")
+plot_interactive_df(country_level_df, top_confirmed, "Confirmed")
 
 # Fatal
-plot_interactive_df(country_level_df, top10_fatal[1:6,]
-                    , "Fatal", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_fatal[1:6,]
-                    , "Fatal", "Log", "Count")
+plot_interactive_df(country_level_df, top_fatal, "Fatal")
 
 # Recovered
-plot_interactive_df(country_level_df, top10_recovered[1:6,]
-                    , "Recovered", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_recovered[1:6,]
-                    , "Recovered", "Log", "Count")
+plot_interactive_df(country_level_df, top_recovered, "Recovered")
 
 #' 
 #' 
 #' 
+#' Since China dominates this plot too much, it would be interesting to see how the other countries are doing as far as recoveries:
+#' 
+## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+# Recovered - after China
+plot_interactive_df(country_level_df, top_recovered[2:6, ], "Recovered")
+
 #' 
 #' 
 #' ---
@@ -464,29 +399,26 @@ plot_interactive_df(country_level_df, top10_recovered[1:6,]
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
-# Per Capita Analysis 
-
-# data enrichment and wranglingt
-
 # read in prepared dataset of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
-# test for new countries in data 
+# TEST
 current_countries <- unique(country_level_df$Country)
 current_countries[!current_countries %in% country_population$Country]
 
-# merge datasets
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+# per capita analysis
 percap <- merge(country_level_df, country_population, by="Country")
 
-# create percentage col
+# percentage
 percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100 
 
 # reorder by Country, Status, and Date descending
 percap <- data.frame(percap %>% 
                      arrange(Country, Status, desc(Date)))
-
-# avoid NaNs in Log plots
-percap$Pct[percap$Pct == 0] <- 0.0001
+          
 
 #' 
 #' 
@@ -504,53 +436,51 @@ kable(current_data[1:25, ]) %>%
 
 #' 
 #' 
-#' Since the cruise ships Diamond Princess and MS Zaandam are not countries and dominate plots in a perhaps unrealistic comparison, I am removing them from from consideration in the plots below.
+#' Since the Diamond Princess is not a country and it dominates the percentages so much in all statuses, I'm removing it from consideration in the plots below.
+#' 
 #' 
 #' 
 #' 
 ## ----include=FALSE-------------------------------------------------------
-# discard cruise ships from countries	
-cruise_ships <- c("Diamond Princess", "MS Zaandam")
-current_data <- current_data[!current_data$Country %in% cruise_ships, ]
-
-# subset to top tencounts 	
-get_top10_pcts <- function(dfm, coln) {
+# subset to top counts 	
+get_top_pcts <- function(dfm, coln) {
 	
-	dfm <- dfm[dfm$Status == coln, c(1,6)][1:10,]
-	row.names(dfm) <- 1:10
+	dfm <- dfm[dfm$Status == coln, c(1,6)][2:12,]
+	row.names(dfm) <- 1:11
 	dfm$Pct <- round(dfm$Pct, 4)
 	dfm
 }					
 
 # separate by status 
-top10_confirmed 	<- get_top10_pcts(current_data, "Confirmed")
-top10_fatal	<- get_top10_pcts(current_data, "Fatal")
-top10_recovered 	<- get_top10_pcts(current_data, "Recovered")
+top_confirmed 	<- get_top_pcts(current_data, "Confirmed")
+top_fatal	<- get_top_pcts(current_data, "Fatal")
+top_recovered 	<- get_top_pcts(current_data, "Recovered")
 
 # plot top countries per status 
 gg_plot <- function(dfm, status, color) {
 
 	ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
 		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top Ten Countries: ", status
-		               , " Cases by Percentage of Population")) + 
+		ggtitle(paste0("Top ", status, " Cases by Pct of Population")) + 
 		xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
 		geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
-    theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme_minimal()
+
 }
 
 #' 
 #' 
 #' 
-## ----echo=FALSE, fig.height=6, fig.width=9-------------------------------
+## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
 # top confirmed
-gg_plot(top10_confirmed, "Confirmed", "#D6604D")
+gg_plot(top_confirmed, "Confirmed", "#D6604D")
 
 # top fatal 
-gg_plot(top10_fatal, "Fatal", "gray25")
+gg_plot(top_fatal, "Fatal", "gray25")
 
 # top recovered
-gg_plot(top10_recovered, "Recovered", "#74C476")
+gg_plot(top_recovered, "Recovered", "#74C476")
+
 
 #' 
 #' ---
@@ -562,19 +492,86 @@ gg_plot(top10_recovered, "Recovered", "#74C476")
 #' Following are time series plots of percentages in linear and (natural) log scales for the top six countries in each category.
 #' 
 #' 
+## ----include=FALSE-------------------------------------------------------
+
+# Generalizing Functions
+create_xts_series <- function(dfm, country, status, scale_) {
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+	
+	series <- if (scale_ == "Linear") {
+				xts(dfm$Pct, order.by = dfm$Date)
+			} else {
+			  xts(log(dfm$Pct), order.by = dfm$Date)
+	        }
+	series
+}
+
+
+create_seriesObject <- function(dfm, status_df, status, scale_) {
+  
+  seriesObject <- NULL
+  for (i in 1:6) {
+    
+    seriesObject <- cbind(seriesObject
+                          , create_xts_series(dfm
+                                              , status_df$Country[i]
+                                              , status
+                                              , scale_)
+                          )
+  }
+  
+  names(seriesObject) <- status_df$Country[1:6]
+  seriesObject
+}
+
+plot_interactive_df <- function(dfm, status_df, status, scale_) {
+  
+  seriesObject <- create_seriesObject(dfm
+									  , status_df
+									  , status
+									  , scale_)
+  
+  ylab_txt <- if (scale_ == "Linear") {
+					""
+				} else {
+				    "Log "
+				}
+  ylab_lab <- paste0(ylab_txt, "Percentage Of ", status, " Cases")
+  main_title <- paste0("Top Countries - ", status
+					 , " Cases (", scale_, " Scale)")
+				
+  interactive_df <- dygraph(seriesObject, main = main_title) %>% 
+					dyAxis("x", drawGrid = FALSE) %>%							
+					dyAxis("y", label = ylab_lab) %>%
+                    dyOptions(colors=brewer.pal(6, "Dark2")
+							 , axisLineWidth = 1.5,
+							 , axisLineColor = "navy"
+							 , gridLineColor = "lightblue") %>%			
+                    dyRangeSelector() %>%
+                    dyLegend(width = 750)
+  interactive_df
+}
+
+# avoid NaNs in Log plots
+percap$Pct[percap$Pct == 0] <- 1/1e8
+
+
+#' 
+#' 
 #' 
 ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 # Confirmed Cases 
-plot_interactive_df(percap, top10_confirmed[1:6, ], "Confirmed", "Linear", "Pct")
-plot_interactive_df(percap, top10_confirmed[1:6, ], "Confirmed", "Log", "Pct")
+plot_interactive_df(percap, top_confirmed, "Confirmed", "Linear")
+plot_interactive_df(percap, top_confirmed, "Confirmed", "Log")
 
 # Fatal Cases 
-plot_interactive_df(percap, top10_fatal, "Fatal", "Linear", "Pct")
-plot_interactive_df(percap, top10_fatal, "Fatal", "Log", "Pct")
+plot_interactive_df(percap, top_fatal, "Fatal", "Linear")
+plot_interactive_df(percap, top_fatal, "Fatal", "Log")
 
 # Recovered Cases
-plot_interactive_df(percap, top10_recovered, "Recovered", "Linear", "Pct")
-plot_interactive_df(percap, top10_recovered, "Recovered", "Log", "Pct")
+plot_interactive_df(percap, top_recovered, "Recovered", "Linear")
+plot_interactive_df(percap, top_recovered, "Recovered", "Log")
 
 
 #' 
@@ -822,190 +819,120 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ## 						group_by(Country, Status))
 ## 	
 ## # subset to top counts 	
-## get_top10_counts <- function(dfm, coln) {
+## get_top_counts <- function(dfm, coln) {
 ## 	
-## 	dfm <- dfm[dfm$Status == coln, c(1,3)][1:10,]
-## 	row.names(dfm) <- 1:10
+## 	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
+## 	row.names(dfm) <- 1:6
 ## 	dfm
 ## }					
 ## 
 ## # separate by status
-## top10_confirmed 	<- get_top10_counts(country_totals, "Confirmed")
-## top10_fatal	<- get_top10_counts(country_totals, "Fatal")
-## top10_recovered 	<- get_top10_counts(country_totals, "Recovered")
+## top_confirmed 	<- get_top_counts(country_totals, "Confirmed")
+## top_fatal	<- get_top_counts(country_totals, "Fatal")
+## top_recovered 	<- get_top_counts(country_totals, "Recovered")
 ## 
 ## # plot top countries per status
 ## gg_plot <- function(dfm, status, color) {
 ## 
 ## 	ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
 ## 		geom_bar(stat="identity", fill=color) +
-## 		ggtitle(paste0("Top Ten Countries - ", status, " Cases")) +
+## 		ggtitle(paste0("Top ", status, " Cases by Country")) +
 ## 		xlab("") + ylab(paste0("Number of ", status, " Cases")) +
 ## 		geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
-##     theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+## 		theme_minimal()
+## 
 ## }
 ## 
-## ## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # top confirmed
-## gg_plot(top10_confirmed, "Confirmed", "#D6604D")
+## gg_plot(top_confirmed, "Confirmed", "#D6604D")
 ## 
 ## # top fatal
-## gg_plot(top10_fatal, "Fatal", "gray25")
+## gg_plot(top_fatal, "Fatal", "gray25")
 ## 
 ## # top recovered
-## gg_plot(top10_recovered, "Recovered", "#74C476")
+## gg_plot(top_recovered, "Recovered", "#74C476")
 ## 
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
-## # subset to top 6 counts 	
-## get_top6_counts <- function(dfm, coln) {
-## 	
-## 	dfm <- dfm[dfm$Status == coln, c(1,3)][1:6,]
-## 	row.names(dfm) <- 1:6
-## 	dfm
-## }		
-## 
-## top6_confirmed 	<- get_top6_counts(country_totals, "Confirmed")
-## top6_fatal	<- get_top6_counts(country_totals, "Fatal")
-## top6_recovered 	<- get_top6_counts(country_totals, "Recovered")
-## 
-## 
-## ## ----include=FALSE-------------------------------------------------------
-## # functions for plotting interactive time series
-## 
-## # arg values:
-## # dfm = the dataframe
-## # country = country name - passed as a vector in next function
-## # status = Confirmed, Fatal, Recovered
-## # scale_ = Linear, Log
-## # type = Count, Pct
-## 
-## create_xts_series <- function(dfm, country, status, scale_, type) {
+## create_xts_series <- function(dfm, country, status) {
 ## 
 ## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-## 	
-## 	if (type == "Count") {
-## 	
-## 	  series <- if (scale_ == "Linear") {
-## 	  			xts(dfm$Count, order.by = dfm$Date)
-## 	  		} else {
-## 	  		  xts(log(dfm$Count), order.by = dfm$Date)
-## 	  		}
-## 	
-## 	} else {
-## 	
-## 	  series <- if (scale_ == "Linear") {
-## 	  			xts(dfm$Pct, order.by = dfm$Date)
-## 	  		} else {
-## 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
-## 	  		}	
-## 	}
+## 	series <- xts(dfm$Count, order.by = dfm$Date)
 ## 	series
 ## }
 ## 
-## 
-## create_seriesObject <- function(dfm, status_df, status, scale_, type) {
+## create_seriesObject <- function(dfm, countries, status) {
 ## 
 ##   seriesObject <- NULL
-##   for (i in 1:6) {
-## 
+##   for (i in 1:length(countries)) {
 ##     seriesObject <- cbind(seriesObject
-##                           , create_xts_series(dfm
-##                                               , status_df$Country[i]
-##                                               , status
-##                                               , scale_
-##                                               , type)
-##                           )
+##                           , create_xts_series(dfm, countries[i]
+##                           , status))
 ##   }
 ## 
-##   names(seriesObject) <- status_df$Country[1:6]
+##   names(seriesObject) <- countries
 ##   seriesObject
 ## }
 ## 
-## plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 ## 
-##   seriesObject <- create_seriesObject(dfm
-## 									  , status_df
-## 									  , status
-## 									  , scale_
-## 									  , type)
+## plot_interactive_df <- function(dfm, status_df, status) {
 ## 
-##   if (type == "Count") {
-##     ylab_txt <- if (scale_ == "Linear") {
-## 	  				"Number Of "
-## 	  			} else {
-## 	  			  "Log Count - "
-## 	  			}
-##   } else {
-##     ylab_txt <- if (scale_ == "Linear") {
-## 	  				"Percentage Of "
-## 	  			} else {
-## 	  			  "Log Percentage - "
-## 	  			}
-##   }
+##   seriesObject <- create_seriesObject(dfm, status_df$Country, status)
 ## 
-##   ylab_lab <- paste0(ylab_txt, status, " Cases")
-##   main_title <- paste0("Top Six Countries - ", status
-## 					 , " Cases (", scale_, " Scale)")
-## 
-##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
-## 					dyAxis("x", drawGrid = FALSE) %>%							
-## 					dyAxis("y", label = ylab_lab) %>%
-## 					dyOptions(colors=brewer.pal(6, "Dark2")
-## 							, axisLineWidth = 1.5
-## 							, axisLineColor = "navy"
-## 							, gridLineColor = "lightblue") %>%			
-## 					dyRangeSelector() %>%
-## 					dyLegend(width = 750)
-## 
+##   interactive_df <- dygraph(seriesObject
+##                             , main=paste0("Top Countries - "
+##                                           , status, " Cases")
+##                             , xlab=""
+##                             , ylab=paste0("Number of "
+##                                           , status, " Cases")
+##                             ) %>%
+## 					          dyAxis("x", drawGrid = FALSE) %>%
+##                     dyOptions(colors=brewer.pal(
+##                                        length(status_df$Country)
+##                                        ,"Dark2")
+##                             , axisLineWidth = 1.5,
+## 							              , axisLineColor = "navy"
+## 							              , gridLineColor = "lightblue") %>%	
+##                     dyRangeSelector() %>%
+##                     dyLegend(width = 750)
 ##   interactive_df
 ## }
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # INTERACTIVE PLOTS - COUNT
-## 
 ## # Confirmed
-## plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
-##                     , "Confirmed", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
-##                     , "Confirmed", "Log", "Count")
+## plot_interactive_df(country_level_df, top_confirmed, "Confirmed")
 ## 
 ## # Fatal
-## plot_interactive_df(country_level_df, top10_fatal[1:6,]
-##                     , "Fatal", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_fatal[1:6,]
-##                     , "Fatal", "Log", "Count")
+## plot_interactive_df(country_level_df, top_fatal, "Fatal")
 ## 
 ## # Recovered
-## plot_interactive_df(country_level_df, top10_recovered[1:6,]
-##                     , "Recovered", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_recovered[1:6,]
-##                     , "Recovered", "Log", "Count")
+## plot_interactive_df(country_level_df, top_recovered, "Recovered")
+## 
+## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
+## # Recovered - after China
+## plot_interactive_df(country_level_df, top_recovered[2:6, ], "Recovered")
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
-## # Per Capita Analysis
-## 
-## # data enrichment and wranglingt
-## 
 ## # read in prepared dataset of countries and populations
 ## country_population <- read.csv("COVID19_DATA/country_population.csv")
 ## 		
-## # test for new countries in data
+## # TEST
 ## current_countries <- unique(country_level_df$Country)
 ## current_countries[!current_countries %in% country_population$Country]
 ## 
-## # merge datasets
+## ## ----include=FALSE-------------------------------------------------------
+## # per capita analysis
 ## percap <- merge(country_level_df, country_population, by="Country")
 ## 
-## # create percentage col
+## # percentage
 ## percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100
 ## 
 ## # reorder by Country, Status, and Date descending
 ## percap <- data.frame(percap %>%
 ##                      arrange(Country, Status, desc(Date)))
 ## 
-## # avoid NaNs in Log plots
-## percap$Pct[percap$Pct == 0] <- 0.0001
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # subset to current counts
@@ -1018,58 +945,120 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 ##                 , full_width = FALSE)
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
-## # discard cruise ships from countries	
-## cruise_ships <- c("Diamond Princess", "MS Zaandam")
-## current_data <- current_data[!current_data$Country %in% cruise_ships, ]
-## 
-## # subset to top tencounts 	
-## get_top10_pcts <- function(dfm, coln) {
+## # subset to top counts 	
+## get_top_pcts <- function(dfm, coln) {
 ## 	
-## 	dfm <- dfm[dfm$Status == coln, c(1,6)][1:10,]
-## 	row.names(dfm) <- 1:10
+## 	dfm <- dfm[dfm$Status == coln, c(1,6)][2:12,]
+## 	row.names(dfm) <- 1:11
 ## 	dfm$Pct <- round(dfm$Pct, 4)
 ## 	dfm
 ## }					
 ## 
 ## # separate by status
-## top10_confirmed 	<- get_top10_pcts(current_data, "Confirmed")
-## top10_fatal	<- get_top10_pcts(current_data, "Fatal")
-## top10_recovered 	<- get_top10_pcts(current_data, "Recovered")
+## top_confirmed 	<- get_top_pcts(current_data, "Confirmed")
+## top_fatal	<- get_top_pcts(current_data, "Fatal")
+## top_recovered 	<- get_top_pcts(current_data, "Recovered")
 ## 
 ## # plot top countries per status
 ## gg_plot <- function(dfm, status, color) {
 ## 
 ## 	ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
 ## 		geom_bar(stat="identity", fill=color) +
-## 		ggtitle(paste0("Top Ten Countries: ", status
-## 		               , " Cases by Percentage of Population")) +
+## 		ggtitle(paste0("Top ", status, " Cases by Pct of Population")) +
 ## 		xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
 ## 		geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
-##     theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+##     theme_minimal()
+## 
 ## }
 ## 
-## ## ----echo=FALSE, fig.height=6, fig.width=9-------------------------------
+## ## ----echo=FALSE, fig.height=7, fig.width=9-------------------------------
 ## # top confirmed
-## gg_plot(top10_confirmed, "Confirmed", "#D6604D")
+## gg_plot(top_confirmed, "Confirmed", "#D6604D")
 ## 
 ## # top fatal
-## gg_plot(top10_fatal, "Fatal", "gray25")
+## gg_plot(top_fatal, "Fatal", "gray25")
 ## 
 ## # top recovered
-## gg_plot(top10_recovered, "Recovered", "#74C476")
+## gg_plot(top_recovered, "Recovered", "#74C476")
+## 
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## 
+## # Generalizing Functions
+## create_xts_series <- function(dfm, country, status, scale_) {
+## 
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## 	
+## 	series <- if (scale_ == "Linear") {
+## 				xts(dfm$Pct, order.by = dfm$Date)
+## 			} else {
+## 			  xts(log(dfm$Pct), order.by = dfm$Date)
+## 	        }
+## 	series
+## }
+## 
+## 
+## create_seriesObject <- function(dfm, status_df, status, scale_) {
+## 
+##   seriesObject <- NULL
+##   for (i in 1:6) {
+## 
+##     seriesObject <- cbind(seriesObject
+##                           , create_xts_series(dfm
+##                                               , status_df$Country[i]
+##                                               , status
+##                                               , scale_)
+##                           )
+##   }
+## 
+##   names(seriesObject) <- status_df$Country[1:6]
+##   seriesObject
+## }
+## 
+## plot_interactive_df <- function(dfm, status_df, status, scale_) {
+## 
+##   seriesObject <- create_seriesObject(dfm
+## 									  , status_df
+## 									  , status
+## 									  , scale_)
+## 
+##   ylab_txt <- if (scale_ == "Linear") {
+## 					""
+## 				} else {
+## 				    "Log "
+## 				}
+##   ylab_lab <- paste0(ylab_txt, "Percentage Of ", status, " Cases")
+##   main_title <- paste0("Top Countries - ", status
+## 					 , " Cases (", scale_, " Scale)")
+## 				
+##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
+## 					dyAxis("x", drawGrid = FALSE) %>%							
+## 					dyAxis("y", label = ylab_lab) %>%
+##                     dyOptions(colors=brewer.pal(6, "Dark2")
+## 							 , axisLineWidth = 1.5,
+## 							 , axisLineColor = "navy"
+## 							 , gridLineColor = "lightblue") %>%			
+##                     dyRangeSelector() %>%
+##                     dyLegend(width = 750)
+##   interactive_df
+## }
+## 
+## # avoid NaNs in Log plots
+## percap$Pct[percap$Pct == 0] <- 1/1e8
+## 
 ## 
 ## ## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
 ## # Confirmed Cases
-## plot_interactive_df(percap, top10_confirmed[1:6, ], "Confirmed", "Linear", "Pct")
-## plot_interactive_df(percap, top10_confirmed[1:6, ], "Confirmed", "Log", "Pct")
+## plot_interactive_df(percap, top_confirmed, "Confirmed", "Linear")
+## plot_interactive_df(percap, top_confirmed, "Confirmed", "Log")
 ## 
 ## # Fatal Cases
-## plot_interactive_df(percap, top10_fatal, "Fatal", "Linear", "Pct")
-## plot_interactive_df(percap, top10_fatal, "Fatal", "Log", "Pct")
+## plot_interactive_df(percap, top_fatal, "Fatal", "Linear")
+## plot_interactive_df(percap, top_fatal, "Fatal", "Log")
 ## 
 ## # Recovered Cases
-## plot_interactive_df(percap, top10_recovered, "Recovered", "Linear", "Pct")
-## plot_interactive_df(percap, top10_recovered, "Recovered", "Log", "Pct")
+## plot_interactive_df(percap, top_recovered, "Recovered", "Linear")
+## plot_interactive_df(percap, top_recovered, "Recovered", "Log")
 ## 
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
@@ -1102,7 +1091,7 @@ kable(percap[percap$Country == "US", ][1:10,]) %>%
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 
 #' 
 #' 

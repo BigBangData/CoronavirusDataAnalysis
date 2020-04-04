@@ -611,7 +611,7 @@ plot_interactive_df(percap, top10_recovered
 ### Time Series Of New Cases 
 
 
-The most interesting plots would show how the disease is progressing. One way is to track how many new cases pop up every day. Since the daily number is a bit erratic, I first calculate the previous week's daily average (mean) and select the top countries with highest mean daily number of new cases per status.
+The most interesting plots would show how the disease is progressing. One way is to track how many new confirmed cases pop up every day.
 
 
 ```{r include=FALSE}
@@ -631,92 +631,62 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 
 percap$NewCases[nrow(percap)] <- 0
 percap$NewCases <- as.integer(percap$NewCases)
-
-
-# get last weeks data only
-lastweek_vec <- percap$Date[1:7]
-lastweek <- percap[percap$Date %in% lastweek_vec, ]
-
-# calculate grouped means 
-lastweek <- data.frame(lastweek %>%
-					   group_by(Country, Status) %>%
-					   summarise(MeanNewCases=round(mean(NewCases),2)))
-					   
-# status dfs reordered by mean new cases 
-confirmed <- lastweek[lastweek$Status == "Confirmed", ] %>%
-			 arrange(desc(MeanNewCases))
-fatal <- lastweek[lastweek$Status == "Fatal", ] %>%
-			 arrange(desc(MeanNewCases))
-recovered <- lastweek[lastweek$Status == "Recovered", ] %>%
-			 arrange(desc(MeanNewCases))
-
-
-gg_plot <- function(dfm, status, color) {
-
-	ggplot(data=dfm, aes(x=reorder(Country, -MeanNewCases), y=MeanNewCases)) +
-		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top Ten Countries: Last Week's Daily Average Of ", status
-		               , " New Cases")) + 
-		xlab("") + ylab("Mean Number of Daily Cases") +
-		geom_text(aes(label=MeanNewCases), vjust=1.6, color="white", size=3.5) +
-    theme_minimal() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-}
 ```
 
-```{r fig.height=5, fig.width=9, echo=FALSE}
-# Bar Plots - New Cases
 
-# top confirmed
-gg_plot(confirmed[1:10,], "Confirmed", "#D6604D")
+```
 
-# top fatal 
-gg_plot(fatal[1:10,], "Fatal", "gray25")
+[IN PROGRESS...]
 
-# top recovered
-gg_plot(recovered[1:10,], "Recovered", "#74C476")
+```
 
-# Time Series - New Cases
+**Recent New Confirmed Cases in the US**
 
+```{r echo=FALSE}
+kable(percap[percap$Country == "US", ][1:10,]) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                , full_width = FALSE)
+```
+
+
+```
+
+TO DO: 
+
+  Time Series plots of New Cases
+  Substitude Zero for Log Plots
+  Fix Titles for New Cases Series (or does it make sense to show top countres with new cases?)
+       
+```
+
+
+
+```{r}
+countries_df = data.frame('Country'=c("US","France","Germany","China","Brazil","Italy"))
+countries_df
+```
+
+
+```{r fig.height=5, fig.width=9}
 # Confirmed Cases 
-plot_interactive_df(percap, confirmed[1:6,], "Confirmed", "Linear", "NewCases")
-plot_interactive_df(percap, confirmed[1:6,], "Confirmed", "Log", "NewCases")
-	
-# Fatal Cases 	
-plot_interactive_df(percap, fatal[1:6,], "Fatal", "Linear", "NewCases")
-plot_interactive_df(percap, fatal[1:6,], "Fatal", "Log", "NewCases")
-	
-# Recovered Cases 	
-plot_interactive_df(percap, recovered[1:6,], "Recovered", "Linear", "NewCases")
-plot_interactive_df(percap, recovered[1:6,], "Recovered", "Log", "NewCases")
+plot_interactive_df(percap, countries_df, "Confirmed", "Linear", "NewCases")
+plot_interactive_df(percap, countries_df, "Fatal", "Linear", "NewCases")
 ```
 
 
 
+### Proportion of New Cases Compared to Total Confirmed Cases
 
 ```
 
 TO DO:
 
-  Doubling rate - calculate how many days it takes to double a given status count, plot that.
   Plot proportion of New to Total Cases, Linear and Log scales.
   Plot against Time and with Time as interaction.
   Outcome Simulation section.
   Add more links throughough document.
 
 ```
-
-
-
----
-
-### Doubling Rate
-
-
----
-
-
-### Proportion of New Cases Compared to Total Confirmed Cases
 
 
 ---
@@ -979,9 +949,7 @@ top6_recovered 	<- get_top6_counts(country_totals, "Recovered")
 
 # arg values:
 # dfm = the dataframe
-# country = country name
-# status_df = to be used as the vector of country names 
-#             which is passed instead of a single country
+# country = country name - passed as a vector in next function
 # status = Confirmed, Fatal, Recovered
 # scale_ = Linear, Log
 # type = Count, Pct 
@@ -998,20 +966,13 @@ create_xts_series <- function(dfm, country, status, scale_, type) {
 	  		  xts(log(dfm$Count), order.by = dfm$Date)
 	  		}
 	
-	} else if (type == "Pct") {
+	} else {
 	  
 	  series <- if (scale_ == "Linear") {
 	  			xts(dfm$Pct, order.by = dfm$Date)
 	  		} else {
 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
 	  		}	  
-	} else {
-	  
-	  series <- if (scale_ == "Linear") {
-	  			xts(dfm$NewCases, order.by = dfm$Date)
-	  		} else {
-	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
-	  		}	  	  
 	}
 	series
 }
@@ -1044,26 +1005,17 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 									  , type)
   
   if (type == "Count") {
-    
     ylab_txt <- if (scale_ == "Linear") {
 	  				"Number Of "
 	  			} else {
 	  			  "Log Count - "
 	  			}
-  } else if (type == "Pct") {
-    
+  } else {
     ylab_txt <- if (scale_ == "Linear") {
 	  				"Percentage Of "
 	  			} else {
 	  			  "Log Percentage - "
 	  			}   
-  } else {
-    
-    ylab_txt <- if (scale_ == "Linear") {
-	  				"Number Of New "
-	  			} else {
-	  			  "Log Count of New - "
-	  			}       
   }
   
   ylab_lab <- paste0(ylab_txt, status, " Cases")
@@ -1120,7 +1072,7 @@ current_countries[!current_countries %in% country_population$Country]
 percap <- merge(country_level_df, country_population, by="Country")
 
 # create percentage col
-percap$Pct <- (percap$Count/(percap$Population_thousands*1000))*100 
+percap$Pct <- (percap$Count / (percap$Population_thousands*1000)) * 100 
 
 # reorder by Country, Status, and Date descending
 percap <- data.frame(percap %>% 
@@ -1144,7 +1096,7 @@ kable(current_data[1:25, ]) %>%
 cruise_ships <- c("Diamond Princess", "MS Zaandam")
 current_data <- current_data[!current_data$Country %in% cruise_ships, ]
 
-# subset to top ten percentages 	
+# subset to top tencounts 	
 get_top10_pcts <- function(dfm, coln) {
 	
 	dfm <- dfm[dfm$Status == coln, c(1,6)][1:10,]
@@ -1200,6 +1152,7 @@ plot_interactive_df(percap, top10_recovered
 plot_interactive_df(percap, top10_recovered
                     , "Recovered", "Log", "Pct")
 
+
 ## ----include=FALSE-------------------------------------------------------
 # Calculate new cases
 percap$NewCases <- NULL 
@@ -1218,63 +1171,10 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 percap$NewCases[nrow(percap)] <- 0
 percap$NewCases <- as.integer(percap$NewCases)
 
-
-# get last weeks data only
-lastweek_vec <- percap$Date[1:7]
-lastweek <- percap[percap$Date %in% lastweek_vec, ]
-
-# calculate grouped means 
-lastweek <- data.frame(lastweek %>%
-					   group_by(Country, Status) %>%
-					   summarise(MeanNewCases=round(mean(NewCases),2)))
-					   
-# status dfs reordered by mean new cases 
-confirmed <- lastweek[lastweek$Status == "Confirmed", ] %>%
-			 arrange(desc(MeanNewCases))
-fatal <- lastweek[lastweek$Status == "Fatal", ] %>%
-			 arrange(desc(MeanNewCases))
-recovered <- lastweek[lastweek$Status == "Recovered", ] %>%
-			 arrange(desc(MeanNewCases))
-
-
-gg_plot <- function(dfm, status, color) {
-
-	ggplot(data=dfm, aes(x=reorder(Country, -MeanNewCases), y=MeanNewCases)) +
-		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top Ten Countries: Last Week's Daily Average Of ", status
-		               , " New Cases")) + 
-		xlab("") + ylab("Mean Number of Daily Cases") +
-		geom_text(aes(label=MeanNewCases), vjust=1.6, color="white", size=3.5) +
-    theme_minimal() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-}
-
-## ----fig.height=5, fig.width=9, echo=FALSE-------------------------------
-# Bar Plots - New Cases
-
-# top confirmed
-gg_plot(confirmed[1:10,], "Confirmed", "#D6604D")
-
-# top fatal 
-gg_plot(fatal[1:10,], "Fatal", "gray25")
-
-# top recovered
-gg_plot(recovered[1:10,], "Recovered", "#74C476")
-
-# Time Series - New Cases
-
-# Confirmed Cases 
-plot_interactive_df(percap, confirmed[1:6,], "Confirmed", "Linear", "NewCases")
-plot_interactive_df(percap, confirmed[1:6,], "Confirmed", "Log", "NewCases")
-	
-# Fatal Cases 	
-plot_interactive_df(percap, fatal[1:6,], "Fatal", "Linear", "NewCases")
-plot_interactive_df(percap, fatal[1:6,], "Fatal", "Log", "NewCases")
-	
-# Recovered Cases 	
-plot_interactive_df(percap, recovered[1:6,], "Recovered", "Linear", "NewCases")
-plot_interactive_df(percap, recovered[1:6,], "Recovered", "Log", "NewCases")
-
+## ----echo=FALSE----------------------------------------------------------
+kable(percap[percap$Country == "US", ][1:10,]) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                , full_width = FALSE)
 ```
 
 

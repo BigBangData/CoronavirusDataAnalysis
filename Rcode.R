@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "04/04/2020"
+#' date: "04/05/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -225,9 +225,7 @@ kable(rbind(head(dfm)
 #' ## Data Wrangling and Enrichment {#enrich-link}
 #' 
 #' 
-#' I created static dataset of countries and their populations. This data was cobbled together with internet searches and the [World Health Organization data.](https://apps.who.int/gho/athena/data/"GHO/WHS9_86,WHS9_88,WHS9_89,WHS9_92WHS9_96,WHS9_97,WHS9_90?filter=COUNTRY:*;REGION:*&x-sideaxis=COUNTRY;YEAR&x-topaxis=GHO&profile=crosstable&format=csv) 
-#' 
-#' I use the country's population to calculate a `Pct` column with the percentage of cases given a country and a status. I also calculate the difference between each day and the previous day's counts as a `NewCases` variable.
+#' I created static dataset of countries and their populations. This data was cobbled together with internet searches and the [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL?lang=en) I use the country's population to calculate a `Pct` column with the percentage of cases given a country and a status. I also calculate the difference between each day and the previous day's counts as a `NewCases` variable.
 #' 
 ## ----include=FALSE-------------------------------------------------------
 # read in static dataset of countries and populations
@@ -268,12 +266,12 @@ percap$NewCases <- as.integer(percap$NewCases)
 #' 
 #' 
 #' 
-#' The top and bottom rows of the enriched dataset for the Brazil subset are:
+#' The top rows of the enriched dataset for Brazil and Canada are:
 #' 
 ## ----echo=FALSE----------------------------------------------------------
 # top and bottom rows for final dataset
 kable(rbind(head(percap[percap$Country == "Brazil", ])
-     ,tail(percap[percap$Country == "Brazil", ]))) %>%
+     ,head(percap[percap$Country == "Canada", ]))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 
@@ -284,6 +282,9 @@ kable(rbind(head(percap[percap$Country == "Brazil", ])
 #' 
 #' 
 #' ## Exploratory Data Analysis {#eda-link}
+#' 
+#' 
+#' 
 #' 
 #' #### WORLD TOTALS
 #' 
@@ -309,8 +310,15 @@ kable(world_totals) %>%
 
 #' 
 #' 
+#' The first section is a series of barplots for top ten countries per status (confirmed, fatal, recovered, active) by count, percentage of population, and number of new cases since the previous day.  
 #' 
-#' #### TOP TEN COUNTRIES PER STATUS
+#' 
+#' The second section is a series of time series for the same categories in linear and log scales.
+#' 
+#' ---
+#' 
+#' ### Barplots
+#' 
 #' 
 ## ----echo=FALSE----------------------------------------------------------
 # subset to country totals 
@@ -402,7 +410,176 @@ gg_plot(top_active, "Active", "NewCases")
 #' 
 #' ### Time Series Plots 
 #' 
-#' Per Status, Country, Linear and Log.
+#' Graphic web apps with pull-down menus are excellent to encourage users to interact with the data, but not so excellent and showing all the possible ways a user could visualize the data. We have 4 statuses, 3 types, and 2 scales, so 24 plots are possible:
+#' 
+#' 
+## ----echo=FALSE----------------------------------------------------------
+plot_types <- data.frame('Status' = c(rep("Confirmed",6)
+									  ,rep("Fatal",6)
+									  ,rep("Recovered",6)
+									  ,rep("Active",6))
+						  ,'Scale' = rep(c("Linear","Log"),3)
+						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)
+						  )
+
+	
+kable(plot_types) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                    , full_width = FALSE)
+
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+# functions for plotting interactive time series
+
+# arg values:
+# dfm = the dataframe
+# country = country name
+# status_df = to be used as the vector of country names 
+#             which is passed instead of a single country
+# status = Confirmed, Fatal, Recovered, Active
+# scale_ = Linear, Log
+# type = Count, Pct, NewCases
+
+create_xts_series <- function(dfm, country, status, scale_, type) {
+  
+	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+	
+	if (type == "Count") {
+	  
+	  series <- if (scale_ == "Linear") {
+	  			xts(dfm$Count, order.by = dfm$Date)
+	  		} else {
+	  		  xts(log(dfm$Count), order.by = dfm$Date)
+	  		}
+	
+	} else if (type == "Pct") {
+	  
+	  series <- if (scale_ == "Linear") {
+	  			xts(dfm$Pct, order.by = dfm$Date)
+	  		} else {
+	  		  xts(log(dfm$Pct), order.by = dfm$Date)
+	  		}	  
+	} else {
+	  
+	  series <- if (scale_ == "Linear") {
+	  			xts(dfm$NewCases, order.by = dfm$Date)
+	  		} else {
+	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
+	  		}	  	  
+	}
+	series
+}
+
+
+create_seriesObject <- function(dfm, status_df, status, scale_, type) {
+  
+  seriesObject <- NULL
+  for (i in 1:5) {
+    
+    seriesObject <- cbind(seriesObject
+                          , create_xts_series(dfm
+                                              , status_df$Country[i]
+                                              , status
+                                              , scale_
+                                              , type)
+                          )
+  }
+  
+  names(seriesObject) <- status_df$Country[1:5]
+  seriesObject
+}
+
+plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
+  
+  seriesObject <- create_seriesObject(dfm
+									  , status_df
+									  , status
+									  , scale_
+									  , type)
+  
+  if (type == "Count") {
+    
+    ylab_txt <- if (scale_ == "Linear") {
+	  				"Number Of "
+	  			} else {
+	  			  "Log Count - "
+	  			}
+  } else if (type == "Pct") {
+    
+    ylab_txt <- if (scale_ == "Linear") {
+	  				"Percentage Of "
+	  			} else {
+	  			  "Log Percentage - "
+	  			}   
+  } else {
+    
+    ylab_txt <- if (scale_ == "Linear") {
+	  				"Number Of New "
+	  			} else {
+	  			  "Log Count of New - "
+	  			}       
+  }
+  
+  ylab_lab <- paste0(ylab_txt, status, " Cases")
+  main_title <- paste0("Top Countries - ", status
+					 , " Cases (", scale_, " Scale)")
+  
+  interactive_df <- dygraph(seriesObject, main = main_title) %>% 
+					dyAxis("x", drawGrid = FALSE) %>%							
+					dyAxis("y", label = ylab_lab) %>%
+					dyOptions(colors=brewer.pal(5, "Dark2")
+							, axisLineWidth = 1.5
+							, axisLineColor = "navy"
+							, gridLineColor = "lightblue") %>%			
+					dyRangeSelector() %>%
+					dyLegend(width = 750)
+  
+  interactive_df
+}
+
+#' 
+#' 
+#' 
+## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
+## INTERACTIVE TIME SERIES
+
+# Confirmed plots 
+res <- lapply(1:6, function(i) plot_interactive_df(percap
+							                     , top_confirmed[1:5, ]
+							                     , top_confirmed$Status[i]
+							                     , plot_types$Scale[i]
+							                     , plot_types$Type[i]))
+		
+htmltools::tagList(res)
+
+# Fatal plots 
+res <- lapply(1:6, function(i) plot_interactive_df(percap
+							                     , top_fatal[1:5, ]
+							                     , top_fatal$Status[i]
+							                     , plot_types$Scale[i]
+							                     , plot_types$Type[i]))
+		
+htmltools::tagList(res)
+
+# Recovered plots 
+res <- lapply(1:6, function(i) plot_interactive_df(percap
+							                     , top_recovered[1:5, ]
+							                     , top_recovered$Status[i]
+							                     , plot_types$Scale[i]
+							                     , plot_types$Type[i]))
+		
+htmltools::tagList(res)
+
+# Active plots 
+res <- lapply(1:6, function(i) plot_interactive_df(percap
+							                     , top_active[1:5, ]
+							                     , top_active$Status[i]
+							                     , plot_types$Scale[i]
+							                     , plot_types$Type[i]))
+		
+htmltools::tagList(res)
+
 #' 
 #' 
 #' 
@@ -415,12 +592,18 @@ gg_plot(top_active, "Active", "NewCases")
 #' 
 #' TO DO:
 #' 
-#'   Redo Time Series plots.
-#'   Doubling rate - calculate how many days it takes to double a given status count, plot that.
-#'   Plot proportion of New to Total Cases, Linear and Log scales.
+#' 
+#'   Doubling rate - calculate how many days it takes to double the count (or average of counts per 5 days)
+#'                   given country and status --> plot that (linear, log)
+#'   
+#'   Plot proportion of New Cases to Total Cases by Status (linear, log)
+#'   
 #'   Plot against Time and with Time as interaction.
+#'   
 #'   Outcome Simulation section.
+#'   
 #'   Add more links throughough document.
+#'   
 #' 
 #' ```
 #' 
@@ -434,7 +617,7 @@ gg_plot(top_active, "Active", "NewCases")
 #' ---
 #' 
 #' 
-#' ### Proportion of New Cases Compared to Total Confirmed Cases
+#' ### Proportion of New Cases to Total Cases
 #' 
 #' 
 #' ---
@@ -670,7 +853,7 @@ gg_plot(top_active, "Active", "NewCases")
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # top and bottom rows for final dataset
 ## kable(rbind(head(percap[percap$Country == "Brazil", ])
-##      ,tail(percap[percap$Country == "Brazil", ]))) %>%
+##      ,head(percap[percap$Country == "Canada", ]))) %>%
 ##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
 ##                   , full_width = FALSE)
 ## 
@@ -773,7 +956,167 @@ gg_plot(top_active, "Active", "NewCases")
 ## gg_plot(top_recovered, "Recovered", "NewCases")
 ## gg_plot(top_active, "Active", "NewCases")
 ## 
+## ## ----echo=FALSE----------------------------------------------------------
+## plot_types <- data.frame('Status' = c(rep("Confirmed",6)
+## 									  ,rep("Fatal",6)
+## 									  ,rep("Recovered",6)
+## 									  ,rep("Active",6))
+## 						  ,'Scale' = rep(c("Linear","Log"),3)
+## 						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)
+## 						  )
 ## 
+## 	
+## kable(plot_types) %>%
+##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                     , full_width = FALSE)
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # functions for plotting interactive time series
+## 
+## # arg values:
+## # dfm = the dataframe
+## # country = country name
+## # status_df = to be used as the vector of country names
+## #             which is passed instead of a single country
+## # status = Confirmed, Fatal, Recovered, Active
+## # scale_ = Linear, Log
+## # type = Count, Pct, NewCases
+## 
+## create_xts_series <- function(dfm, country, status, scale_, type) {
+## 
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## 	
+## 	if (type == "Count") {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	  			xts(dfm$Count, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$Count), order.by = dfm$Date)
+## 	  		}
+## 	
+## 	} else if (type == "Pct") {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	  			xts(dfm$Pct, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
+## 	  		}	
+## 	} else {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	  			xts(dfm$NewCases, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
+## 	  		}	  	
+## 	}
+## 	series
+## }
+## 
+## 
+## create_seriesObject <- function(dfm, status_df, status, scale_, type) {
+## 
+##   seriesObject <- NULL
+##   for (i in 1:5) {
+## 
+##     seriesObject <- cbind(seriesObject
+##                           , create_xts_series(dfm
+##                                               , status_df$Country[i]
+##                                               , status
+##                                               , scale_
+##                                               , type)
+##                           )
+##   }
+## 
+##   names(seriesObject) <- status_df$Country[1:5]
+##   seriesObject
+## }
+## 
+## plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
+## 
+##   seriesObject <- create_seriesObject(dfm
+## 									  , status_df
+## 									  , status
+## 									  , scale_
+## 									  , type)
+## 
+##   if (type == "Count") {
+## 
+##     ylab_txt <- if (scale_ == "Linear") {
+## 	  				"Number Of "
+## 	  			} else {
+## 	  			  "Log Count - "
+## 	  			}
+##   } else if (type == "Pct") {
+## 
+##     ylab_txt <- if (scale_ == "Linear") {
+## 	  				"Percentage Of "
+## 	  			} else {
+## 	  			  "Log Percentage - "
+## 	  			}
+##   } else {
+## 
+##     ylab_txt <- if (scale_ == "Linear") {
+## 	  				"Number Of New "
+## 	  			} else {
+## 	  			  "Log Count of New - "
+## 	  			}
+##   }
+## 
+##   ylab_lab <- paste0(ylab_txt, status, " Cases")
+##   main_title <- paste0("Top Countries - ", status
+## 					 , " Cases (", scale_, " Scale)")
+## 
+##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
+## 					dyAxis("x", drawGrid = FALSE) %>%							
+## 					dyAxis("y", label = ylab_lab) %>%
+## 					dyOptions(colors=brewer.pal(5, "Dark2")
+## 							, axisLineWidth = 1.5
+## 							, axisLineColor = "navy"
+## 							, gridLineColor = "lightblue") %>%			
+## 					dyRangeSelector() %>%
+## 					dyLegend(width = 750)
+## 
+##   interactive_df
+## }
+## 
+## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
+## ## INTERACTIVE TIME SERIES
+## 
+## # Confirmed plots
+## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_confirmed[1:5, ]
+## 							                     , top_confirmed$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(res)
+## 
+## # Fatal plots
+## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_fatal[1:5, ]
+## 							                     , top_fatal$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(res)
+## 
+## # Recovered plots
+## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_recovered[1:5, ]
+## 							                     , top_recovered$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(res)
+## 
+## # Active plots
+## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_active[1:5, ]
+## 							                     , top_active$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(res)
 
 #' 
 #' 
@@ -781,5 +1124,5 @@ gg_plot(top_active, "Active", "NewCases")
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 

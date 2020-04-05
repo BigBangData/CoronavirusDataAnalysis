@@ -584,14 +584,48 @@ res <- lapply(1:6, function(i) plot_interactive_df(percap
 		
 htmltools::tagList(res)
 
-#' 
-#' 
-#' 
-#' 
-#' ---
-#' 
-#' 
-#' 
+
+
+# ================================================================
+
+write.csv(percap, paste0(dir_path, "percap_20200405.csv"), row.names=FALSE)
+
+# solving for one time series (Ndays = nrow(x))
+x <- percap[percap$Country == "US" & percap$Status == "Fatal", ]
+
+x$AvgNewCases <- NULL
+for (i in 1:Ndays) {
+	
+	if (i == 1) {
+	
+		x$AvgNewCases[i] <- (x$NewCases[i]+x$NewCases[i+1]
+							+x$NewCases[i+2]+x$NewCases[i+3]+x$NewCases[i+4])/5
+	} else if (i == 2) {
+	
+		x$AvgNewCases[i] <- (x$NewCases[i-1]+x$NewCases[i]
+							+x$NewCases[i+1]+x$NewCases[i+2]+x$NewCases[i+3])/5		
+
+	} else if (i > 2 & i < (Ndays-2)) {
+	
+		x$AvgNewCases[i] <- (x$NewCases[i-2]+x$NewCases[i-1]
+							+x$NewCases[i]+x$NewCases[i+1]+x$NewCases[i+2])/5
+							
+	} else if (i == (Ndays-2)) {
+	
+		x$AvgNewCases[i] <- (x$NewCases[i-3]+x$NewCases[i-2]
+							+x$NewCases[i-1]+x$NewCases[i]+x$NewCases[i+1])/5
+	} else {
+	
+		x$AvgNewCases[i] <- (x$NewCases[i-4]+x$NewCases[i-3]
+							+x$NewCases[i-2]+x$NewCases[i-1]+x$NewCases[i])/5	
+	}
+}
+
+
+x$PctIncrease <- 
+
+
+
 #' ```
 #' 
 #' TO DO:

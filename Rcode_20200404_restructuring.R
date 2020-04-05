@@ -165,8 +165,8 @@ dfm <- readRDS(rds_file)
 #' 
 ## ----echo=FALSE----------------------------------------------------------
 # subset to current counts 
-current_data <- data.frame(country_level_df %>%
-					filter(Date == unique(country_level_df$Date)[1])) %>%
+current_data <- data.frame(dfm %>%
+					filter(Date == unique(dfm$Date)[1])) %>%
 					arrange(Status, desc(Count))
 
 # subset to world totals 
@@ -174,12 +174,15 @@ world_totals <- data.frame(current_data %>%
 					group_by(Status) %>%
 					summarise('Total'=sum(Count)))
 
+world_totals$Total <- formatC(world_totals$Total, big.mark=",")
 
 kable(world_totals) %>%
       kable_styling(bootstrap_options = c("striped", "hover")
                     , full_width = FALSE)
 
 #' 
+
+
 #' 
 #' #### TOP TEN COUNTRIES PER STATUS
 #' 
@@ -190,42 +193,87 @@ country_totals <- data.frame(current_data %>%
 						group_by(Country, Status))
 	
 # subset to top counts 	
-get_top10_counts <- function(dfm, coln) {
+get_top_counts <- function(dfm, coln, num) {
 	
-	dfm <- dfm[dfm$Status == coln, c(1,3)][1:10,]
-	row.names(dfm) <- 1:10
+	dfm <- dfm[dfm$Status == coln, c(1,3)][1:num,]
+	row.names(dfm) <- 1:num
 	dfm
 }					
 
 # separate by status 
-top10_confirmed 	<- get_top10_counts(country_totals, "Confirmed")
-top10_fatal	<- get_top10_counts(country_totals, "Fatal")
-top10_recovered 	<- get_top10_counts(country_totals, "Recovered")
+top_confirmed 	<- get_top_counts(country_totals, "Confirmed", 10)
+top_fatal		<- get_top_counts(country_totals, "Fatal", 10)
+top_recovered 	<- get_top_counts(country_totals, "Recovered", 10)
+top_active 		<- get_top_counts(country_totals, "Active", 10)
 
 # plot top countries per status 
-gg_plot <- function(dfm, status, color) {
+gg_plot <- function(dfm, status, type) {
 
-	ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
-		geom_bar(stat="identity", fill=color) + 
-		ggtitle(paste0("Top Ten Countries - ", status, " Cases")) + 
-		xlab("") + ylab(paste0("Number of ", status, " Cases")) +
-		geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
-    theme_minimal() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+	color <- if (status == "Confirmed") {
+				"#D6604D"
+			 } else if (status == "Fatal") {
+				"gray25"
+			 } else if (status == "Recovered") {
+				"#74C476"
+			 } else {
+				"#984EA3"
+			 }
+	
+	if (type == "Count") {	
+		ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
+			geom_bar(stat="identity", fill=color) + 
+			ggtitle(paste0("Top Countries - ", status, " Cases")) + 
+			xlab("") + ylab(paste0("Number of ", status, " Cases")) +
+			geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
+			theme_minimal() + 
+			theme(axis.text.x = element_text(angle = 45, hjust = 1))
+	} else if (type == "Pct") {
+		ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
+			geom_bar(stat="identity", fill=color) + 		
+			ggtitle(paste0("Top Countries: ", status
+						 , " Cases by Percentage of Population")) + 
+			xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
+			geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
+			theme_minimal() + 		
+			theme(axis.text.x = element_text(angle = 45, hjust = 1))
+	} else {
+		ggplot(data=dfm, aes(x=reorder(Country, -MeanNewCases), y=MeanNewCases)) +
+			geom_bar(stat="identity", fill=color) + 
+			ggtitle(paste0("Top Countries: Last Week's Daily Average Of ", status
+						 , " New Cases")) + 
+			xlab("") + ylab("Mean Number of Daily Cases") +
+			geom_text(aes(label=MeanNewCases), vjust=1.6, color="white", size=3.5) +
+			theme_minimal() + 
+			theme(axis.text.x = element_text(angle = 45, hjust = 1))			
+	}
 }
 
-#' 
-#' 
-#' 
-## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
-# top confirmed
-gg_plot(top10_confirmed, "Confirmed", "#D6604D") 
 
-# top fatal 
-gg_plot(top10_fatal, "Fatal", "gray25")
+# top countries by count
+gg_plot(top_confirmed, "Confirmed", "Count") 
+gg_plot(top_fatal, "Fatal", "Count")
+gg_plot(top_recovered, "Recovered", "Count")
+gg_plot(top_active, "Active", "Count")
 
-# top recovered
-gg_plot(top10_recovered, "Recovered", "#74C476")
+# top countries by percentage
+gg_plot(top_confirmed, "Confirmed", "Pct") 
+gg_plot(top_fatal, "Fatal", "Pct")
+gg_plot(top_recovered, "Recovered", "Pct")
+gg_plot(top_active, "Active", "Pct")
+
+# top countries by mean of new cases last week 
+gg_plot(top_confirmed, "Confirmed", "NewCases") 
+gg_plot(top_fatal, "Fatal", "NewCases")
+gg_plot(top_recovered, "Recovered", "NewCases")
+gg_plot(top_active, "Active", "NewCases")
+
+
+
+
+
+
+
+
 
 
 #' 
@@ -375,21 +423,21 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 # INTERACTIVE PLOTS - COUNT 
 
 # Confirmed
-plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
+plot_interactive_df(dfm, top10_confirmed[1:6, ]
                     , "Confirmed", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
+plot_interactive_df(dfm, top10_confirmed[1:6, ]
                     , "Confirmed", "Log", "Count")
 
 # Fatal
-plot_interactive_df(country_level_df, top10_fatal[1:6,]
+plot_interactive_df(dfm, top10_fatal[1:6,]
                     , "Fatal", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_fatal[1:6,]
+plot_interactive_df(dfm, top10_fatal[1:6,]
                     , "Fatal", "Log", "Count")
 
 # Recovered
-plot_interactive_df(country_level_df, top10_recovered[1:6,]
+plot_interactive_df(dfm, top10_recovered[1:6,]
                     , "Recovered", "Linear", "Count")
-plot_interactive_df(country_level_df, top10_recovered[1:6,]
+plot_interactive_df(dfm, top10_recovered[1:6,]
                     , "Recovered", "Log", "Count")
 
 #' 
@@ -411,17 +459,17 @@ plot_interactive_df(country_level_df, top10_recovered[1:6,]
 ## ----include=FALSE-------------------------------------------------------
 # Per Capita Analysis 
 
-# data enrichment and wranglingt
+# data enrichment and wrangling
 
 # read in prepared dataset of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
 # test for new countries in data 
-current_countries <- unique(country_level_df$Country)
+current_countries <- unique(dfm$Country)
 current_countries[!current_countries %in% country_population$Country]
 
 # merge datasets
-percap <- merge(country_level_df, country_population, by="Country")
+percap <- merge(dfm, country_population, by="Country")
 
 # create percentage col
 percap$Pct <- (percap$Count/(percap$Population_thousands*1000))*100 
@@ -430,8 +478,6 @@ percap$Pct <- (percap$Count/(percap$Population_thousands*1000))*100
 percap <- data.frame(percap %>% 
                      arrange(Country, Status, desc(Date)))
 
-# avoid NaNs in Log plots
-percap$Pct[percap$Pct == 0] <- 0.0001
 
 #' 
 #' 
@@ -807,32 +853,32 @@ plot_interactive_df(percap, recovered[1:6,], "Recovered", "Log", "NewCases")
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
 ## # country-level dataset
-## country_level_df <- data.frame(dfm %>%
+## dfm <- data.frame(dfm %>%
 ## 							   select(Country_Region, Status, Date, Value) %>%
 ## 							   group_by(Country_Region, Status, Date) %>%
 ## 							   summarise('Value'=sum(Value))) %>%
 ## 							   arrange(Country_Region, Status, desc(Date))
 ## 
-## colnames(country_level_df) <- c("Country", "Status", "Date", "Count")
+## colnames(dfm) <- c("Country", "Status", "Date", "Count")
 ## 
-## Ncountries <- length(unique(country_level_df$Country))
-## Ndays <- length(unique(country_level_df$Date))
+## Ncountries <- length(unique(dfm$Country))
+## Ndays <- length(unique(dfm$Date))
 ## 
 ## # check: is the number of rows equal to the number of countries
 ## # times the number of days times 3 (statuses)?
-## nrow(country_level_df) == Ncountries * Ndays * 3
+## nrow(dfm) == Ncountries * Ndays * 3
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # top and bottom rows for final dataset
-## kable(rbind(head(country_level_df)
-##      ,tail(country_level_df))) %>%
+## kable(rbind(head(dfm)
+##      ,tail(dfm))) %>%
 ##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
 ##                   , full_width = FALSE)
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## # subset to current counts
-## current_data <- data.frame(country_level_df %>%
-## 					filter(Date == unique(country_level_df$Date)[1])) %>%
+## current_data <- data.frame(dfm %>%
+## 					filter(Date == unique(dfm$Date)[1])) %>%
 ## 					arrange(Status, desc(Count))
 ## 
 ## # subset to world totals
@@ -1014,21 +1060,21 @@ plot_interactive_df(percap, recovered[1:6,], "Recovered", "Log", "NewCases")
 ## # INTERACTIVE PLOTS - COUNT
 ## 
 ## # Confirmed
-## plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
+## plot_interactive_df(dfm, top10_confirmed[1:6, ]
 ##                     , "Confirmed", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_confirmed[1:6, ]
+## plot_interactive_df(dfm, top10_confirmed[1:6, ]
 ##                     , "Confirmed", "Log", "Count")
 ## 
 ## # Fatal
-## plot_interactive_df(country_level_df, top10_fatal[1:6,]
+## plot_interactive_df(dfm, top10_fatal[1:6,]
 ##                     , "Fatal", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_fatal[1:6,]
+## plot_interactive_df(dfm, top10_fatal[1:6,]
 ##                     , "Fatal", "Log", "Count")
 ## 
 ## # Recovered
-## plot_interactive_df(country_level_df, top10_recovered[1:6,]
+## plot_interactive_df(dfm, top10_recovered[1:6,]
 ##                     , "Recovered", "Linear", "Count")
-## plot_interactive_df(country_level_df, top10_recovered[1:6,]
+## plot_interactive_df(dfm, top10_recovered[1:6,]
 ##                     , "Recovered", "Log", "Count")
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
@@ -1040,11 +1086,11 @@ plot_interactive_df(percap, recovered[1:6,], "Recovered", "Log", "NewCases")
 ## country_population <- read.csv("COVID19_DATA/country_population.csv")
 ## 		
 ## # test for new countries in data
-## current_countries <- unique(country_level_df$Country)
+## current_countries <- unique(dfm$Country)
 ## current_countries[!current_countries %in% country_population$Country]
 ## 
 ## # merge datasets
-## percap <- merge(country_level_df, country_population, by="Country")
+## percap <- merge(dfm, country_population, by="Country")
 ## 
 ## # create percentage col
 ## percap$Pct <- (percap$Count/(percap$Population_thousands*1000))*100

@@ -9,6 +9,8 @@
 #' 
 ## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 
 #' 
 #' 
@@ -429,7 +431,7 @@ kable(plot_types) %>%
 
 #' 
 #' 
-## ----include=FALSE-------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 # functions for plotting interactive time series
 
 # arg values:
@@ -500,30 +502,32 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
   
   if (type == "Count") {
     
-    ylab_txt <- if (scale_ == "Linear") {
-	  				"Number Of "
+    txt_ <- if (scale_ == "Linear") {
+	  				"Count Of "
 	  			} else {
-	  			  "Log Count - "
-	  			}
+	  			  "Log Count Of "
+	  			}			
+				
   } else if (type == "Pct") {
     
-    ylab_txt <- if (scale_ == "Linear") {
+    txt_ <- if (scale_ == "Linear") {
 	  				"Percentage Of "
 	  			} else {
-	  			  "Log Percentage - "
-	  			}   
+	  			  "Log Percentage Of "
+	  			} 		
+				
   } else {
     
-    ylab_txt <- if (scale_ == "Linear") {
-	  				"Number Of New "
+    txt_ <- if (scale_ == "Linear") {
+	  				"Count Of New "
 	  			} else {
-	  			  "Log Count of New - "
-	  			}       
+	  			  "Log Count Of New "
+	  			}  							
   }
+
+  ylab_lab   <- paste0(txt_, status, " Cases")
   
-  ylab_lab <- paste0(ylab_txt, status, " Cases")
-  main_title <- paste0("Top Countries - ", status
-					 , " Cases (", scale_, " Scale)")
+  main_title <- paste0("Top Countries - ", txt_, status, " Cases")
   
   interactive_df <- dygraph(seriesObject, main = main_title) %>% 
 					dyAxis("x", drawGrid = FALSE) %>%							
@@ -639,6 +643,8 @@ htmltools::tagList(res)
 ## ----eval=FALSE----------------------------------------------------------
 ## ## ----setup, include=FALSE------------------------------------------------
 ## knitr::opts_chunk$set(echo = TRUE)
+## knitr::opts_chunk$set(message = FALSE)
+## knitr::opts_chunk$set(warning = FALSE)
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
 ## 
@@ -970,7 +976,7 @@ htmltools::tagList(res)
 ##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
 ##                     , full_width = FALSE)
 ## 
-## ## ----include=FALSE-------------------------------------------------------
+## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 ## # functions for plotting interactive time series
 ## 
 ## # arg values:
@@ -1041,30 +1047,32 @@ htmltools::tagList(res)
 ## 
 ##   if (type == "Count") {
 ## 
-##     ylab_txt <- if (scale_ == "Linear") {
-## 	  				"Number Of "
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"Count Of "
 ## 	  			} else {
-## 	  			  "Log Count - "
-## 	  			}
+## 	  			  "Log Count Of "
+## 	  			}			
+## 				
 ##   } else if (type == "Pct") {
 ## 
-##     ylab_txt <- if (scale_ == "Linear") {
+##     txt_ <- if (scale_ == "Linear") {
 ## 	  				"Percentage Of "
 ## 	  			} else {
-## 	  			  "Log Percentage - "
-## 	  			}
+## 	  			  "Log Percentage Of "
+## 	  			} 		
+## 				
 ##   } else {
 ## 
-##     ylab_txt <- if (scale_ == "Linear") {
-## 	  				"Number Of New "
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"Count Of New "
 ## 	  			} else {
-## 	  			  "Log Count of New - "
-## 	  			}
+## 	  			  "Log Count Of New "
+## 	  			}  							
 ##   }
 ## 
-##   ylab_lab <- paste0(ylab_txt, status, " Cases")
-##   main_title <- paste0("Top Countries - ", status
-## 					 , " Cases (", scale_, " Scale)")
+##   ylab_lab   <- paste0(txt_, status, " Cases")
+## 
+##   main_title <- paste0("Top Countries - ", txt_, status, " Cases")
 ## 
 ##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
 ## 					dyAxis("x", drawGrid = FALSE) %>%							
@@ -1124,5 +1132,5 @@ htmltools::tagList(res)
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
 

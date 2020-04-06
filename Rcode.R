@@ -412,16 +412,16 @@ gg_plot(top_active, "Active", "NewCases")
 #' 
 #' ### Time Series Plots 
 #' 
-#' Graphic web apps with pull-down menus are excellent to encourage users to interact with the data, but not so excellent and showing all the possible ways a user could visualize the data. We have 4 statuses, 3 types, and 2 scales, so 24 plots are possible:
+#' Graphic web apps with pull-down menus are excellent to encourage users to interact with the data, but not so excellent and showing all the possible ways a user could visualize the data. We have 4 statuses, 5 types, and 2 scales, so 40 plots are possible. I eliminated the plots of new cases on a daily basis since they are too noisy, and went with a five-day rolling average of new cases and the percentage increase of those - we still get 32 plots:
 #' 
 #' 
 ## ----echo=FALSE----------------------------------------------------------
-plot_types <- data.frame('Status' = c(rep("Confirmed",6)
-									  ,rep("Fatal",6)
-									  ,rep("Recovered",6)
-									  ,rep("Active",6))
-						  ,'Scale' = rep(c("Linear","Log"),3)
-						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)
+plot_types <- data.frame('Status' = c(rep("Confirmed", 8)
+									  ,rep("Fatal", 8)
+									  ,rep("Recovered", 8)
+									  ,rep("Active", 8))
+						  ,'Type' = rep(c("Count","Pct","AvgNewCases","AvgPctIncrease"), each=2)									  
+						  ,'Scale' = rep(c("Linear","Log"), 4)
 						  )
 
 	
@@ -429,6 +429,69 @@ kable(plot_types) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                     , full_width = FALSE)
 
+#' 
+#' 
+#' 
+#' 
+## ----include=FALSE-------------------------------------------------------
+# calculate five-day rolling average of new cases
+percap$AvgNewCases <- NULL 
+
+for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+	
+	for (j in i:(i+Ndays-1)) {
+	
+		if (j == i) {
+		
+			percap$AvgNewCases[j] <- (percap$NewCases[j]+percap$NewCases[j+1]
+								+percap$NewCases[j+2]+percap$NewCases[j+3]+percap$NewCases[j+4])/5
+		} else if (j == (i+1)) {
+		
+			percap$AvgNewCases[j] <- (percap$NewCases[j-1]+percap$NewCases[j]
+								+percap$NewCases[j+1]+percap$NewCases[j+2]+percap$NewCases[j+3])/5		
+	
+		} else if (j > (i+1) & j < (i+Ndays-2)) {
+		
+			percap$AvgNewCases[j] <- (percap$NewCases[j-2]+percap$NewCases[j-1]
+								+percap$NewCases[j]+percap$NewCases[j+1]+percap$NewCases[j+2])/5
+								
+		} else if (j == (i+Ndays-2)) {
+		
+			percap$AvgNewCases[j] <- (percap$NewCases[j-3]+percap$NewCases[j-2]
+								+percap$NewCases[j-1]+percap$NewCases[j]+percap$NewCases[j+1])/5
+		} else {
+		
+			percap$AvgNewCases[j] <- (percap$NewCases[j-4]+percap$NewCases[j-3]
+								+percap$NewCases[j-2]+percap$NewCases[j-1]+percap$NewCases[j])/5	
+		}		
+	}
+}
+
+#' 
+## ----include=FALSE-------------------------------------------------------
+## calculate average percent increase of five-day rolling average
+#percap$AvgPctIncrease <- NULL
+#for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+#	
+#	for (j in 1:(i+Ndays-1)) {
+#
+#		if (j == (i+Ndays-1)) {
+#				
+#			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
+#			
+#		} else {
+#		
+#			percap$AvgPctIncrease[j] <- round(percap$AvgNewCases[j] / percap$AvgNewCases[j+1], 3)
+#			
+#		}	
+#	}
+#}
+#	
+#percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
+#percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
+
+#' 
+#' 
 #' 
 #' 
 ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
@@ -516,13 +579,21 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 	  			  "Log Percentage Of "
 	  			} 		
 				
+  } else if (type == "AvgNewCases") {
+    
+    txt_ <- if (scale_ == "Linear") {
+	  				"Five-day Rolling Mean Of New "
+	  			} else {
+	  			  "Log Mean Of New "
+	  			}  	
+    
   } else {
     
     txt_ <- if (scale_ == "Linear") {
-	  				"Count Of New "
+	  				"Percent Increase Of New "
 	  			} else {
-	  			  "Log Count Of New "
-	  			}  							
+	  			  "Log Percent Increase Of New "
+	  			}
   }
 
   ylab_lab   <- paste0(txt_, status, " Cases")
@@ -549,7 +620,7 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 ## INTERACTIVE TIME SERIES
 
 # Confirmed plots 
-res <- lapply(1:6, function(i) plot_interactive_df(percap
+res <- lapply(1:8, function(i) plot_interactive_df(percap
 							                     , top_confirmed[1:5, ]
 							                     , top_confirmed$Status[i]
 							                     , plot_types$Scale[i]
@@ -558,7 +629,7 @@ res <- lapply(1:6, function(i) plot_interactive_df(percap
 htmltools::tagList(res)
 
 # Fatal plots 
-res <- lapply(1:6, function(i) plot_interactive_df(percap
+res <- lapply(1:8, function(i) plot_interactive_df(percap
 							                     , top_fatal[1:5, ]
 							                     , top_fatal$Status[i]
 							                     , plot_types$Scale[i]
@@ -567,7 +638,7 @@ res <- lapply(1:6, function(i) plot_interactive_df(percap
 htmltools::tagList(res)
 
 # Recovered plots 
-res <- lapply(1:6, function(i) plot_interactive_df(percap
+res <- lapply(1:8, function(i) plot_interactive_df(percap
 							                     , top_recovered[1:5, ]
 							                     , top_recovered$Status[i]
 							                     , plot_types$Scale[i]
@@ -576,7 +647,7 @@ res <- lapply(1:6, function(i) plot_interactive_df(percap
 htmltools::tagList(res)
 
 # Active plots 
-res <- lapply(1:6, function(i) plot_interactive_df(percap
+res <- lapply(1:8, function(i) plot_interactive_df(percap
 							                     , top_active[1:5, ]
 							                     , top_active$Status[i]
 							                     , plot_types$Scale[i]
@@ -584,48 +655,14 @@ res <- lapply(1:6, function(i) plot_interactive_df(percap
 		
 htmltools::tagList(res)
 
-
-
-# ================================================================
-
-write.csv(percap, paste0(dir_path, "percap_20200405.csv"), row.names=FALSE)
-
-# solving for one time series (Ndays = nrow(x))
-x <- percap[percap$Country == "US" & percap$Status == "Fatal", ]
-
-x$AvgNewCases <- NULL
-for (i in 1:Ndays) {
-	
-	if (i == 1) {
-	
-		x$AvgNewCases[i] <- (x$NewCases[i]+x$NewCases[i+1]
-							+x$NewCases[i+2]+x$NewCases[i+3]+x$NewCases[i+4])/5
-	} else if (i == 2) {
-	
-		x$AvgNewCases[i] <- (x$NewCases[i-1]+x$NewCases[i]
-							+x$NewCases[i+1]+x$NewCases[i+2]+x$NewCases[i+3])/5		
-
-	} else if (i > 2 & i < (Ndays-2)) {
-	
-		x$AvgNewCases[i] <- (x$NewCases[i-2]+x$NewCases[i-1]
-							+x$NewCases[i]+x$NewCases[i+1]+x$NewCases[i+2])/5
-							
-	} else if (i == (Ndays-2)) {
-	
-		x$AvgNewCases[i] <- (x$NewCases[i-3]+x$NewCases[i-2]
-							+x$NewCases[i-1]+x$NewCases[i]+x$NewCases[i+1])/5
-	} else {
-	
-		x$AvgNewCases[i] <- (x$NewCases[i-4]+x$NewCases[i-3]
-							+x$NewCases[i-2]+x$NewCases[i-1]+x$NewCases[i])/5	
-	}
-}
-
-
-x$PctIncrease <- 
-
-
-
+#' 
+#' 
+#' 
+#' 
+#' ---
+#' 
+#' 
+#' 
 #' ```
 #' 
 #' TO DO:
@@ -650,6 +687,10 @@ x$PctIncrease <-
 #' ---
 #' 
 #' ### Doubling Rate
+#' 
+#' 
+#' 
+#' 
 #' 
 #' 
 #' ---
@@ -997,18 +1038,74 @@ x$PctIncrease <-
 ## gg_plot(top_active, "Active", "NewCases")
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
-## plot_types <- data.frame('Status' = c(rep("Confirmed",6)
-## 									  ,rep("Fatal",6)
-## 									  ,rep("Recovered",6)
-## 									  ,rep("Active",6))
-## 						  ,'Scale' = rep(c("Linear","Log"),3)
-## 						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)
+## plot_types <- data.frame('Status' = c(rep("Confirmed", 8)
+## 									  ,rep("Fatal", 8)
+## 									  ,rep("Recovered", 8)
+## 									  ,rep("Active", 8))
+## 						  ,'Type' = rep(c("Count","Pct","AvgNewCases","AvgPctIncrease"), each=2)									
+## 						  ,'Scale' = rep(c("Linear","Log"), 4)
 ## 						  )
 ## 
 ## 	
 ## kable(plot_types) %>%
 ##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
 ##                     , full_width = FALSE)
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # calculate five-day rolling average of new cases
+## percap$AvgNewCases <- NULL
+## 
+## for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## 	
+## 	for (j in i:(i+Ndays-1)) {
+## 	
+## 		if (j == i) {
+## 		
+## 			percap$AvgNewCases[j] <- (percap$NewCases[j]+percap$NewCases[j+1]
+## 								+percap$NewCases[j+2]+percap$NewCases[j+3]+percap$NewCases[j+4])/5
+## 		} else if (j == (i+1)) {
+## 		
+## 			percap$AvgNewCases[j] <- (percap$NewCases[j-1]+percap$NewCases[j]
+## 								+percap$NewCases[j+1]+percap$NewCases[j+2]+percap$NewCases[j+3])/5		
+## 	
+## 		} else if (j > (i+1) & j < (i+Ndays-2)) {
+## 		
+## 			percap$AvgNewCases[j] <- (percap$NewCases[j-2]+percap$NewCases[j-1]
+## 								+percap$NewCases[j]+percap$NewCases[j+1]+percap$NewCases[j+2])/5
+## 								
+## 		} else if (j == (i+Ndays-2)) {
+## 		
+## 			percap$AvgNewCases[j] <- (percap$NewCases[j-3]+percap$NewCases[j-2]
+## 								+percap$NewCases[j-1]+percap$NewCases[j]+percap$NewCases[j+1])/5
+## 		} else {
+## 		
+## 			percap$AvgNewCases[j] <- (percap$NewCases[j-4]+percap$NewCases[j-3]
+## 								+percap$NewCases[j-2]+percap$NewCases[j-1]+percap$NewCases[j])/5	
+## 		}		
+## 	}
+## }
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## ## calculate average percent increase of five-day rolling average
+## #percap$AvgPctIncrease <- NULL
+## #for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## #	
+## #	for (j in 1:(i+Ndays-1)) {
+## #
+## #		if (j == (i+Ndays-1)) {
+## #				
+## #			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
+## #			
+## #		} else {
+## #		
+## #			percap$AvgPctIncrease[j] <- round(percap$AvgNewCases[j] / percap$AvgNewCases[j+1], 3)
+## #			
+## #		}	
+## #	}
+## #}
+## #	
+## #percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
+## #percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
 ## 
 ## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 ## # functions for plotting interactive time series
@@ -1095,13 +1192,21 @@ x$PctIncrease <-
 ## 	  			  "Log Percentage Of "
 ## 	  			} 		
 ## 				
+##   } else if (type == "AvgNewCases") {
+## 
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"Five-day Rolling Mean Of New "
+## 	  			} else {
+## 	  			  "Log Mean Of New "
+## 	  			}  	
+## 
 ##   } else {
 ## 
 ##     txt_ <- if (scale_ == "Linear") {
-## 	  				"Count Of New "
+## 	  				"Percent Increase Of New "
 ## 	  			} else {
-## 	  			  "Log Count Of New "
-## 	  			}  							
+## 	  			  "Log Percent Increase Of New "
+## 	  			}
 ##   }
 ## 
 ##   ylab_lab   <- paste0(txt_, status, " Cases")
@@ -1125,7 +1230,7 @@ x$PctIncrease <-
 ## ## INTERACTIVE TIME SERIES
 ## 
 ## # Confirmed plots
-## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## res <- lapply(1:8, function(i) plot_interactive_df(percap
 ## 							                     , top_confirmed[1:5, ]
 ## 							                     , top_confirmed$Status[i]
 ## 							                     , plot_types$Scale[i]
@@ -1134,7 +1239,7 @@ x$PctIncrease <-
 ## htmltools::tagList(res)
 ## 
 ## # Fatal plots
-## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## res <- lapply(1:8, function(i) plot_interactive_df(percap
 ## 							                     , top_fatal[1:5, ]
 ## 							                     , top_fatal$Status[i]
 ## 							                     , plot_types$Scale[i]
@@ -1143,7 +1248,7 @@ x$PctIncrease <-
 ## htmltools::tagList(res)
 ## 
 ## # Recovered plots
-## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## res <- lapply(1:8, function(i) plot_interactive_df(percap
 ## 							                     , top_recovered[1:5, ]
 ## 							                     , top_recovered$Status[i]
 ## 							                     , plot_types$Scale[i]
@@ -1152,19 +1257,22 @@ x$PctIncrease <-
 ## htmltools::tagList(res)
 ## 
 ## # Active plots
-## res <- lapply(1:6, function(i) plot_interactive_df(percap
+## res <- lapply(1:8, function(i) plot_interactive_df(percap
 ## 							                     , top_active[1:5, ]
 ## 							                     , top_active$Status[i]
 ## 							                     , plot_types$Scale[i]
 ## 							                     , plot_types$Type[i]))
 ## 		
 ## htmltools::tagList(res)
+## 
 
+#' 
+#' 
 #' 
 #' 
 ## ------------------------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 

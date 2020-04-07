@@ -15,7 +15,7 @@ knitr::opts_chunk$set(warning = FALSE)
 #' 
 #' 
 #' 
-#' This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files for this project, including all previous versions. For full reproducibility, a similar directory structure including custom datasets should be reproduced as well - the easiest way would be to clone directly from GitHub.
+#' This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)
 #' 
 #' 
 #' ## Contents {#contents-link}
@@ -233,13 +233,10 @@ kable(rbind(head(dfm)
 # read in static dataset of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
-# test for new countries in data -- manual step
+# test for new countries in data 
 current_countries <- unique(dfm$Country)
 current_countries[!current_countries %in% country_population$Country]
 
-#' 
-#' 
-## ----include=FALSE-------------------------------------------------------
 # merge datasets
 percap <- merge(dfm, country_population, by="Country")
 
@@ -471,30 +468,27 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 }
 
 #' 
-#' 
-#' 
 ## ----include=FALSE-------------------------------------------------------
-# calculate average percent increase of five-day rolling average
-percap$AvgPctIncrease <- NULL
-for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
-	
-	for (j in i:(i+Ndays-1)) {
-
-		if (j == (i+Ndays-1)) {
-				
-			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
-			
-		} else {
-		
-			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j] / percap$AvgNewCases[j+1]
-			
-		}	
-	}
-}
-	
-percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
-percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
-percap$AvgPctIncrease <- round(percap$AvgPctIncrease, 3)
+## calculate average percent increase of five-day rolling average
+#percap$AvgPctIncrease <- NULL
+#for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+#	
+#	for (j in 1:(i+Ndays-1)) {
+#
+#		if (j == (i+Ndays-1)) {
+#				
+#			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
+#			
+#		} else {
+#		
+#			percap$AvgPctIncrease[j] <- round(percap$AvgNewCases[j] / percap$AvgNewCases[j+1], 3)
+#			
+#		}	
+#	}
+#}
+#	
+#percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
+#percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
 
 #' 
 #' 
@@ -531,25 +525,14 @@ create_xts_series <- function(dfm, country, status, scale_, type) {
 	  		} else {
 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
 	  		}	  
-	} else if (type == "AvgNewCases") {
+	} else {
 	  
 	  series <- if (scale_ == "Linear") {
-	    
-	  			xts(dfm$AvgNewCases, order.by = dfm$Date)
+	  			xts(dfm$NewCases, order.by = dfm$Date)
 	  		} else {
-	  		  xts(log(dfm$AvgNewCases), order.by = dfm$Date)
+	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
 	  		}	  	  
-	  
-	} else { # AvgPctIncrease
-	  
-	  series <- if (scale_ == "Linear") {
-	    
-	  			xts(dfm$AvgPctIncrease, order.by = dfm$Date)
-	  		} else {
-	  		  xts(log(dfm$AvgPctIncrease), order.by = dfm$Date)	 
-	  		}
 	}
-	
 	series
 }
 
@@ -917,11 +900,10 @@ htmltools::tagList(res)
 ## # read in static dataset of countries and populations
 ## country_population <- read.csv("COVID19_DATA/country_population.csv")
 ## 		
-## # test for new countries in data -- manual step
+## # test for new countries in data
 ## current_countries <- unique(dfm$Country)
 ## current_countries[!current_countries %in% country_population$Country]
 ## 
-## ## ----include=FALSE-------------------------------------------------------
 ## # merge datasets
 ## percap <- merge(dfm, country_population, by="Country")
 ## 
@@ -1104,27 +1086,26 @@ htmltools::tagList(res)
 ## }
 ## 
 ## ## ----include=FALSE-------------------------------------------------------
-## # calculate average percent increase of five-day rolling average
-## percap$AvgPctIncrease <- NULL
-## for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
-## 	
-## 	for (j in i:(i+Ndays-1)) {
-## 
-## 		if (j == (i+Ndays-1)) {
-## 				
-## 			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
-## 			
-## 		} else {
-## 		
-## 			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j] / percap$AvgNewCases[j+1]
-## 			
-## 		}	
-## 	}
-## }
-## 	
-## percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
-## percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
-## percap$AvgPctIncrease <- round(percap$AvgPctIncrease, 3)
+## ## calculate average percent increase of five-day rolling average
+## #percap$AvgPctIncrease <- NULL
+## #for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## #	
+## #	for (j in 1:(i+Ndays-1)) {
+## #
+## #		if (j == (i+Ndays-1)) {
+## #				
+## #			percap$AvgPctIncrease[j] <- percap$AvgNewCases[j]
+## #			
+## #		} else {
+## #		
+## #			percap$AvgPctIncrease[j] <- round(percap$AvgNewCases[j] / percap$AvgNewCases[j+1], 3)
+## #			
+## #		}	
+## #	}
+## #}
+## #	
+## #percap$AvgPctIncrease[is.nan(percap$AvgPctIncrease)] <- 0
+## #percap$AvgPctIncrease[percap$AvgPctIncrease == Inf | percap$AvgPctIncrease == -Inf] <- 0
 ## 
 ## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 ## # functions for plotting interactive time series
@@ -1157,25 +1138,14 @@ htmltools::tagList(res)
 ## 	  		} else {
 ## 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
 ## 	  		}	
-## 	} else if (type == "AvgNewCases") {
+## 	} else {
 ## 	
 ## 	  series <- if (scale_ == "Linear") {
-## 	
-## 	  			xts(dfm$AvgNewCases, order.by = dfm$Date)
+## 	  			xts(dfm$NewCases, order.by = dfm$Date)
 ## 	  		} else {
-## 	  		  xts(log(dfm$AvgNewCases), order.by = dfm$Date)
+## 	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
 ## 	  		}	  	
-## 	
-## 	} else { # AvgPctIncrease
-## 	
-## 	  series <- if (scale_ == "Linear") {
-## 	
-## 	  			xts(dfm$AvgPctIncrease, order.by = dfm$Date)
-## 	  		} else {
-## 	  		  xts(log(dfm$AvgPctIncrease), order.by = dfm$Date)	
-## 	  		}
 ## 	}
-## 	
 ## 	series
 ## }
 ## 
@@ -1304,5 +1274,5 @@ htmltools::tagList(res)
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
 library(knitr)
 options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 

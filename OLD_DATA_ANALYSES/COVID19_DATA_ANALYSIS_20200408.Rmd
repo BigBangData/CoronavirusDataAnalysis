@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "04/08/2020"
+date: "04/07/2020"
 output: 
   html_document:
     keep_md: true
@@ -583,67 +583,6 @@ htmltools::tagList(active_plots)
 
 ---
 
-#### IN CONSTRUCTION...
-
-**Log of Rate of Change**
-
-```{r}
-# Log2 of Count
-percap$Log2Count <- log2(percap$Count)
-head(percap)
-```
-
-```{r}
-# calculate log2 rate of change
-percap$Log2RateOfChange <- NULL
-
-for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
-	
-	for (j in i:(i+Ndays-1)) {
-	  
-		if (percap$Count[j] > 10) {
-      
-			percap$Log2RateOfChange[j] <- percap$Log2Count[j] - percap$Log2Count[j+1]
-		  
-		} else {
-		
-			# avoid wild rates of change on low counts
-			percap$Log2RateOfChange[j] <- 0
-		}
-	}
-  
-	if (i > 1) {
-	
-		# fix last row of a given time series
-		percap$Log2RateOfChange[i-1] <- 0
-	}  
-}
-```
-
-
-```{r}
-# test with US fatalities
-x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-x
-```
-
-
-```{r fig.height=6, fig.width=9}
-# single interative plot
-series <- xts(x$Log2RateOfChange, order.by = x$Date)
-
-interactive_df <- dygraph(series, main = "US Fatalities") %>% 
-				dyAxis("x", drawGrid = FALSE) %>%							
-				dyAxis("y", label = "Log of Rate of Change") %>%
-				dyOptions(colors="black"
-						, axisLineWidth = 1.5
-						, axisLineColor = "navy"
-						, gridLineColor = "lightblue") %>%			
-				dyRangeSelector() %>%
-				dyLegend(width = 750)
-
-interactive_df
-```
 
 
 ```
@@ -655,7 +594,7 @@ TO DO:
   
   Plot proportion of New Cases to Total Cases by Status (linear, log)?
   
-  Plot percentage increase vs proportion of population to world population?
+  Plot log of percentage increase.
   
   Outcome Simulation section.
   
@@ -663,6 +602,7 @@ TO DO:
   
 
 ```
+
 
 
 
@@ -1148,57 +1088,6 @@ active_plots <- lapply(1:6, function(i) plot_interactive_df(percap
 		
 htmltools::tagList(active_plots)
 
-## ------------------------------------------------------------------------
-# Log2 of Count
-percap$Log2Count <- log2(percap$Count)
-head(percap)
-
-## ------------------------------------------------------------------------
-# calculate log2 rate of change
-percap$Log2RateOfChange <- NULL
-
-for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
-	
-	for (j in i:(i+Ndays-1)) {
-	  
-		if (percap$Count[j] > 10) {
-      
-			percap$Log2RateOfChange[j] <- percap$Log2Count[j] - percap$Log2Count[j+1]
-		  
-		} else {
-		
-			# avoid wild rates of change on low counts
-			percap$Log2RateOfChange[j] <- 0
-		}
-	}
-  
-	if (i > 1) {
-	
-		# fix last row of a given time series
-		percap$Log2RateOfChange[i-1] <- 0
-	}  
-}
-
-## ------------------------------------------------------------------------
-# test with US fatalities
-x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-x
-
-## ------------------------------------------------------------------------
-# single interative plot
-series <- xts(x$Log2RateOfChange, order.by = x$Date)
-
-interactive_df <- dygraph(series, main = "US Fatalities") %>% 
-				dyAxis("x", drawGrid = FALSE) %>%							
-				dyAxis("y", label = "Log of Rate of Change") %>%
-				dyOptions(colors="black"
-						, axisLineWidth = 1.5
-						, axisLineColor = "navy"
-						, gridLineColor = "lightblue") %>%			
-				dyRangeSelector() %>%
-				dyLegend(width = 750)
-
-interactive_df
 ```
 
 

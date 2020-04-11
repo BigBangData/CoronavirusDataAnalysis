@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "04/07/2020"
+#' date: "04/09/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(warning = FALSE)
 #' 
 #' This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files for this project, including all previous versions. For full reproducibility, a similar directory structure including custom datasets should be reproduced as well - the easiest way would be to clone directly from GitHub.
 #' 
-#' This project is not intended to be a serious data analysis. For one, the number of confirmed cases and the derived measure active cases (confirmed minus fatal and recovered cases) suffer from lack of definition and usefulness since they vary over time and geography depending on differing policies and testing capabilities. Without considering more sources of information and enriching the data, using the Johns Hopkins data alone would be a poor way to assess how COVID-19 spreads through the population. The number of confirmed cases is also well below the presumed actual number of cases, and by the time I plot these, the data is about two weeks stale. I am pursuing this limited project in my spare time for my own personal purposes.
+#' This project is not intended to be a serious data analysis, which would require more datasets and study. This is a personal project to explore the daily JHU datasets. The plots produced here, therefore, have serious issues and do not reflect reality. They do not take into consideration the meaning of confirmed cases - this varies per location and time depending on differing methods of definition, availability of testing, changes in policy, and so forth. These plots should not be taken as a model for how COVID-19 spreads through populations. The data is incomplete, and represents a view of the past.
 #' 
 #' 
 #' ## Contents {#contents-link}
@@ -316,7 +316,10 @@ kable(world_totals) %>%
 
 #' 
 #' 
-#' In this first section I plot a series of barplots for the top ten countries per status (confirmed, fatal, recovered, active) by count, percentage of population, and number of new cases since the previous day.  
+#' In this first section I plot a series of barplots for the top ten countries per status (confirmed, fatal, recovered, active) by count, percentage of population, and number of new cases since the previous day.
+#' 
+#' UPDATE - decided to remove Active plots, in fact, this whole section is badly plotted, it leads to information overload. 
+#' TO DO - find 1 or 2 plots to convey the same information, or the message behind it (stacked barplots a maybe).
 #' 
 #' 
 #' ---
@@ -389,24 +392,24 @@ gg_plot <- function(dfm, status, type) {
 #' 
 #' 
 #' 
-## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## ----fig.height=4, fig.width=8, echo=FALSE-------------------------------
 # top countries by count
 gg_plot(top_confirmed, "Confirmed", "Count") 
 gg_plot(top_fatal, "Fatal", "Count")
 gg_plot(top_recovered, "Recovered", "Count")
-gg_plot(top_active, "Active", "Count")
+#gg_plot(top_active, "Active", "Count")
 
 # top countries by percentage
 gg_plot(top_confirmed, "Confirmed", "Pct") 
 gg_plot(top_fatal, "Fatal", "Pct")
 gg_plot(top_recovered, "Recovered", "Pct")
-gg_plot(top_active, "Active", "Pct")
+#gg_plot(top_active, "Active", "Pct")
 
 # top countries by number of new cases in the last day 
 gg_plot(top_confirmed, "Confirmed", "NewCases") 
 gg_plot(top_fatal, "Fatal", "NewCases")
 gg_plot(top_recovered, "Recovered", "NewCases")
-gg_plot(top_active, "Active", "NewCases")
+#gg_plot(top_active, "Active", "NewCases")
 
 #' 
 #' 
@@ -419,7 +422,7 @@ gg_plot(top_active, "Active", "NewCases")
 #' I this section I plot the top five countries for active and fatal cases. Fatal is the most relible type of data since there are more protocols involving deaths than confirmation of a virus, and active is a mildly useful way to track how many cases are out there based on this dataset. 
 #' 
 #' 
-#' 
+#' UPDATE - same issue as barplots, information overload. Find better ways to plot (ex: plot count + log in dual axis plot).
 #' 
 ## ----echo=FALSE----------------------------------------------------------
 plot_types <- data.frame('Num' = 1:12
@@ -591,13 +594,11 @@ htmltools::tagList(active_plots)
 #' 
 #' **Log of Rate of Change**
 #' 
-## ------------------------------------------------------------------------
+## ----include=FALSE-------------------------------------------------------
 # Log2 of Count
 percap$Log2Count <- log2(percap$Count)
-head(percap)
 
-#' 
-## ------------------------------------------------------------------------
+
 # calculate log2 rate of change
 percap$Log2RateOfChange <- NULL
 
@@ -625,60 +626,23 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 
 #' 
 #' 
-## ------------------------------------------------------------------------
+## ----fig.height=6, fig.width=9-------------------------------------------
+# Single dual-axis plot of count + log2 rate of change
+
 # test with US fatalities
 x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-x
-
-#' 
-#' 
-## ----fig.height=6, fig.width=9-------------------------------------------
-# single interative plot
-series <- xts(x$Log2RateOfChange, order.by = x$Date)
-
-interactive_df <- dygraph(series, main = "US Fatalities") %>% 
-				dyAxis("x", drawGrid = FALSE) %>%							
-				dyAxis("y", label = "Log of Rate of Change") %>%
-				dyOptions(colors="black"
-						, axisLineWidth = 1.5
-						, axisLineColor = "navy"
-						, gridLineColor = "lightblue") %>%			
-				dyRangeSelector() %>%
-				dyLegend(width = 750)
-
-interactive_df
-
-
-x <- percap
-
-      Country Status       Date Count Population_thousands   Pct NewCases Log2Count Log2RateOfChange
-54991      US  Fatal 2020-04-08 14695               322180 0.005     1973 13.843038        0.2079999
-54992      US  Fatal 2020-04-07 12722               322180 0.004     1939 13.635038        0.2385669
-54993      US  Fatal 2020-04-06 10783               322180 0.003     1164 13.396471        0.1647998
-54994      US  Fatal 2020-04-05  9619               322180 0.003     1212 13.231671        0.1942958
-54995      US  Fatal 2020-04-04  8407               322180 0.003     1320 13.037375        0.2464160
-54996      US  Fatal 2020-04-03  7087               322180 0.002     1161 12.790959        0.2581164
-54997      US  Fatal 2020-04-02  5926               322180 0.002     1169 12.532843        0.3170066
-54998      US  Fatal 2020-04-01  4757               322180 0.001      884 12.215836        0.2966005
-54999      US  Fatal 2020-03-31  3873               322180 0.001      895 11.919236        0.3791077
 
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Log2Count, colour = "Log2Count")) +
-	scale_y_continuous(sec.axis = sec_axis(~., name = "Log 2 Count")) +
+	geom_line(aes(y = Count/5000, colour = "Count/5000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*5000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "US Fatalities"
 		,y = "Log2 Rate of Change"
 		,x = ""
 		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9)) 
-
-
-
-
-
-
+	theme(legend.title = element_blank(), legend.position = c(.6, .9))
 
 #' 
 #' 
@@ -1016,24 +980,24 @@ ggplot(x, aes(x = Date)) +
 ## 	}
 ## }
 ## 
-## ## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## ## ----fig.height=4, fig.width=8, echo=FALSE-------------------------------
 ## # top countries by count
 ## gg_plot(top_confirmed, "Confirmed", "Count")
 ## gg_plot(top_fatal, "Fatal", "Count")
 ## gg_plot(top_recovered, "Recovered", "Count")
-## gg_plot(top_active, "Active", "Count")
+## #gg_plot(top_active, "Active", "Count")
 ## 
 ## # top countries by percentage
 ## gg_plot(top_confirmed, "Confirmed", "Pct")
 ## gg_plot(top_fatal, "Fatal", "Pct")
 ## gg_plot(top_recovered, "Recovered", "Pct")
-## gg_plot(top_active, "Active", "Pct")
+## #gg_plot(top_active, "Active", "Pct")
 ## 
 ## # top countries by number of new cases in the last day
 ## gg_plot(top_confirmed, "Confirmed", "NewCases")
 ## gg_plot(top_fatal, "Fatal", "NewCases")
 ## gg_plot(top_recovered, "Recovered", "NewCases")
-## gg_plot(top_active, "Active", "NewCases")
+## #gg_plot(top_active, "Active", "NewCases")
 ## 
 ## ## ----echo=FALSE----------------------------------------------------------
 ## plot_types <- data.frame('Num' = 1:12
@@ -1184,12 +1148,11 @@ ggplot(x, aes(x = Date)) +
 ## 		
 ## htmltools::tagList(active_plots)
 ## 
-## ## ------------------------------------------------------------------------
+## ## ----include=FALSE-------------------------------------------------------
 ## # Log2 of Count
 ## percap$Log2Count <- log2(percap$Count)
-## head(percap)
 ## 
-## ## ------------------------------------------------------------------------
+## 
 ## # calculate log2 rate of change
 ## percap$Log2RateOfChange <- NULL
 ## 
@@ -1215,26 +1178,24 @@ ggplot(x, aes(x = Date)) +
 ## 	}
 ## }
 ## 
-## ## ------------------------------------------------------------------------
+## ## ----fig.height=6, fig.width=9-------------------------------------------
+## # Single dual-axis plot of count + log2 rate of change
+## 
 ## # test with US fatalities
 ## x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-## x
 ## 
-## ## ------------------------------------------------------------------------
-## # single interative plot
-## series <- xts(x$Log2RateOfChange, order.by = x$Date)
 ## 
-## interactive_df <- dygraph(series, main = "US Fatalities") %>%
-## 				dyAxis("x", drawGrid = FALSE) %>%							
-## 				dyAxis("y", label = "Log of Rate of Change") %>%
-## 				dyOptions(colors="black"
-## 						, axisLineWidth = 1.5
-## 						, axisLineColor = "navy"
-## 						, gridLineColor = "lightblue") %>%			
-## 				dyRangeSelector() %>%
-## 				dyLegend(width = 750)
+## ggplot(x, aes(x = Date)) +
+## 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
+## 	geom_line(aes(y = Count/5000, colour = "Count/5000")) +
+## 	scale_y_continuous(sec.axis = sec_axis(~.*5000, name = "Count")) +
+## 	scale_colour_manual(values = c("black", "red")) +
+## 	labs(title = "US Fatalities"
+## 		,y = "Log2 Rate of Change"
+## 		,x = ""
+## 		,colour = "Parameter") +
+## 	theme(legend.title = element_blank(), legend.position = c(.6, .9))
 ## 
-## interactive_df
 
 #' 
 #' 
@@ -1242,7 +1203,7 @@ ggplot(x, aes(x = Date)) +
 #' 
 ## ------------------------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#library(knitr)
-#options(knitr.purl.inline = TRUE)
-#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+library(knitr)
+options(knitr.purl.inline = TRUE)
+purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 

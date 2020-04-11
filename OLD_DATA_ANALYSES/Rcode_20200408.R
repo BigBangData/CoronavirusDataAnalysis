@@ -587,6 +587,99 @@ htmltools::tagList(active_plots)
 #' 
 #' ---
 #' 
+#' #### IN CONSTRUCTION...
+#' 
+#' **Log of Rate of Change**
+#' 
+## ------------------------------------------------------------------------
+# Log2 of Count
+percap$Log2Count <- log2(percap$Count)
+head(percap)
+
+#' 
+## ------------------------------------------------------------------------
+# calculate log2 rate of change
+percap$Log2RateOfChange <- NULL
+
+for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+	
+	for (j in i:(i+Ndays-1)) {
+	  
+		if (percap$Count[j] > 10) {
+      
+			percap$Log2RateOfChange[j] <- percap$Log2Count[j] - percap$Log2Count[j+1]
+		  
+		} else {
+		
+			# avoid wild rates of change on low counts
+			percap$Log2RateOfChange[j] <- 0
+		}
+	}
+  
+	if (i > 1) {
+	
+		# fix last row of a given time series
+		percap$Log2RateOfChange[i-1] <- 0
+	}  
+}
+
+#' 
+#' 
+## ------------------------------------------------------------------------
+# test with US fatalities
+x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
+x
+
+#' 
+#' 
+## ----fig.height=6, fig.width=9-------------------------------------------
+# single interative plot
+series <- xts(x$Log2RateOfChange, order.by = x$Date)
+
+interactive_df <- dygraph(series, main = "US Fatalities") %>% 
+				dyAxis("x", drawGrid = FALSE) %>%							
+				dyAxis("y", label = "Log of Rate of Change") %>%
+				dyOptions(colors="black"
+						, axisLineWidth = 1.5
+						, axisLineColor = "navy"
+						, gridLineColor = "lightblue") %>%			
+				dyRangeSelector() %>%
+				dyLegend(width = 750)
+
+interactive_df
+
+
+x <- percap
+
+      Country Status       Date Count Population_thousands   Pct NewCases Log2Count Log2RateOfChange
+54991      US  Fatal 2020-04-08 14695               322180 0.005     1973 13.843038        0.2079999
+54992      US  Fatal 2020-04-07 12722               322180 0.004     1939 13.635038        0.2385669
+54993      US  Fatal 2020-04-06 10783               322180 0.003     1164 13.396471        0.1647998
+54994      US  Fatal 2020-04-05  9619               322180 0.003     1212 13.231671        0.1942958
+54995      US  Fatal 2020-04-04  8407               322180 0.003     1320 13.037375        0.2464160
+54996      US  Fatal 2020-04-03  7087               322180 0.002     1161 12.790959        0.2581164
+54997      US  Fatal 2020-04-02  5926               322180 0.002     1169 12.532843        0.3170066
+54998      US  Fatal 2020-04-01  4757               322180 0.001      884 12.215836        0.2966005
+54999      US  Fatal 2020-03-31  3873               322180 0.001      895 11.919236        0.3791077
+
+
+ggplot(x, aes(x = Date)) +
+	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
+	geom_line(aes(y = Log2Count, colour = "Log2Count")) +
+	scale_y_continuous(sec.axis = sec_axis(~., name = "Log 2 Count")) +
+	scale_colour_manual(values = c("black", "red")) +
+	labs(title = "US Fatalities"
+		,y = "Log2 Rate of Change"
+		,x = ""
+		,colour = "Parameter") +
+	theme(legend.title = element_blank(), legend.position = c(.6, .9)) 
+
+
+
+
+
+
+
 #' 
 #' 
 #' ```
@@ -598,7 +691,7 @@ htmltools::tagList(active_plots)
 #'   
 #'   Plot proportion of New Cases to Total Cases by Status (linear, log)?
 #'   
-#'   Plot log of percentage increase.
+#'   Plot percentage increase vs proportion of population to world population?
 #'   
 #'   Outcome Simulation section.
 #'   
@@ -606,7 +699,6 @@ htmltools::tagList(active_plots)
 #'   
 #' 
 #' ```
-#' 
 #' 
 #' 
 #' 
@@ -621,8 +713,528 @@ htmltools::tagList(active_plots)
 #' 
 #' 
 ## ----eval=FALSE----------------------------------------------------------
+## ## ----setup, include=FALSE------------------------------------------------
+## knitr::opts_chunk$set(echo = TRUE)
+## knitr::opts_chunk$set(message = FALSE)
+## knitr::opts_chunk$set(warning = FALSE)
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## 
+## # environment setup
+## rm(list = ls())
+## options(scipen=999)
+## 
+## # install and load packages
+## install_packages <- function(package){
+## 
+##   newpackage <- package[!(package %in% installed.packages()[, "Package"])]
+## 
+## 	if (length(newpackage)) {
+##       suppressMessages(install.packages(newpackage, dependencies = TRUE))
+## 	}
+## 	sapply(package, require, character.only = TRUE)
+## }
 ## 
 ## 
+## packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer","kableExtra")
+## suppressPackageStartupMessages(install_packages(packages))
+## 
+## # directory structure setup
+## dir_name <- "COVID19_DATA"
+## if (!file.exists(dir_name)) {
+## 	dir.create(dir_name)
+## }
+## 
+## dir_path <- "COVID19_DATA/"
+## 
+## # check if today's RDS file exists
+## rds_file <- paste0(dir_path, gsub("-", "", Sys.Date()), "_data.rds")
+## 
+## if (!file.exists(rds_file)) {
+## 
+## 	# download todays's CSVs
+## 	
+## 	# standard fullpath names for today's CSVs
+## 	confirmed_csv <- paste0(dir_path, gsub("-", "", Sys.Date()), "_confirmed.csv")
+## 	deaths_csv	  <- paste0(dir_path, gsub("-", "", Sys.Date()), "_deaths.csv")
+## 	recovered_csv <- paste0(dir_path, gsub("-", "", Sys.Date()), "_recovered.csv")
+## 	
+## 	# download function
+## 	download_csv <- function(fullpath_csv) {
+## 	
+## 		# check if CSV file exists first
+## 		if (!file.exists(fullpath_csv)) {
+## 		
+## 			# construct url
+## 			url_header <- paste0("https://data.humdata.org/hxlproxy/data/"
+## 								,"download/time_series_covid19_")
+## 			
+## 			url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode"
+## 						,"-header-att01=date&explode-value-att01=value&filter02=ren"
+## 						,"ame&rename-oldtag02=%23affected%2Bdate&rename-newtag02=%2"
+## 						,"3date&rename-header02=Date&filter03=rename&rename-oldtag0"
+## 						,"3=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfec"
+## 						,"ted%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&cl"
+## 						,"ean-date-tags04=%23date&filter05=sort&sort-tags05=%23date"
+## 						,"&sort-reverse05=on&filter06=sort&sort-tags06=%23country%2"
+## 						,"Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default"
+## 						,"-tag=%23affected%2Blabel&tagger-01-header=province%2Fstat"
+## 						,"e&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2"
+## 						,"Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header="
+## 						,"lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagg"
+## 						,"er-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw"
+## 						,".githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmast"
+## 						,"er%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftim"
+## 						,"e_series_covid19_")
+## 			
+## 			# extract name and reshape into global name
+## 			date_name <- strsplit(fullpath_csv,"/")[[1]][2]
+## 			name <- strsplit(strsplit(date_name, "_")[[1]][2], "\\.")[[1]][1]
+## 			global <- paste0(name, "_global")	
+## 			
+## 			# download
+## 			final_url  <- paste0(url_header, global, url_body, global, ".csv")
+## 			download.file(final_url, destfile = fullpath_csv)		
+## 		}
+## 	}
+## 	
+## 	download_csv(confirmed_csv)
+## 	download_csv(deaths_csv)
+## 	download_csv(recovered_csv)
+## 	
+## 	# load data into environment
+## 	load_csv <- function(fullpath_csv) {
+## 	
+## 		read.csv(fullpath_csv
+## 				, header=TRUE
+## 				, fileEncoding="UTF-8-BOM"
+## 				, stringsAsFactors=FALSE, na.strings="")[-1, ]
+## 	}
+## 	
+## 		
+## 	confirmed_df  <- load_csv(confirmed_csv)
+## 	fatal_df	  <- load_csv(deaths_csv)
+## 	recovered_df <- load_csv(recovered_csv)
+## 	
+## 	# need an active dataset for confirmed - deaths - recovered
+## 	# will fix count (Value) later after fixing data types
+## 	active_df 	   <- confirmed_df
+## 	
+## 	preprocess_csv <- function(dfm, colname) {
+## 	
+## 		# prep data for long format (rbing later)
+## 		
+## 		# add Status col identifying the dataset
+## 		# remove Lat Long
+## 		# rename cols
+## 		dfm$Status <- rep(colname, nrow(dfm))
+## 		dfm <- dfm[ ,!colnames(dfm) %in% c("Province.State", "Lat", "Long")]
+## 		colnames(dfm) <- c("Country", "Date", "Count", "Status")
+## 		
+## 		# fix data types
+## 		dfm$Count <- as.integer(dfm$Count)
+## 		dfm$Date <- as.Date(dfm$Date, tryFormats = c("%Y-%m-%d", "%Y/%m/%d"))
+## 		dfm$Status <- as.factor(dfm$Status)
+## 	
+## 		# lose the Province_State data and group by country
+## 		# countries like Canada have subnational data issues
+## 		dfm <- dfm %>%
+## 			select(Country, Status, Date, Count) %>%
+## 			group_by(Country, Status, Date) %>%
+## 			summarise(Count=sum(Count)) %>%
+## 			arrange(Country, Status, desc(Date))
+## 		
+## 		# return dataframe
+## 		as.data.frame(dfm)
+## 	}
+## 	
+## 	confirmed_clean  <- preprocess_csv(confirmed_df, "Confirmed")
+## 	fatal_clean 	 <- preprocess_csv(fatal_df, "Fatal")
+## 	recovered_clean  <- preprocess_csv(recovered_df, "Recovered")
+## 	active_clean	 <- preprocess_csv(active_df, "Active")
+## 	
+## 	# recalculate Counts for active
+## 	active_clean$Count <- (confirmed_clean$Count
+## 						- fatal_clean$Count
+## 						- recovered_clean$Count)
+## 	
+## 	# row bind (append) files into one dataset
+## 	dfm <- rbind(confirmed_clean
+## 				, fatal_clean
+## 				, recovered_clean
+## 				, active_clean
+## 				, make.row.names=FALSE)
+## 	
+## 	# save as RDS
+## 	saveRDS(dfm, file = rds_file)
+## }
+## 
+## 
+## # read RDS file
+## dfm <- readRDS(rds_file)
+## 
+## # calculate number of countries and number of days in the time series
+## Ncountries <- length(unique(dfm$Country))
+## Ndays <- length(unique(dfm$Date))
+## 
+## ## ------------------------------------------------------------------------
+## # structure of dataset
+## str(dfm)
+## 
+## 
+## nrow(dfm)
+## length(dfm)
+## Ndays
+## Ncountries
+## ## ----echo=FALSE----------------------------------------------------------
+## # top and bottom rows for final dataset
+## kable(rbind(head(dfm)
+##      ,tail(dfm))) %>%
+##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                   , full_width = FALSE)
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # read in static dataset of countries and populations
+## country_population <- read.csv("COVID19_DATA/country_population.csv")
+## 		
+## # test for new countries in data -- manual step
+## current_countries <- unique(dfm$Country)
+## current_countries[!current_countries %in% country_population$Country]
+## 
+## ## ----include=FALSE-------------------------------------------------------
+## # merge datasets
+## percap <- merge(dfm, country_population, by="Country")
+## 
+## # create percentage col
+## percap$Pct <- round(percap$Count/(percap$Population_thousands*1000)*100, 3)
+## 
+## # reorder by Country, Status, and Date descending
+## percap <- data.frame(percap %>%
+##                      arrange(Country, Status, desc(Date)))
+## 
+## # calculate new cases
+## percap$NewCases <- NULL
+## 
+## for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## 	
+## 	for (j in i:(i+Ndays-1)) {
+## 		percap$NewCases[j] <- percap$Count[j] - percap$Count[j+1]
+## 	}
+## 	
+## 	if (i > 1) {
+## 		percap$NewCases[i-1] <- 0
+## 	}
+## }
+## 
+## percap$NewCases[nrow(percap)] <- 0
+## percap$NewCases <- as.integer(percap$NewCases)
+## 
+## ## ----echo=FALSE----------------------------------------------------------
+## # top and bottom rows for final dataset
+## kable(rbind(head(percap[percap$Country == "Brazil", ])
+##      ,head(percap[percap$Country == "Canada", ]))) %>%
+##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                   , full_width = FALSE)
+## 
+## ## ----echo=FALSE, fig.height=6, fig.width=6-------------------------------
+## # subset to current counts
+## # subset to current counts
+## current_data <- data.frame(percap %>%
+## 					filter(Date == unique(percap$Date)[1])) %>%
+## 					arrange(Status, desc(Count))
+## 
+## # subset to world totals
+## world_totals <- data.frame(current_data %>%
+## 					group_by(Status) %>%
+## 					summarise('Total'=sum(Count)))
+## 
+## world_totals$Total <- formatC(world_totals$Total, big.mark=",")
+## 
+## kable(world_totals) %>%
+##       kable_styling(bootstrap_options = c("striped", "hover")
+##                     , full_width = FALSE)
+## 
+## ## ----echo=FALSE----------------------------------------------------------
+## # subset to country totals
+## country_totals <- data.frame(current_data %>%
+## 						select(Country, Status, Count, Pct, NewCases) %>%
+## 						group_by(Country, Status))
+## 	
+## # subset to top counts 	
+## get_top_counts <- function(dfm, coln, num) {
+## 	
+## 	dfm <- dfm[dfm$Status == coln, ][1:num,]
+## 	row.names(dfm) <- 1:num
+## 	dfm
+## }					
+## 
+## # separate by status
+## top_confirmed 	<- get_top_counts(country_totals, "Confirmed", 10)
+## top_fatal		<- get_top_counts(country_totals, "Fatal", 10)
+## top_recovered 	<- get_top_counts(country_totals, "Recovered", 10)
+## top_active 		<- get_top_counts(country_totals, "Active", 10)
+## 
+## # plot top countries per status and type
+## gg_plot <- function(dfm, status, type) {
+## 
+## 	color <- if (status == "Confirmed") {
+## 				"#D6604D"
+## 			 } else if (status == "Fatal") {
+## 				"gray25"
+## 			 } else if (status == "Recovered") {
+## 				"#74C476"
+## 			 } else {
+## 				"#984EA3"
+## 			 }
+## 	
+## 	if (type == "Count") {	
+## 		ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
+## 			geom_bar(stat="identity", fill=color) +
+## 			ggtitle(paste0("Top Countries - ", status, " Cases")) +
+## 			xlab("") + ylab(paste0("Number of ", status, " Cases")) +
+## 			geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
+## 			theme_minimal() +
+## 			theme(axis.text.x = element_text(angle = 45, hjust = 1))
+## 	} else if (type == "Pct") {
+## 		ggplot(data=dfm, aes(x=reorder(Country, -Pct), y=Pct)) +
+## 			geom_bar(stat="identity", fill=color) + 		
+## 			ggtitle(paste0("Top Countries: ", status
+## 						 , " Cases by Percentage of Population")) +
+## 			xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
+## 			geom_text(aes(label=Pct), vjust=1.6, color="white", size=3.5) +
+## 			theme_minimal() + 		
+## 			theme(axis.text.x = element_text(angle = 45, hjust = 1))
+## 	} else {
+## 		ggplot(data=dfm, aes(x=reorder(Country, -NewCases), y=NewCases)) +
+## 			geom_bar(stat="identity", fill=color) +
+## 			ggtitle(paste0("Top Countries: Yesterday's ", status
+## 						 , " New Cases")) +
+## 			xlab("") + ylab("Number of New Cases") +
+## 			geom_text(aes(label=NewCases), vjust=1.6, color="white", size=3.5) +
+## 			theme_minimal() +
+## 			theme(axis.text.x = element_text(angle = 45, hjust = 1))			
+## 	}
+## }
+## 
+## ## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## # top countries by count
+## gg_plot(top_confirmed, "Confirmed", "Count")
+## gg_plot(top_fatal, "Fatal", "Count")
+## gg_plot(top_recovered, "Recovered", "Count")
+## gg_plot(top_active, "Active", "Count")
+## 
+## # top countries by percentage
+## gg_plot(top_confirmed, "Confirmed", "Pct")
+## gg_plot(top_fatal, "Fatal", "Pct")
+## gg_plot(top_recovered, "Recovered", "Pct")
+## gg_plot(top_active, "Active", "Pct")
+## 
+## # top countries by number of new cases in the last day
+## gg_plot(top_confirmed, "Confirmed", "NewCases")
+## gg_plot(top_fatal, "Fatal", "NewCases")
+## gg_plot(top_recovered, "Recovered", "NewCases")
+## gg_plot(top_active, "Active", "NewCases")
+## 
+## ## ----echo=FALSE----------------------------------------------------------
+## plot_types <- data.frame('Num' = 1:12
+##               ,'Status' = c(rep("Active", 6)
+## 									  ,rep("Fatal", 6))
+## 						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)									
+## 						  ,'Scale' = rep(c("Linear","Log"), 2)
+## 						  )
+## 	
+## kable(plot_types) %>%
+##       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+##                     , full_width = FALSE)
+## 
+## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
+## # functions for plotting interactive time series
+## 
+## # arg values:
+## # dfm = the dataframe
+## # country = country name
+## # status_df = to be used as the vector of country names
+## #             which is passed instead of a single country
+## # status = Confirmed, Fatal, Recovered, Active
+## # scale_ = Linear, Log
+## # type = Count, Pct, NewCases
+## 
+## create_xts_series <- function(dfm, country, status, scale_, type) {
+## 
+## 	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
+## 	
+## 	if (type == "Count") {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	
+## 	  			xts(dfm$Count, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$Count), order.by = dfm$Date)
+## 	  		}
+## 	
+## 	} else if (type == "Pct") {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	
+## 	  			xts(dfm$Pct, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$Pct), order.by = dfm$Date)
+## 	  		}	
+## 	
+## 	} else {
+## 	
+## 	  series <- if (scale_ == "Linear") {
+## 	
+## 	  			xts(dfm$NewCases, order.by = dfm$Date)
+## 	  		} else {
+## 	  		  xts(log(dfm$NewCases), order.by = dfm$Date)
+## 	  		}	  	
+## 	
+## 	}
+## 	series
+## }
+## 
+## 
+## create_seriesObject <- function(dfm, status_df, status, scale_, type) {
+## 
+##   seriesObject <- NULL
+##   for (i in 1:5) {
+## 
+##     seriesObject <- cbind(seriesObject
+##                           , create_xts_series(dfm
+##                                               , status_df$Country[i]
+##                                               , status
+##                                               , scale_
+##                                               , type)
+##                           )
+##   }
+## 
+##   names(seriesObject) <- status_df$Country[1:5]
+##   seriesObject
+## }
+## 
+## plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
+## 
+##   seriesObject <- create_seriesObject(dfm
+## 									  , status_df
+## 									  , status
+## 									  , scale_
+## 									  , type)
+## 
+##   if (type == "Count") {
+## 
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"Count Of "
+## 	  			} else {
+## 	  			  "Log Count Of "
+## 	  			}			
+## 				
+##   } else if (type == "Pct") {
+## 
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"Percentage Of "
+## 	  			} else {
+## 	  			  "Log Percentage Of "
+## 	  			} 		
+## 				
+##   } else {
+## 
+##     txt_ <- if (scale_ == "Linear") {
+## 	  				"New "
+## 	  			} else {
+## 	  			  "Log Of New "
+## 	  			}  	
+##   }
+## 
+##   ylab_lab   <- paste0(txt_, status, " Cases")
+## 
+##   main_title <- paste0("Top Countries - ", txt_, status, " Cases")
+## 
+##   interactive_df <- dygraph(seriesObject, main = main_title) %>%
+## 					dyAxis("x", drawGrid = FALSE) %>%							
+## 					dyAxis("y", label = ylab_lab) %>%
+## 					dyOptions(colors=brewer.pal(5, "Dark2")
+## 							, axisLineWidth = 1.5
+## 							, axisLineColor = "navy"
+## 							, gridLineColor = "lightblue") %>%			
+## 					dyRangeSelector() %>%
+## 					dyLegend(width = 750)
+## 
+##   interactive_df
+## }
+## 
+## ## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
+## ## INTERACTIVE TIME SERIES
+## 
+## # Fatal plots
+## fatal_plots <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_fatal[1:5, ]
+## 							                     , top_fatal$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(fatal_plots)
+## 
+## # Active plots
+## active_plots <- lapply(1:6, function(i) plot_interactive_df(percap
+## 							                     , top_active[1:5, ]
+## 							                     , top_active$Status[i]
+## 							                     , plot_types$Scale[i]
+## 							                     , plot_types$Type[i]))
+## 		
+## htmltools::tagList(active_plots)
+## 
+## ## ------------------------------------------------------------------------
+## # Log2 of Count
+## percap$Log2Count <- log2(percap$Count)
+## head(percap)
+## 
+## ## ------------------------------------------------------------------------
+## # calculate log2 rate of change
+## percap$Log2RateOfChange <- NULL
+## 
+## for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
+## 	
+## 	for (j in i:(i+Ndays-1)) {
+## 	
+## 		if (percap$Count[j] > 10) {
+## 
+## 			percap$Log2RateOfChange[j] <- percap$Log2Count[j] - percap$Log2Count[j+1]
+## 		
+## 		} else {
+## 		
+## 			# avoid wild rates of change on low counts
+## 			percap$Log2RateOfChange[j] <- 0
+## 		}
+## 	}
+## 
+## 	if (i > 1) {
+## 	
+## 		# fix last row of a given time series
+## 		percap$Log2RateOfChange[i-1] <- 0
+## 	}
+## }
+## 
+## ## ------------------------------------------------------------------------
+## # test with US fatalities
+## x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
+## x
+## 
+## ## ------------------------------------------------------------------------
+## # single interative plot
+## series <- xts(x$Log2RateOfChange, order.by = x$Date)
+## 
+## interactive_df <- dygraph(series, main = "US Fatalities") %>%
+## 				dyAxis("x", drawGrid = FALSE) %>%							
+## 				dyAxis("y", label = "Log of Rate of Change") %>%
+## 				dyOptions(colors="black"
+## 						, axisLineWidth = 1.5
+## 						, axisLineColor = "navy"
+## 						, gridLineColor = "lightblue") %>%			
+## 				dyRangeSelector() %>%
+## 				dyLegend(width = 750)
+## 
+## interactive_df
 
 #' 
 #' 
@@ -630,7 +1242,7 @@ htmltools::tagList(active_plots)
 #' 
 ## ------------------------------------------------------------------------
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-library(knitr)
-options(knitr.purl.inline = TRUE)
-purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
+#library(knitr)
+#options(knitr.purl.inline = TRUE)
+#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 

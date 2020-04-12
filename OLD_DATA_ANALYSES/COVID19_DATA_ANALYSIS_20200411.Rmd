@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "04/11/2020"
+date: "04/10/2020"
 output: 
   html_document:
     keep_md: true
@@ -622,7 +622,7 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 ```
 
 
-```{r fig.height=6, fig.width=9, echo=FALSE}
+```{r fig.height=6, fig.width=9}
 # Single dual-axis plot of count + log2 rate of change
 
 # test with US fatalities
@@ -631,56 +631,10 @@ x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateO
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
+	geom_line(aes(y = Count/5000, colour = "Count/5000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*5000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "US Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-# test with China fatalities
-x <- percap[percap$Country == "China" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "China Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Italy fatalities
-x <- percap[percap$Country == "Italy" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Italy Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Brazil fatalities
-x <- percap[percap$Country == "Brazil" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/1000, colour = "Count/1000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*1000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Brazil Fatalities"
 		,y = "Log2 Rate of Change"
 		,x = ""
 		,colour = "Parameter") +
@@ -1223,63 +1177,16 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 ## ----fig.height=6, fig.width=9-------------------------------------------
 # Single dual-axis plot of count + log2 rate of change
 
-
 # test with US fatalities
 x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
 
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
+	geom_line(aes(y = Count/5000, colour = "Count/5000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*5000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "US Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-# test with China fatalities
-x <- percap[percap$Country == "China" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "China Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Italy fatalities
-x <- percap[percap$Country == "Italy" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Italy Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Brazil fatalities
-x <- percap[percap$Country == "Brazil" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/1000, colour = "Count/1000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*1000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Brazil Fatalities"
 		,y = "Log2 Rate of Change"
 		,x = ""
 		,colour = "Parameter") +

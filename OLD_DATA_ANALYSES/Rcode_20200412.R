@@ -1,7 +1,7 @@
 #' ---
 #' title: "Coronavirus Data Analysis"
 #' author: "Marcelo Sanches"
-#' date: "04/15/2020"
+#' date: "04/11/2020"
 #' output: 
 #'   html_document:
 #'     keep_md: true
@@ -690,38 +690,18 @@ ggplot(x, aes(x = Date)) +
 		,colour = "Parameter") +
 	theme(legend.title = element_blank(), legend.position = c(.6, .9))
 
-
-# test with Japan fatalities
-x <- percap[percap$Country == "Japan" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100, colour = "Count/100")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Japan Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-#' 
-#' 
-#' 
 #' 
 #' 
 #' ```
 #' 
-#' OTHER PLOTS:
+#' TO DO:
 #' 
 #' 
-#'   Doubling rate.
+#'   Doubling rate - ?
 #'   
-#'   Proportion of New Cases to Total Cases.
+#'   Plot proportion of New Cases to Total Cases by Status (linear, log)?
 #'   
-#'   Percentage increase + hline showing proportion of population to world population.
+#'   Plot percentage increase vs proportion of population to world population?
 #'   
 #'   Outcome Simulation section.
 #'   
@@ -1244,8 +1224,9 @@ ggplot(x, aes(x = Date)) +
 ## 	}
 ## }
 ## 
-## ## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
+## ## ----fig.height=6, fig.width=9-------------------------------------------
 ## # Single dual-axis plot of count + log2 rate of change
+## 
 ## 
 ## # test with US fatalities
 ## x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
@@ -1303,22 +1284,6 @@ ggplot(x, aes(x = Date)) +
 ## 	scale_y_continuous(sec.axis = sec_axis(~.*1000, name = "Count")) +
 ## 	scale_colour_manual(values = c("black", "red")) +
 ## 	labs(title = "Brazil Fatalities"
-## 		,y = "Log2 Rate of Change"
-## 		,x = ""
-## 		,colour = "Parameter") +
-## 	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-## 
-## 
-## # test with Japan fatalities
-## x <- percap[percap$Country == "Japan" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-## 
-## 
-## ggplot(x, aes(x = Date)) +
-## 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-## 	geom_line(aes(y = Count/100, colour = "Count/100")) +
-## 	scale_y_continuous(sec.axis = sec_axis(~.*100, name = "Count")) +
-## 	scale_colour_manual(values = c("black", "red")) +
-## 	labs(title = "Japan Fatalities"
 ## 		,y = "Log2 Rate of Change"
 ## 		,x = ""
 ## 		,colour = "Parameter") +

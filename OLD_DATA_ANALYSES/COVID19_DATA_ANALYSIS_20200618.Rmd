@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "09/21/2020"
+date: "06/18/2020"
 output: 
   html_document:
     keep_md: true
@@ -583,7 +583,6 @@ active_plots <- lapply(1:6, function(i) plot_interactive_df(percap
 							                     , plot_types$Type[i]))
 		
 htmltools::tagList(active_plots)
-
 ```
 
 
@@ -634,8 +633,8 @@ x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateO
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
+	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "US Fatalities"
 		,y = "Log2 Rate of Change"
@@ -649,8 +648,8 @@ x <- percap[percap$Country == "Spain" & percap$Status == "Fatal" & percap$Log2Ra
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
+	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "Spain Fatalities"
 		,y = "Log2 Rate of Change"
@@ -663,8 +662,8 @@ x <- percap[percap$Country == "Italy" & percap$Status == "Fatal" & percap$Log2Ra
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
+	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "Italy Fatalities"
 		,y = "Log2 Rate of Change"
@@ -677,8 +676,8 @@ x <- percap[percap$Country == "Brazil" & percap$Status == "Fatal" & percap$Log2R
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
+	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "Brazil Fatalities"
 		,y = "Log2 Rate of Change"
@@ -692,8 +691,8 @@ x <- percap[percap$Country == "Russia" & percap$Status == "Fatal" & percap$Log2R
 
 ggplot(x, aes(x = Date)) +
 	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
+	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
+	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
 	scale_colour_manual(values = c("black", "red")) +
 	labs(title = "Russia Fatalities"
 		,y = "Log2 Rate of Change"
@@ -737,13 +736,12 @@ OTHER PLOTS:
 
 
 ```{r eval=FALSE}
-## ----setup, include=FALSE--------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 
-
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE-------------------------------------------------------
 
 # environment setup 
 rm(list = ls())
@@ -902,8 +900,7 @@ dfm <- readRDS(rds_file)
 Ncountries <- length(unique(dfm$Country))
 Ndays <- length(unique(dfm$Date))
 
-
-## --------------------------------------------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------
 # structure of dataset
 str(dfm)
 
@@ -912,15 +909,14 @@ nrow(dfm)
 length(dfm)
 Ndays
 Ncountries
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # top and bottom rows for final dataset
 kable(rbind(head(dfm)
      ,tail(dfm))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 
-
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE-------------------------------------------------------
 # read in static dataset of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
@@ -928,8 +924,7 @@ country_population <- read.csv("COVID19_DATA/country_population.csv")
 current_countries <- unique(dfm$Country)
 current_countries[!current_countries %in% country_population$Country]
 
-
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE-------------------------------------------------------
 # merge datasets
 percap <- merge(dfm, country_population, by="Country")
 
@@ -957,16 +952,14 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 percap$NewCases[nrow(percap)] <- 0
 percap$NewCases <- as.integer(percap$NewCases)
 
-
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # top and bottom rows for final dataset
 kable(rbind(head(percap[percap$Country == "Brazil", ])
      ,head(percap[percap$Country == "Canada", ]))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 
-
-## ----echo=FALSE, fig.height=6, fig.width=6---------------------------------------------------------------------------------
+## ----echo=FALSE, fig.height=6, fig.width=6-------------------------------
 # subset to current counts 
 # subset to current counts 
 current_data <- data.frame(percap %>%
@@ -984,8 +977,7 @@ kable(world_totals) %>%
       kable_styling(bootstrap_options = c("striped", "hover")
                     , full_width = FALSE)
 
-
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # subset to country totals 
 country_totals <- data.frame(current_data %>%
 						select(Country, Status, Count, Pct, NewCases) %>%
@@ -1047,8 +1039,7 @@ gg_plot <- function(dfm, status, type) {
 	}
 }
 
-
-## ----fig.height=4, fig.width=8, echo=FALSE---------------------------------------------------------------------------------
+## ----fig.height=4, fig.width=8, echo=FALSE-------------------------------
 # top countries by count
 gg_plot(top_confirmed, "Confirmed", "Count") 
 gg_plot(top_fatal, "Fatal", "Count")
@@ -1067,8 +1058,7 @@ gg_plot(top_fatal, "Fatal", "NewCases")
 gg_plot(top_recovered, "Recovered", "NewCases")
 #gg_plot(top_active, "Active", "NewCases")
 
-
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 plot_types <- data.frame('Num' = 1:12
               ,'Status' = c(rep("Active", 6)
 									  ,rep("Fatal", 6))
@@ -1080,8 +1070,7 @@ kable(plot_types) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                     , full_width = FALSE)
 
-
-## ----message=FALSE, warnings=FALSE, echo=FALSE-----------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 # functions for plotting interactive time series
 
 # arg values:
@@ -1197,8 +1186,7 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
   interactive_df
 }
 
-
-## ----message=FALSE, warnings=FALSE, echo=FALSE-----------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE---------------------------
 ## INTERACTIVE TIME SERIES
 
 # Fatal plots 
@@ -1219,9 +1207,7 @@ active_plots <- lapply(1:6, function(i) plot_interactive_df(percap
 		
 htmltools::tagList(active_plots)
 
-
-
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE-------------------------------------------------------
 # Log2 of Count
 percap$Log2Count <- log2(percap$Count)
 
@@ -1251,8 +1237,7 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 	}  
 }
 
-
-## ----fig.height=6, fig.width=9, echo=FALSE---------------------------------------------------------------------------------
+## ----fig.height=6, fig.width=9, echo=FALSE-------------------------------
 # Single dual-axis plot of count + log2 rate of change
 
 # test with US fatalities
@@ -1326,7 +1311,6 @@ ggplot(x, aes(x = Date)) +
 		,x = ""
 		,colour = "Parameter") +
 	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
 ```
 
 
@@ -1334,7 +1318,7 @@ ggplot(x, aes(x = Date)) +
 
 ```{r}
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#ibrary(knitr)
-#ptions(knitr.purl.inline = TRUE)
-#url("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+#library(knitr)
+#options(knitr.purl.inline = TRUE)
+#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
 ``` 

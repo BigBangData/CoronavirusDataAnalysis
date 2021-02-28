@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "09/21/2020"
+date: "02/28/2021"
 output: 
   html_document:
     keep_md: true
@@ -14,25 +14,29 @@ knitr::opts_chunk$set(warning = FALSE)
 ```
 
 
+This is an old project from March 2020. I've just reran the code to see whether it survived months of inactivity (it did).
 
-This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files for this project, including all previous versions. For full reproducibility, a similar directory structure including custom datasets should be reproduced as well - the easiest way would be to clone directly from GitHub.
+---
 
-This project is not intended to be a serious data analysis, which would require more datasets and study. This is a personal project to explore the daily JHU datasets. The plots produced here, therefore, have serious issues and do not reflect reality. They do not take into consideration the meaning of confirmed cases - this varies per location and time depending on differing methods of definition, availability of testing, changes in policy, and so forth. These plots should not be taken as a model for how COVID-19 spreads through populations. The data is incomplete, and represents a view of the past.
+__Summer 2020__
+
+This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files for this project, including all previous versions. For full reproducibility, a similar directory structure including custom data sets should be reproduced as well - the easiest way would be to fork or clone [this GitHub repo.](https://github.com/BigBangData/CoronavirusDataAnalysis)
+
+This project is not intended to be a serious data analysis, which would require more data sets and study. This is a personal project to explore the daily JHU data sets. The plots produced here have do not reflect reality. For example, they do not take into consideration the meaning of confirmed cases - this varies per location and time depending on differing methods of definition, availability of testing, changes in policy, and so forth. These plots should not be taken as a model for how COVID-19 spreads through populations. The data is incomplete, and represents a view of the past.
 
 
 ## Contents {#contents-link}
 
 * [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup steps.
 * [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated columns.
-* [Exploratory Data Analysis](#eda-link): main section with visualizations [IN PROGRESS...]
-* [Outcome Simulation](#sim-link): simulations of possible outcomes. [TO DO]
+* [Exploratory Data Analysis](#eda-link): main section with visualizations.
 * [Code Appendix](#codeappendix-link): entire R code.
 
 ---
 
 ## Data Pre-Processing {#preprocess-link}
 
-I downloaded three CSV files, one for each status: confirmed cases, fatal cases, and recovered cases. The confirmed status is a sum of all confirmed cases which later turn into fatalities or recoveries, so I subtracted those to get a fourth status of "active" cases. I produce a longform dataset with the following structure:
+I downloaded three CSV files, one for each status: confirmed cases, fatal cases, and recovered cases. The confirmed status is a sum of all confirmed cases which later turn into fatalities or recoveries, so I subtracted those to get a fourth status of "active" cases. I produce a long-form data set with the following structure:
 
 
 ```{r include=FALSE}
@@ -202,7 +206,7 @@ str(dfm)
 ```
 
 
-There are `r nrow(dfm)` rows and `r length(dfm)` columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. Today there are `r Ndays` daysa and `r Ncountries` countries in the data. 
+There are `r nrow(dfm)` rows and `r length(dfm)` columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. Today there are `r Ndays` days and `r Ncountries` countries in the data. 
 
 In pre-processing I decided to remove the sub-national province or state variable because it is too sparse and varies too much per day. For this project I am concentrating on country-level data. I also discarded latitude and longitude since there are many issues with those, and I do not plan on mapping the spread of the disease.
 
@@ -225,10 +229,10 @@ kable(rbind(head(dfm)
 ## Data Wrangling and Enrichment {#enrich-link}
 
 
-I maintain a static dataset of countries and their populations. This data is cobbled together with internet searches and the [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL?lang=en) I use the country's population to calculate a `Pct` column with the percentage of cases given a country and a status. I also calculate the difference between each day and the previous day's counts as the `NewCases` variable.
+I maintain a static data set of countries and their populations. This data is cobbled together with internet searches and [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL?lang=en) I use the country's population to calculate a `Pct` column with the percentage of cases given a country and a status. I also calculate the difference between each day and the previous day's counts as the `NewCases` variable.
 
 ```{r include=FALSE}
-# read in static dataset of countries and populations
+# read in static data set of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
 # test for new countries in data -- manual step
@@ -238,7 +242,7 @@ current_countries[!current_countries %in% country_population$Country]
 
 
 ```{r include=FALSE}
-# merge datasets
+# merge data sets
 percap <- merge(dfm, country_population, by="Country")
 
 # create percentage col
@@ -249,6 +253,7 @@ percap <- data.frame(percap %>%
                      arrange(Country, Status, desc(Date)))
 
 # calculate new cases
+# NB - this needs optimization - nested for loops are too slow
 percap$NewCases <- NULL 
 
 for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
@@ -268,12 +273,12 @@ percap$NewCases <- as.integer(percap$NewCases)
 
 
 
-The top rows of the enriched dataset for Brazil and Canada are:
+The top rows of the enriched data set for Brazil and US are:
 
 ```{r echo=FALSE}
-# top and bottom rows for final dataset
+# top and bottom rows for final data set
 kable(rbind(head(percap[percap$Country == "Brazil", ])
-     ,head(percap[percap$Country == "Canada", ]))) %>%
+     ,head(percap[percap$Country == "US", ]))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 ```
@@ -284,11 +289,6 @@ kable(rbind(head(percap[percap$Country == "Brazil", ])
 
 
 ## Exploratory Data Analysis {#eda-link}
-
-
-
-
-#### WORLD TOTALS
 
 
 
@@ -312,15 +312,14 @@ kable(world_totals) %>%
 ```
 
 
-In this first section I plot a series of barplots for the top ten countries per status (confirmed, fatal, recovered, active) by count, percentage of population, and number of new cases since the previous day.
-
-UPDATE - decided to remove Active plots, in fact, this whole section is badly plotted, it leads to information overload. 
-TO DO - find 1 or 2 plots to convey the same information, or the message behind it (stacked barplots a maybe).
 
 
 ---
 
-### Barplots
+### Bar plots
+
+
+There are many ways to slice the data: plotting all those lead to information overload. I found the top countries by percentage of population plots most suprising, given how we're used to hearing about counts instead:
 
 
 ```{r echo=FALSE}
@@ -390,9 +389,9 @@ gg_plot <- function(dfm, status, type) {
 
 ```{r fig.height=4, fig.width=8, echo=FALSE}
 # top countries by count
-gg_plot(top_confirmed, "Confirmed", "Count") 
-gg_plot(top_fatal, "Fatal", "Count")
-gg_plot(top_recovered, "Recovered", "Count")
+#gg_plot(top_confirmed, "Confirmed", "Count") 
+#gg_plot(top_fatal, "Fatal", "Count")
+#gg_plot(top_recovered, "Recovered", "Count")
 #gg_plot(top_active, "Active", "Count")
 
 # top countries by percentage
@@ -402,9 +401,9 @@ gg_plot(top_recovered, "Recovered", "Pct")
 #gg_plot(top_active, "Active", "Pct")
 
 # top countries by number of new cases in the last day 
-gg_plot(top_confirmed, "Confirmed", "NewCases") 
-gg_plot(top_fatal, "Fatal", "NewCases")
-gg_plot(top_recovered, "Recovered", "NewCases")
+#gg_plot(top_confirmed, "Confirmed", "NewCases") 
+#gg_plot(top_fatal, "Fatal", "NewCases")
+#gg_plot(top_recovered, "Recovered", "NewCases")
 #gg_plot(top_active, "Active", "NewCases")
 ```
 
@@ -416,24 +415,23 @@ gg_plot(top_recovered, "Recovered", "NewCases")
 
 ### Interactive Time Series Plots - Fatal and Active cases
 
-With 4 statuses (confirmed, fatal, recovered, and active cases), 3 types of plots (count, percentage, and new cases), and 2 scales (linear and log), we have about 24 types of plots to consider. To make sense of data in a 2D plot that fits a computer screen, the human eye needs it to be more-or-less of the same scale, so countries with huge disparities would not be able to be easily compared. Moreover, we can only choose about 5 countries per plot before it gets too busy. I could choose the top five countries and plot all 24 plots, but that leads to information overload. 
-
-I this section I plot the top five countries for active and fatal cases. Fatal is the most relible type of data since there are more protocols involving deaths than confirmation of a virus, and active is a mildly useful way to track how many cases are out there based on this dataset. 
+Counts and percentages of the top five countries for active and fatal cases - linear and log scales: eight plots total from twenty four possible choices. Fatal is the most reliable type of data since there are more protocols involving deaths than confirmation of a virus, and active is a mildly useful way to track how many cases are out there based on this data set. 
 
 
-UPDATE - same issue as barplots, information overload. Find better ways to plot (ex: plot count + log in dual axis plot).
+
+
 
 ```{r echo=FALSE}
-plot_types <- data.frame('Num' = 1:12
-              ,'Status' = c(rep("Active", 6)
-									  ,rep("Fatal", 6))
-						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)									  
+plot_types <- data.frame('Num' = 1:8
+              ,'Status' = c(rep("Active", 4)
+									  ,rep("Fatal", 4))
+						  ,'Type' = rep(c("Count","Pct"), each=2)									  #
 						  ,'Scale' = rep(c("Linear","Log"), 2)
 						  )
 	
-kable(plot_types) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
-                    , full_width = FALSE)
+#kable(plot_types) %>%
+#      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+#                    , full_width = FALSE)
 ```
 
 
@@ -590,9 +588,11 @@ htmltools::tagList(active_plots)
 
 ---
 
-#### IN CONSTRUCTION...
+### Log rate of change
 
-**Log of Rate of Change**
+
+Another interesting metric to observe is the log rate of change in the progression of a time series - here are double-axis plots for counts (scaled down) in comparison with the log rate of change for fatalities in the top 5 countries for that category:
+
 
 ```{r include=FALSE}
 # Log2 of Count
@@ -626,105 +626,57 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 ```
 
 
-```{r fig.height=6, fig.width=9, echo=FALSE}
+```{r echo=FALSE}
 # Single dual-axis plot of count + log2 rate of change
+plot_rate_of_change <- function(Country, Status, Scale) {
+  
+  conditions <- (percap$Country == Country 
+                & percap$Status == Status 
+                & percap$Log2RateOfChange > 0)
+  
+  x <- percap[conditions, ]
+  
+  ggplot(x, aes(x = Date)) +
+  	geom_line(aes(y = Log2RateOfChange, colour = "Log Rate Of Change")) +
+  	geom_line(aes(y = Count/Scale, colour = paste0("Count/", Scale))) +
+  	scale_y_continuous(sec.axis = sec_axis(~.*Scale, name = "Count")) +
+  	scale_colour_manual(values = c("black", "red")) +
+  	labs(title = Country
+  		,y = "Log Rate of Change"
+  		,x = ""
+  		,colour = "Parameter") +
+  	theme(legend.title = element_blank(), legend.position = c(.6, .9))
 
-# test with US fatalities
-x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "US Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-# test with Spain fatalities
-x <- percap[percap$Country == "Spain" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Spain Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Italy fatalities
-x <- percap[percap$Country == "Italy" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Italy Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Brazil fatalities
-x <- percap[percap$Country == "Brazil" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Brazil Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-# test with Russia fatalities
-x <- percap[percap$Country == "Russia" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/100000, colour = "Count/100000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*100000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Russia Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-```
-
-
-
-
+}
 
 ```
 
-OTHER PLOTS:
+```{r fig.height=6, fig.width=9, echo=FALSE}
+# US
+plot_rate_of_change("US", "Fatal", 100000)
 
+# Brazil
+plot_rate_of_change("Brazil", "Fatal", 100000)
 
-  Doubling rate.
-  
-  Proportion of New Cases to Total Cases.
-  
-  Percentage increase + hline showing proportion of population to world population.
-  
-  Outcome Simulation section.
-  
-  Add more links throughough document.
-  
+# Mexico
+plot_rate_of_change("Mexico", "Fatal", 100000)
 
+# India
+plot_rate_of_change("India", "Fatal", 100000)
+
+# United Kingdom
+plot_rate_of_change("United Kingdom", "Fatal", 100000)
 ```
 
 
+### Other Interesting Plots
+
+
+Quick future iterations on these visualizations could include other interesting metrics such as:
+
+- Doubling rates
+- Proportion of New Cases to Total Cases
+- Percentage increase plus a horizontal line showing proportion of population to world population
 
 
 ---
@@ -737,13 +689,13 @@ OTHER PLOTS:
 
 
 ```{r eval=FALSE}
-## ----setup, include=FALSE--------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 
 
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------------------------------------------------
 
 # environment setup 
 rm(list = ls())
@@ -903,7 +855,7 @@ Ncountries <- length(unique(dfm$Country))
 Ndays <- length(unique(dfm$Date))
 
 
-## --------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------------------
 # structure of dataset
 str(dfm)
 
@@ -912,7 +864,7 @@ nrow(dfm)
 length(dfm)
 Ndays
 Ncountries
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------------------------------------------------
 # top and bottom rows for final dataset
 kable(rbind(head(dfm)
      ,tail(dfm))) %>%
@@ -920,8 +872,8 @@ kable(rbind(head(dfm)
                   , full_width = FALSE)
 
 
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
-# read in static dataset of countries and populations
+## ----include=FALSE------------------------------------------------------------------------------------------------------
+# read in static data set of countries and populations
 country_population <- read.csv("COVID19_DATA/country_population.csv")
 		  
 # test for new countries in data -- manual step
@@ -929,8 +881,8 @@ current_countries <- unique(dfm$Country)
 current_countries[!current_countries %in% country_population$Country]
 
 
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
-# merge datasets
+## ----include=FALSE------------------------------------------------------------------------------------------------------
+# merge data sets
 percap <- merge(dfm, country_population, by="Country")
 
 # create percentage col
@@ -941,6 +893,7 @@ percap <- data.frame(percap %>%
                      arrange(Country, Status, desc(Date)))
 
 # calculate new cases
+# NB - this needs optimization - nested for loops are too slow
 percap$NewCases <- NULL 
 
 for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
@@ -958,15 +911,15 @@ percap$NewCases[nrow(percap)] <- 0
 percap$NewCases <- as.integer(percap$NewCases)
 
 
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
-# top and bottom rows for final dataset
+## ----echo=FALSE---------------------------------------------------------------------------------------------------------
+# top and bottom rows for final data set
 kable(rbind(head(percap[percap$Country == "Brazil", ])
-     ,head(percap[percap$Country == "Canada", ]))) %>%
+     ,head(percap[percap$Country == "US", ]))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                   , full_width = FALSE)
 
 
-## ----echo=FALSE, fig.height=6, fig.width=6---------------------------------------------------------------------------------
+## ----echo=FALSE, fig.height=6, fig.width=6------------------------------------------------------------------------------
 # subset to current counts 
 # subset to current counts 
 current_data <- data.frame(percap %>%
@@ -985,7 +938,7 @@ kable(world_totals) %>%
                     , full_width = FALSE)
 
 
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------------------------------------------------
 # subset to country totals 
 country_totals <- data.frame(current_data %>%
 						select(Country, Status, Count, Pct, NewCases) %>%
@@ -1048,11 +1001,11 @@ gg_plot <- function(dfm, status, type) {
 }
 
 
-## ----fig.height=4, fig.width=8, echo=FALSE---------------------------------------------------------------------------------
+## ----fig.height=4, fig.width=8, echo=FALSE------------------------------------------------------------------------------
 # top countries by count
-gg_plot(top_confirmed, "Confirmed", "Count") 
-gg_plot(top_fatal, "Fatal", "Count")
-gg_plot(top_recovered, "Recovered", "Count")
+#gg_plot(top_confirmed, "Confirmed", "Count") 
+#gg_plot(top_fatal, "Fatal", "Count")
+#gg_plot(top_recovered, "Recovered", "Count")
 #gg_plot(top_active, "Active", "Count")
 
 # top countries by percentage
@@ -1062,26 +1015,26 @@ gg_plot(top_recovered, "Recovered", "Pct")
 #gg_plot(top_active, "Active", "Pct")
 
 # top countries by number of new cases in the last day 
-gg_plot(top_confirmed, "Confirmed", "NewCases") 
-gg_plot(top_fatal, "Fatal", "NewCases")
-gg_plot(top_recovered, "Recovered", "NewCases")
+#gg_plot(top_confirmed, "Confirmed", "NewCases") 
+#gg_plot(top_fatal, "Fatal", "NewCases")
+#gg_plot(top_recovered, "Recovered", "NewCases")
 #gg_plot(top_active, "Active", "NewCases")
 
 
-## ----echo=FALSE------------------------------------------------------------------------------------------------------------
-plot_types <- data.frame('Num' = 1:12
-              ,'Status' = c(rep("Active", 6)
-									  ,rep("Fatal", 6))
-						  ,'Type' = rep(c("Count","Pct","NewCases"), each=2)									  
+## ----echo=FALSE---------------------------------------------------------------------------------------------------------
+plot_types <- data.frame('Num' = 1:8
+              ,'Status' = c(rep("Active", 4)
+									  ,rep("Fatal", 4))
+						  ,'Type' = rep(c("Count","Pct"), each=2)									  #
 						  ,'Scale' = rep(c("Linear","Log"), 2)
 						  )
 	
-kable(plot_types) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
-                    , full_width = FALSE)
+#kable(plot_types) %>%
+#      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+#                    , full_width = FALSE)
 
 
-## ----message=FALSE, warnings=FALSE, echo=FALSE-----------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE--------------------------------------------------------------------------
 # functions for plotting interactive time series
 
 # arg values:
@@ -1198,7 +1151,7 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 }
 
 
-## ----message=FALSE, warnings=FALSE, echo=FALSE-----------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE--------------------------------------------------------------------------
 ## INTERACTIVE TIME SERIES
 
 # Fatal plots 
@@ -1221,7 +1174,7 @@ htmltools::tagList(active_plots)
 
 
 
-## ----include=FALSE---------------------------------------------------------------------------------------------------------
+## ----include=FALSE------------------------------------------------------------------------------------------------------
 # Log2 of Count
 percap$Log2Count <- log2(percap$Count)
 
@@ -1252,80 +1205,46 @@ for (i in  seq.int(from=1, to=(nrow(percap)-1), by=Ndays)) {
 }
 
 
-## ----fig.height=6, fig.width=9, echo=FALSE---------------------------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------------------------------------------------
 # Single dual-axis plot of count + log2 rate of change
+plot_rate_of_change <- function(Country, Status, Scale) {
+  
+  conditions <- (percap$Country == Country 
+                & percap$Status == Status 
+                & percap$Log2RateOfChange > 0)
+  
+  x <- percap[conditions, ]
+  
+  ggplot(x, aes(x = Date)) +
+  	geom_line(aes(y = Log2RateOfChange, colour = "Log Rate Of Change")) +
+  	geom_line(aes(y = Count/Scale, colour = paste0("Count/", Scale))) +
+  	scale_y_continuous(sec.axis = sec_axis(~.*Scale, name = "Count")) +
+  	scale_colour_manual(values = c("black", "red")) +
+  	labs(title = Country
+  		,y = "Log Rate of Change"
+  		,x = ""
+  		,colour = "Parameter") +
+  	theme(legend.title = element_blank(), legend.position = c(.6, .9))
 
-# test with US fatalities
-x <- percap[percap$Country == "US" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "US Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-
-# test with Spain fatalities
-x <- percap[percap$Country == "Spain" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Spain Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Italy fatalities
-x <- percap[percap$Country == "Italy" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Italy Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
-
-# test with Brazil fatalities
-x <- percap[percap$Country == "Brazil" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
-
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Brazil Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
+}
 
 
-# test with Russia fatalities
-x <- percap[percap$Country == "Russia" & percap$Status == "Fatal" & percap$Log2RateOfChange > 0, ]
 
-ggplot(x, aes(x = Date)) +
-	geom_line(aes(y = Log2RateOfChange, colour = "Log2RateOfChange")) +
-	geom_line(aes(y = Count/10000, colour = "Count/10000")) +
-	scale_y_continuous(sec.axis = sec_axis(~.*10000, name = "Count")) +
-	scale_colour_manual(values = c("black", "red")) +
-	labs(title = "Russia Fatalities"
-		,y = "Log2 Rate of Change"
-		,x = ""
-		,colour = "Parameter") +
-	theme(legend.title = element_blank(), legend.position = c(.6, .9))
+## ----fig.height=6, fig.width=9, echo=FALSE------------------------------------------------------------------------------
+# US
+plot_rate_of_change("US", "Fatal", 100000)
+
+# Brazil
+plot_rate_of_change("Brazil", "Fatal", 100000)
+
+# Mexico
+plot_rate_of_change("Mexico", "Fatal", 100000)
+
+# India
+plot_rate_of_change("India", "Fatal", 100000)
+
+# United Kingdom
+plot_rate_of_change("United Kingdom", "Fatal", 100000)
 
 ```
 
@@ -1334,7 +1253,7 @@ ggplot(x, aes(x = Date)) +
 
 ```{r}
 # uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-#ibrary(knitr)
-#ptions(knitr.purl.inline = TRUE)
-#url("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 2)
+#library(knitr)
+#options(knitr.purl.inline = TRUE)
+#purl("COVID19_DATA_ANALYSIS.Rmd", output = "Rcode.R", documentation = 1)
 ``` 

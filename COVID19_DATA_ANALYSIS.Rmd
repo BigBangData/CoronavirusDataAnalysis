@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "02/28/2021"
+date: "4/11/2021"
 output: 
   html_document:
     keep_md: true
@@ -14,11 +14,13 @@ knitr::opts_chunk$set(warning = FALSE)
 ```
 
 
-This is an old project from March 2020. I've just reran the code to see whether it survived months of inactivity (it did).
+__April 2021__
+
+This is a year-old project from April 2020. At that time, the JHU CCSE data structures were changing often. I abandoned the project and just re-ran the code, which survived inactivity. If the JHU CCSE data structures changed, these changes were minor and did not break the analysis.
 
 ---
 
-__Summer 2020__
+__April 2020__
 
 This is a simple exploration of the time series data which was compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources (see website for full description). The data can be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases)This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files for this project. For full reproducibility, a similar directory structure including custom data sets should be reproduced as well; the easiest way to do so is to fork or clone the repo.
 
@@ -389,20 +391,20 @@ gg_plot <- function(dfm, status, type) {
 
 ```{r fig.height=4, fig.width=8, echo=FALSE}
 # top countries by count
-#gg_plot(top_confirmed, "Confirmed", "Count") 
-#gg_plot(top_fatal, "Fatal", "Count")
+gg_plot(top_confirmed, "Confirmed", "Count") 
+gg_plot(top_fatal, "Fatal", "Count")
 #gg_plot(top_recovered, "Recovered", "Count")
 #gg_plot(top_active, "Active", "Count")
 
 # top countries by percentage
 gg_plot(top_confirmed, "Confirmed", "Pct") 
 gg_plot(top_fatal, "Fatal", "Pct")
-gg_plot(top_recovered, "Recovered", "Pct")
+#gg_plot(top_recovered, "Recovered", "Pct")
 #gg_plot(top_active, "Active", "Pct")
 
 # top countries by number of new cases in the last day 
-#gg_plot(top_confirmed, "Confirmed", "NewCases") 
-#gg_plot(top_fatal, "Fatal", "NewCases")
+gg_plot(top_confirmed, "Confirmed", "NewCases") 
+gg_plot(top_fatal, "Fatal", "NewCases")
 #gg_plot(top_recovered, "Recovered", "NewCases")
 #gg_plot(top_active, "Active", "NewCases")
 ```

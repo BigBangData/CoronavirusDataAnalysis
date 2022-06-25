@@ -494,7 +494,7 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 ## plot time series
 plot_types <- data.frame('Num' = 1:12
               ,'Status' = c(rep("Confirmed", 6), rep("Fatal", 6))
-						  ,'Type' = rep(c("Count", "Percentage", "NewCases"), each=2)									  #
+						  ,'Type' = rep(c("Count", "Percentage", "NewCases"), each=2)
 						  ,'Scale' = rep(c("Linear", "Log"), 3)
 						  )
 

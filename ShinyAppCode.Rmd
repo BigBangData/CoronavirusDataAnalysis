@@ -1,3 +1,4 @@
+```{r}
 # environment setup 
 rm(list = ls())
 options(scipen=999)
@@ -129,7 +130,9 @@ if (!file.exists(rds_file)) {
 
 # read in RDS file 
 dfm <- readRDS(rds_file)
+```
 
+```{r}
 # remove seasonal "countries" like Antarctica and Olympics
 dfm <- dfm[!dfm$Country %in% c('Antarctica', 'Summer Olympics 2020', 'Winter Olympics 2022'), ]
 

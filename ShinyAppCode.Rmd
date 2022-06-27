@@ -1,0 +1,218 @@
+# environment setup 
+rm(list = ls())
+options(scipen=999)
+
+# install and load packages  
+install_packages <- function(package){
+  
+  newpackage <- package[!(package %in% installed.packages()[, "Package"])]
+      
+    if (length(newpackage)) {
+      suppressMessages(install.packages(newpackage, dependencies = TRUE))
+    }
+    sapply(package, require, character.only = TRUE)
+}
+
+packages <- c("dygraphs", "tidyverse", "xts", "RColorBrewer", "kableExtra", "sqldf")
+suppressPackageStartupMessages(install_packages(packages))
+
+# directory structure setup 
+dir_name <- "data"
+if (!file.exists(dir_name)) {
+    dir.create(dir_name)
+}
+
+dir_path <- "data/"
+
+# check if today's RDS file exists
+rds_file <- paste0(dir_path, gsub("-", "", Sys.Date()), "_data.rds")
+
+if (!file.exists(rds_file)) {
+    
+    # abspaths for today's csv files
+    confirmed_csv <- paste0(dir_path, gsub("-", "", Sys.Date()), "_confirmed.csv")
+    deaths_csv      <- paste0(dir_path, gsub("-", "", Sys.Date()), "_deaths.csv")
+    
+    # download function 
+    download_csv <- function(fullpath_csv) {
+    
+        # check if CSV file exists first 
+        if (!file.exists(fullpath_csv)) {
+        
+            # construct url 
+            url_header <- paste0("https://data.humdata.org/hxlproxy/data/"
+                                ,"download/time_series_covid19_")
+            
+            url_body <- paste0("_narrow.csv?dest=data_edit&filter01=explode&explode"
+                        ,"-header-att01=date&explode-value-att01=value&filter02=ren"
+                        ,"ame&rename-oldtag02=%23affected%2Bdate&rename-newtag02=%2"
+                        ,"3date&rename-header02=Date&filter03=rename&rename-oldtag0"
+                        ,"3=%23affected%2Bvalue&rename-newtag03=%23affected%2Binfec"
+                        ,"ted%2Bvalue%2Bnum&rename-header03=Value&filter04=clean&cl"
+                        ,"ean-date-tags04=%23date&filter05=sort&sort-tags05=%23date"
+                        ,"&sort-reverse05=on&filter06=sort&sort-tags06=%23country%2"
+                        ,"Bname%2C%23adm1%2Bname&tagger-match-all=on&tagger-default"
+                        ,"-tag=%23affected%2Blabel&tagger-01-header=province%2Fstat"
+                        ,"e&tagger-01-tag=%23adm1%2Bname&tagger-02-header=country%2"
+                        ,"Fregion&tagger-02-tag=%23country%2Bname&tagger-03-header="
+                        ,"lat&tagger-03-tag=%23geo%2Blat&tagger-04-header=long&tagg"
+                        ,"er-04-tag=%23geo%2Blon&header-row=1&url=https%3A%2F%2Fraw"
+                        ,".githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmast"
+                        ,"er%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftim"
+                        ,"e_series_covid19_")
+            
+            # extract name and reshape into global name 
+            date_name <- strsplit(fullpath_csv,"/")[[1]][2]
+            name <- strsplit(strsplit(date_name, "_")[[1]][2], "\\.")[[1]][1]
+            global <- paste0(name, "_global")    
+            
+            # download
+            final_url  <- paste0(url_header, global, url_body, global, ".csv")
+            download.file(final_url, destfile = fullpath_csv)        
+        }
+    }
+    
+    download_csv(confirmed_csv)
+    download_csv(deaths_csv)
+    
+    # load data into environment
+    load_csv <- function(fullpath_csv) { 
+    
+        read.csv(fullpath_csv
+                , header=TRUE
+                , fileEncoding="UTF-8-BOM"
+                , stringsAsFactors=FALSE, na.strings="")[-1, ]
+    }
+    
+        
+    confirmed_df  <- load_csv(confirmed_csv)
+    fatal_df      <- load_csv(deaths_csv)
+    
+    # preprocess function
+    preprocess_csv <- function(dfm, colname) {
+    
+        # prep data for long format (rbind later)
+        
+        # add Status col identifying the dataset
+        # remove Lat Long & rename cols 
+        dfm$Status <- rep(colname, nrow(dfm))
+        dfm <- dfm[ ,!colnames(dfm) %in% c("Province.State", "Lat", "Long")]
+        colnames(dfm) <- c("Country", "Date", "Count", "Status")
+        
+        # fix data types 
+        dfm$Count <- as.integer(dfm$Count)
+        dfm$Date <- as.Date(dfm$Date, tryFormats = c("%Y-%m-%d", "%Y/%m/%d"))
+        dfm$Status <- as.factor(dfm$Status)
+    
+        # lose the Province_State data and group by country 
+        # countries like Canada have subnational data issues 
+        dfm <- dfm %>% 
+            select(Country, Status, Date, Count) %>%
+            group_by(Country, Status, Date) %>%
+            summarise(Count=sum(Count)) %>%
+            arrange(Country, Status, desc(Date))
+        
+        # return dataframe 
+        as.data.frame(dfm)
+    }
+    
+    confirmed_clean  <- preprocess_csv(confirmed_df, "Confirmed")
+    fatal_clean      <- preprocess_csv(fatal_df, "Fatal")
+
+    # row bind (append) files into one dataset 
+    dfm <- rbind(confirmed_clean, fatal_clean
+                , make.row.names=FALSE)
+    
+    # save as RDS 
+    saveRDS(dfm, file = rds_file)
+}
+
+# read in RDS file 
+dfm <- readRDS(rds_file)
+
+# remove seasonal "countries" like Antarctica and Olympics
+dfm <- dfm[!dfm$Country %in% c('Antarctica', 'Summer Olympics 2020', 'Winter Olympics 2022'), ]
+
+# read in static data set of countries and populations
+country_population <- read.csv("data/country_population.csv")
+
+# merge data sets
+mm <- merge(dfm, country_population, by="Country")
+
+# calculate percentages
+mm$Percentage <- round(mm$Count/(mm$Population*1000)*100, 3)
+
+# reorder by Country, Status, and Date descending
+mm <- data.frame(mm %>% arrange(Country, Status, desc(Date)))
+
+# calculate new cases
+mm <- sqldf('
+    SELECT 
+        sq.*
+        , LEAD(sq.CountLag - Count, 1) OVER (PARTITION BY Country, Status) AS NewCases
+    FROM (
+        SELECT 
+            p.*
+            , LAG(Count, 1) OVER (PARTITION BY Country, Status) AS CountLag
+        FROM mm AS p
+        ) AS sq
+')
+
+# remove temp col, replace NA, convert to int
+mm$CountLag <- NULL
+mm$NewCases[is.na(mm$NewCases)] <- 0
+mm$NewCases <- as.integer(mm$NewCases)
+```
+
+
+```{r}
+# subset to last day, ordered by status and count desc
+current_data <- data.frame(mm %>%
+    filter(Date == unique(mm$Date)[1])) %>%
+    arrange(Status, desc(Count))
+
+current_data$Color <- ifelse(current_data$Status == "Confirmed", "#D6604D", "#202226")
+
+# reorder & reshape
+current_data <- current_data[, c("Date", "Country", "Status", "Color", "Count", "Percentage", "NewCases")]
+colnames(current_data) <- c("Date", "Country", "Status", "Color", "Cumulative Count", "% Of Population", "New Cases")
+
+current_data <- as.data.frame(
+    current_data %>% pivot_longer(
+        cols = c("Cumulative Count", "% Of Population", "New Cases")
+            , names_to = "Type"
+            , values_to = "Value"
+    )
+)
+
+write.csv(current_data, "./data/current_data.csv", row.names = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

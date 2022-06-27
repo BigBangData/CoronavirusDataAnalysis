@@ -1,10 +1,10 @@
-## ----setup, include=FALSE-------------------------------------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE-------------------------------------------------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 
 
-## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------
+## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------
 # environment setup 
 rm(list = ls())
 options(scipen=999)
@@ -136,7 +136,7 @@ if (!file.exists(rds_file)) {
 }
 
 
-## -------------------------------------------------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------------------------
 # read in RDS file 
 dfm <- readRDS(rds_file) 
 
@@ -145,23 +145,18 @@ Ncountries <- length(unique(dfm$Country))
 Ndays <- length(unique(dfm$Date))
 
 
-## -------------------------------------------------------------------------------------------------------------------------------------------------------
-# structure of dataset
-str(dfm)
-
-
 nrow(dfm)
 length(dfm)
 Ndays
 Ncountries
-## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------------------------
 # top and bottom rows for final dataset
 kable(rbind(head(dfm, 3), tail(dfm, 3))) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed")
                     , full_width = FALSE)
 
 
-## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------
+## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------
 # remove seasonal "countries" like Antarctica and Olympics
 dfm <- dfm[!dfm$Country %in% c('Antarctica', 'Summer Olympics 2020', 'Winter Olympics 2022'), ]
 
@@ -173,7 +168,7 @@ current_countries <- unique(dfm$Country)
 current_countries[!current_countries %in% country_population$Country]
 
 
-## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------
+## ----include=FALSE--------------------------------------------------------------------------------------------------------------------------------------------------------
 # merge data sets
 percap <- merge(dfm, country_population, by="Country")
 
@@ -202,7 +197,7 @@ percap$NewCases[is.na(percap$NewCases)] <- 0
 percap$NewCases <- as.integer(percap$NewCases)
 
 
-## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------------------------
 # top and bottom rows for final data set
 kable(rbind(head(percap[percap$Country == "Brazil", ], 3)
             , head(percap[percap$Country == "US", ], 3))) %>%
@@ -210,7 +205,7 @@ kable(rbind(head(percap[percap$Country == "Brazil", ], 3)
                   , full_width = FALSE)
 
 
-## ----echo=FALSE, fig.height=6, fig.width=6--------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE, fig.height=6, fig.width=6--------------------------------------------------------------------------------------------------------------------------------
 # subset to current counts 
 current_data <- data.frame(percap %>%
                     filter(Date == unique(percap$Date)[1])) %>%
@@ -228,7 +223,7 @@ kable(world_totals) %>%
                     , full_width = FALSE)
 
 
-## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------------------------------
 # subset to country totals 
 country_totals <- data.frame(current_data %>%
                         select(Country, Status, Count, Percentage, NewCases) %>%
@@ -247,56 +242,7 @@ top_confirmed     <- get_top_counts(country_totals, "Confirmed", 10)
 top_fatal        <- get_top_counts(country_totals, "Fatal", 10)
 
 
-# plot top countries per status and type
-gg_plot <- function(dfm, status, type) {
-
-    color <- ifelse(status == "Confirmed", "#D6604D", "gray25")
-    
-    if (type == "Count") {    
-        ggplot(data=dfm, aes(x=reorder(Country, -Count), y=Count)) +
-            geom_bar(stat="identity", fill=color) + 
-            ggtitle(paste0("Top Countries - ", status, " Cases")) + 
-            xlab("") + ylab(paste0("Number of ", status, " Cases")) +
-            geom_text(aes(label=Count), vjust=1.6, color="white", size=3.5) +
-            theme_minimal() + 
-            theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    } else if (type == "Percentage") {
-        ggplot(data=dfm, aes(x=reorder(Country, -Percentage), y=Percentage)) +
-            geom_bar(stat="identity", fill=color) +         
-            ggtitle(paste0("Top Countries: ", status
-                         , " Cases by Percentage of Population")) + 
-            xlab("") + ylab(paste0("Percentage of ", status, " Cases")) +
-            geom_text(aes(label=Percentage), vjust=1.6, color="white", size=3.5) +
-            theme_minimal() +         
-            theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    } else {
-        ggplot(data=dfm, aes(x=reorder(Country, -NewCases), y=NewCases)) +
-            geom_bar(stat="identity", fill=color) + 
-            ggtitle(paste0("Top Countries: Yesterday's ", status
-                         , " New Cases")) + 
-            xlab("") + ylab("Number of New Cases") +
-            geom_text(aes(label=NewCases), vjust=1.6, color="white", size=3.5) +
-            theme_minimal() + 
-            theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    }
-}
-
-
-## ----fig.height=4, fig.width=8, echo=FALSE--------------------------------------------------------------------------------------------------------------
-# top countries by count overall
-gg_plot(top_confirmed, "Confirmed", "Count") 
-gg_plot(top_fatal, "Fatal", "Count")
-
-# top countries by percentage of population overall
-gg_plot(top_confirmed, "Confirmed", "Percentage") 
-gg_plot(top_fatal, "Fatal", "Percentage")
-
-# top countries by number of new cases in the last day 
-gg_plot(top_confirmed, "Confirmed", "NewCases") 
-gg_plot(top_fatal, "Fatal", "NewCases")
-
-
-## ----message=FALSE, warnings=FALSE, echo=FALSE----------------------------------------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE----------------------------------------------------------------------------------------------------------------------------
 # functions for plotting interactive time series
 
 # arg values:
@@ -388,12 +334,12 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
   main_title <- paste0("Top Countries - ", txt_, status, " Cases")
   
   interactive_df <- dygraph(seriesObject, main = main_title) %>% 
-                    dyAxis("x", drawGrid = FALSE) %>%
+                    dyAxis("x", drawGrid = FALSE) %>%                            
                     dyAxis("y", label = ylab_lab) %>%
                     dyOptions(colors=brewer.pal(5, "Dark2")
                             , axisLineWidth = 1.5
                             , axisLineColor = "navy"
-                            , gridLineColor = "lightblue") %>
+                            , gridLineColor = "lightblue") %>%            
                     dyRangeSelector() %>%
                     dyLegend(width = 750)
   
@@ -401,7 +347,7 @@ plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
 }
 
 
-## ----message=FALSE, warnings=FALSE, echo=FALSE----------------------------------------------------------------------------------------------------------
+## ----message=FALSE, warnings=FALSE, echo=FALSE----------------------------------------------------------------------------------------------------------------------------
 ## plot time series
 plot_types <- data.frame('Num' = 1:12
               ,'Status' = c(rep("Confirmed", 6), rep("Fatal", 6))
@@ -426,9 +372,3 @@ confirmed_plots <- lapply(1:6, function(i) plot_interactive_df(percap
                                                  , plot_types$Type[i]))
         
 htmltools::tagList(confirmed_plots)
-
-## -------------------------------------------------------------------------------------------------------------------------------------------------------
-# uncomment to run, creates Rcode file with R code, set documentation = 1 to avoid text commentary
-# library(knitr)
-# options(knitr.purl.inline = TRUE)
-# purl("CoronavirusDataAnalysis.Rmd", output = "Rcode.R", documentation = 1)

@@ -13,6 +13,7 @@ ui <- fluidPage(
 
     # Sidebar panel
     sidebarLayout(
+        position = "right",
         sidebarPanel(
           
             # drop-down for type of plot
@@ -38,6 +39,29 @@ ui <- fluidPage(
         # Show plot
         mainPanel(
            plotOutput("distPlot")
+        )
+    ),
+
+    fluidRow(
+        column(12,
+            p(
+                strong("Warning! "),
+                "These bar charts are not intended as a serious data analysis, which would require more data and study.
+                This is a personal project to explore the daily JHU datasets.", style = "color:#A93C38"
+            ),
+            h4(strong("Notes")),
+            p(
+                tags$ul(
+                    tags$li("This is a simple exploration of the raw time series data compiled by the Johns Hopkins University Center for 
+                            Systems Science and Engineering (JHU CCSE) from various sources."),
+                    tags$li("See the ",
+                            tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU-CSSE GitHub repository"),
+                            " for more information."),
+                    tags$li("See ",
+                            tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", "this GitHub repository"),
+                            " for all files and code related to this app and data project.")
+                )
+            )
         )
     )
 )

@@ -1,0 +1,9 @@
+Run CoronavirusDataAnalysis.Rmd
+Republish (update existing)
+Run ShinyAppCode.Rmd
+Spin up base R
+setwd("../GitHub/CoronavirusDataAnalysis/CoronavirusShinyApp")
+library(shiny)
+library(rsconnect)
+runApp() # to test
+deployApp() # to update existing

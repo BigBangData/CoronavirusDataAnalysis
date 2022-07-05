@@ -15,25 +15,25 @@ ui <- fluidPage(
     sidebarLayout(
         position = "right",
         sidebarPanel(
-          
+            
             # drop-down for type of plot
             selectInput(inputId = "plot_type", 
                         label = "Plot Type",
-                        choices = c("Cumulative Count", "% Of Population", "New Cases"),
-                        selected = "Cumulative Count"),
-
+                        choices = c( "Cumulative Count", "Count Per 10K", "New Cases Per 10K"),
+                        selected = "Count Per 10K"),
+            
             # drop-down for status
             selectInput(inputId = "status", 
                         label = "Status",
                         choices = c("Confirmed", "Fatal"),
-                        selected = "Confirmed"),
+                        selected = "Fatal"),
             
             # slider for top N number of countries to display
             sliderInput(inputId = "top_n",
                         label = "Number of Countries:",
                         min = 5,
-                        max = 25,
-                        value = 10)
+                        max = 50,
+                        value = 15)
         ),
         
         # Show plot
@@ -71,14 +71,15 @@ server <- function(input, output) {
 
     output$distPlot <- renderPlot({
         
-        # plot type
+        # subset to specific type
         data <- current_data[current_data$Type == input$plot_type, ]
         
-        # status
+        # subset to specific status
         data <- data[data$Status == input$status, ]
         
-        # top n
-        data <- data[order(data$Type), ][1:input$top_n, ]
+        # top N (order desc)
+        data <- data[order(data$Value, decreasing = TRUE), ]
+        data <- data[1:input$top_n, ]
         
         # draw the bar chart
         ggplot(
@@ -88,7 +89,7 @@ server <- function(input, output) {
             xlab("") + ylab(input$plot_type) + theme_minimal() +
             scale_y_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
             theme(plot.title = element_text(size = 14, face = "bold")) +
-            theme(axis.text.x = element_text(angle = 45, hjust = 1)
+            theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 10)
         )
     })
 }

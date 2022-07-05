@@ -7,10 +7,10 @@ current_data <- read.csv("current_data.csv")
 
 # Define UI for application
 ui <- fluidPage(
-
+    
     # Application title
     titlePanel("Coronavirus: Latest Country Stats"),
-
+    
     # Sidebar panel
     sidebarLayout(
         position = "right",
@@ -19,7 +19,7 @@ ui <- fluidPage(
             # drop-down for type of plot
             selectInput(inputId = "plot_type", 
                         label = "Plot Type",
-                        choices = c( "Cumulative Count", "Count Per 10K", "New Cases Per 10K"),
+                        choices = c( "Total Count", "Count per 10K", "New Cases per 10K"),
                         selected = "Count Per 10K"),
             
             # drop-down for status
@@ -41,7 +41,7 @@ ui <- fluidPage(
            plotOutput("distPlot")
         )
     ),
-
+    
     fluidRow(
         column(12,
             p(
@@ -68,7 +68,7 @@ ui <- fluidPage(
 
 # Define server logic
 server <- function(input, output) {
-
+    
     output$distPlot <- renderPlot({
         
         # subset to specific type

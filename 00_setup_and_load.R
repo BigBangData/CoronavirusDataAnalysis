@@ -2,7 +2,7 @@
 rm(list = ls())
 options(scipen=999)
 
-# change dirs if in base R
+# uncomment if not sourcing file
 # setwd("../GitHub/CoronavirusDataAnalysis")
 
 # install and/or load packages
@@ -103,12 +103,21 @@ dfm <- readRDS(rds_file)
 
 ## Enrich data
 
-# calculate number of countries and number of days in the time series
-Ncountries <- length(unique(dfm$Country))
-Ndays <- length(unique(dfm$Date))
+# remove seasonal "countries" like Antarctica, the Olympics, ships,
+# and small populations such as the Holy See
+non_countries <- c(
+    'Antarctica'
+    , 'Diamond Princess'
+    , 'Holy See'
+    , 'MS Zaandam'
+    , 'Summer Olympics 2020'
+    , 'Winter Olympics 2022'
+)
 
-# remove seasonal "countries" like Antarctica and Olympics
-dfm <- dfm[!dfm$Country %in% c('Antarctica', 'Summer Olympics 2020', 'Winter Olympics 2022'), ]
+dfm <- dfm[!dfm$Country %in% non_countries, ]
+
+# cleanup Taiwan's asterisk
+dfm$Country[which(dfm$Country == "Taiwan*")] <- "Taiwan"
 
 # read in static data set of countries and populations
 # DATA QUALITY ISSUE: need to maintain population on a yearly basis
@@ -119,6 +128,7 @@ current_countries <- unique(dfm$Country)
 
 test_that("empty vector", {
     expect_equal(
+        # any current_countries not in the country_population dataset?
         current_countries[!current_countries %in% country_population$Country]
         , character(0)
     )

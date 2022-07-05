@@ -25,7 +25,7 @@ enriched_rds <- paste0("data/", gsub("-", "", Sys.Date()), "_enriched.rds")
 
 # load preprocessed data
 if (!file.exists(enriched_rds)) {
-    print("Issue: source('setup_and_load.R')")
+    print("Issue: source('00_setup_and_load.R')")
 } else {
     merged <- readRDS(enriched_rds)
     rm(list=ls()[-which(ls() == "merged")])

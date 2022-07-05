@@ -1,1159 +1,1159 @@
 "Date","Country","Status","Color","Type","Value"
-2022-07-03,"US","Confirmed","#D6604D","Total Count",87843561
-2022-07-03,"US","Confirmed","#D6604D","Count per 10K",2726.53674964306
-2022-07-03,"US","Confirmed","#D6604D","New Cases per 10K",0.153268359302253
-2022-07-03,"India","Confirmed","#D6604D","Total Count",43518564
-2022-07-03,"India","Confirmed","#D6604D","Count per 10K",328.647614243176
-2022-07-03,"India","Confirmed","#D6604D","New Cases per 10K",0.121849821510968
-2022-07-03,"Brazil","Confirmed","#D6604D","Total Count",32490422
-2022-07-03,"Brazil","Confirmed","#D6604D","Count per 10K",1564.64977630952
-2022-07-03,"Brazil","Confirmed","#D6604D","New Cases per 10K",0.894521148261764
-2022-07-03,"France","Confirmed","#D6604D","Total Count",31410383
-2022-07-03,"France","Confirmed","#D6604D","Count per 10K",4853.198034641
-2022-07-03,"France","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Germany","Confirmed","#D6604D","Total Count",28394995
-2022-07-03,"Germany","Confirmed","#D6604D","Count per 10K",3466.39748519807
-2022-07-03,"Germany","Confirmed","#D6604D","New Cases per 10K",0.288713910761155
-2022-07-03,"United Kingdom","Confirmed","#D6604D","Total Count",22941362
-2022-07-03,"United Kingdom","Confirmed","#D6604D","Count per 10K",3487.11213120734
-2022-07-03,"United Kingdom","Confirmed","#D6604D","New Cases per 10K",0.000304002188815759
-2022-07-03,"Italy","Confirmed","#D6604D","Total Count",18768871
-2022-07-03,"Italy","Confirmed","#D6604D","Count per 10K",3158.14756856806
-2022-07-03,"Italy","Confirmed","#D6604D","New Cases per 10K",12.2693925626788
-2022-07-03,"Korea, South","Confirmed","#D6604D","Total Count",18395864
-2022-07-03,"Korea, South","Confirmed","#D6604D","Count per 10K",3574.09442393627
-2022-07-03,"Korea, South","Confirmed","#D6604D","New Cases per 10K",1.21488245579949
-2022-07-03,"Russia","Confirmed","#D6604D","Total Count",18170656
-2022-07-03,"Russia","Confirmed","#D6604D","Count per 10K",1262.15788559719
-2022-07-03,"Russia","Confirmed","#D6604D","New Cases per 10K",0.212065432570416
-2022-07-03,"Turkey","Confirmed","#D6604D","Total Count",15123331
-2022-07-03,"Turkey","Confirmed","#D6604D","Count per 10K",1902.01868900292
-2022-07-03,"Turkey","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Spain","Confirmed","#D6604D","Total Count",12818184
-2022-07-03,"Spain","Confirmed","#D6604D","Count per 10K",2765.63907827738
-2022-07-03,"Spain","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Vietnam","Confirmed","#D6604D","Total Count",10748639
-2022-07-03,"Vietnam","Confirmed","#D6604D","Count per 10K",1136.59222366738
-2022-07-03,"Vietnam","Confirmed","#D6604D","New Cases per 10K",0.0541403631211073
-2022-07-03,"Argentina","Confirmed","#D6604D","Total Count",9394326
-2022-07-03,"Argentina","Confirmed","#D6604D","Count per 10K",2142.52423198851
-2022-07-03,"Argentina","Confirmed","#D6604D","New Cases per 10K",6.19289803179237
-2022-07-03,"Japan","Confirmed","#D6604D","Total Count",9388222
-2022-07-03,"Japan","Confirmed","#D6604D","Count per 10K",734.895928735254
-2022-07-03,"Japan","Confirmed","#D6604D","New Cases per 10K",1.82138412042364
-2022-07-03,"Netherlands","Confirmed","#D6604D","Total Count",8296406
-2022-07-03,"Netherlands","Confirmed","#D6604D","Count per 10K",4883.97362689115
-2022-07-03,"Netherlands","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Australia","Confirmed","#D6604D","Total Count",8254847
-2022-07-03,"Australia","Confirmed","#D6604D","Count per 10K",3421.55641216944
-2022-07-03,"Australia","Confirmed","#D6604D","New Cases per 10K",12.3199038381829
-2022-07-03,"Iran","Confirmed","#D6604D","Total Count",7239557
-2022-07-03,"Iran","Confirmed","#D6604D","Count per 10K",901.822066096142
-2022-07-03,"Iran","Confirmed","#D6604D","New Cases per 10K",0.0893157442355843
-2022-07-03,"Colombia","Confirmed","#D6604D","Total Count",6175181
-2022-07-03,"Colombia","Confirmed","#D6604D","Count per 10K",1269.22923560726
-2022-07-03,"Colombia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Indonesia","Confirmed","#D6604D","Total Count",6093917
-2022-07-03,"Indonesia","Confirmed","#D6604D","Count per 10K",233.380579438179
-2022-07-03,"Indonesia","Confirmed","#D6604D","New Cases per 10K",0.0618118453554947
-2022-07-03,"Mexico","Confirmed","#D6604D","Total Count",6089600
-2022-07-03,"Mexico","Confirmed","#D6604D","Count per 10K",477.46589305316
-2022-07-03,"Mexico","Confirmed","#D6604D","New Cases per 10K",2.42363180178767
-2022-07-03,"Poland","Confirmed","#D6604D","Total Count",6016407
-2022-07-03,"Poland","Confirmed","#D6604D","Count per 10K",1573.98676224362
-2022-07-03,"Poland","Confirmed","#D6604D","New Cases per 10K",0.0413352867308497
-2022-07-03,"Portugal","Confirmed","#D6604D","Total Count",5171236
-2022-07-03,"Portugal","Confirmed","#D6604D","Count per 10K",4985.76552256074
-2022-07-03,"Portugal","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Ukraine","Confirmed","#D6604D","Total Count",5040518
-2022-07-03,"Ukraine","Confirmed","#D6604D","Count per 10K",1134.2554962983
-2022-07-03,"Ukraine","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Malaysia","Confirmed","#D6604D","Total Count",4573891
-2022-07-03,"Malaysia","Confirmed","#D6604D","Count per 10K",1466.60178920704
-2022-07-03,"Malaysia","Confirmed","#D6604D","New Cases per 10K",0.813159329207683
-2022-07-03,"Thailand","Confirmed","#D6604D","Total Count",4532100
-2022-07-03,"Thailand","Confirmed","#D6604D","Count per 10K",658.123257434944
-2022-07-03,"Thailand","Confirmed","#D6604D","New Cases per 10K",0.289701440520446
-2022-07-03,"Austria","Confirmed","#D6604D","Total Count",4471152
-2022-07-03,"Austria","Confirmed","#D6604D","Count per 10K",5132.17630853995
-2022-07-03,"Austria","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Israel","Confirmed","#D6604D","Total Count",4377578
-2022-07-03,"Israel","Confirmed","#D6604D","Count per 10K",5343.72314453125
-2022-07-03,"Israel","Confirmed","#D6604D","New Cases per 10K",11.204833984375
-2022-07-03,"Belgium","Confirmed","#D6604D","Total Count",4246078
-2022-07-03,"Belgium","Confirmed","#D6604D","Count per 10K",3738.40288783236
-2022-07-03,"Belgium","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Chile","Confirmed","#D6604D","Total Count",4023697
-2022-07-03,"Chile","Confirmed","#D6604D","Count per 10K",2246.62032384143
-2022-07-03,"Chile","Confirmed","#D6604D","New Cases per 10K",5.46845337800112
-2022-07-03,"South Africa","Confirmed","#D6604D","Total Count",3995291
-2022-07-03,"South Africa","Confirmed","#D6604D","Count per 10K",713.253771311256
-2022-07-03,"South Africa","Confirmed","#D6604D","New Cases per 10K",0.190663215210212
-2022-07-03,"Canada","Confirmed","#D6604D","Total Count",3957823
-2022-07-03,"Canada","Confirmed","#D6604D","Count per 10K",1090.60980986498
-2022-07-03,"Canada","Confirmed","#D6604D","New Cases per 10K",0.255166712593001
-2022-07-03,"Czechia","Confirmed","#D6604D","Total Count",3935570
-2022-07-03,"Czechia","Confirmed","#D6604D","Count per 10K",3708.95297332956
-2022-07-03,"Czechia","Confirmed","#D6604D","New Cases per 10K",0.148902082744322
-2022-07-03,"Taiwan","Confirmed","#D6604D","Total Count",3870528
-2022-07-03,"Taiwan","Confirmed","#D6604D","Count per 10K",1627.64003364172
-2022-07-03,"Taiwan","Confirmed","#D6604D","New Cases per 10K",13.7392767031119
-2022-07-03,"Switzerland","Confirmed","#D6604D","Total Count",3759730
-2022-07-03,"Switzerland","Confirmed","#D6604D","Count per 10K",4474.80361818615
-2022-07-03,"Switzerland","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Greece","Confirmed","#D6604D","Total Count",3719839
-2022-07-03,"Greece","Confirmed","#D6604D","Count per 10K",3326.0363018598
-2022-07-03,"Greece","Confirmed","#D6604D","New Cases per 10K",10.3978898426323
-2022-07-03,"Philippines","Confirmed","#D6604D","Total Count",3708271
-2022-07-03,"Philippines","Confirmed","#D6604D","Count per 10K",358.911246612466
-2022-07-03,"Philippines","Confirmed","#D6604D","New Cases per 10K",0.127758420441347
-2022-07-03,"Peru","Confirmed","#D6604D","Total Count",3637529
-2022-07-03,"Peru","Confirmed","#D6604D","Count per 10K",1144.81305469881
-2022-07-03,"Peru","Confirmed","#D6604D","New Cases per 10K",0.821741046138352
-2022-07-03,"Denmark","Confirmed","#D6604D","Total Count",3220185
-2022-07-03,"Denmark","Confirmed","#D6604D","Count per 10K",5637.57878151261
-2022-07-03,"Denmark","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Romania","Confirmed","#D6604D","Total Count",2919461
-2022-07-03,"Romania","Confirmed","#D6604D","Count per 10K",1476.11538072606
-2022-07-03,"Romania","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Slovakia","Confirmed","#D6604D","Total Count",2551116
-2022-07-03,"Slovakia","Confirmed","#D6604D","Count per 10K",4686.10580455547
-2022-07-03,"Slovakia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Sweden","Confirmed","#D6604D","Total Count",2519199
-2022-07-03,"Sweden","Confirmed","#D6604D","Count per 10K",2560.68204919699
-2022-07-03,"Sweden","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Iraq","Confirmed","#D6604D","Total Count",2356264
-2022-07-03,"Iraq","Confirmed","#D6604D","Count per 10K",633.353224202349
-2022-07-03,"Iraq","Confirmed","#D6604D","New Cases per 10K",0.635432626401097
-2022-07-03,"China","Confirmed","#D6604D","Total Count",2142216
-2022-07-03,"China","Confirmed","#D6604D","Count per 10K",15.1777896649816
-2022-07-03,"China","Confirmed","#D6604D","New Cases per 10K",0.0162744479830525
-2022-07-03,"Serbia","Confirmed","#D6604D","Total Count",2031920
-2022-07-03,"Serbia","Confirmed","#D6604D","Count per 10K",2303.7641723356
-2022-07-03,"Serbia","Confirmed","#D6604D","New Cases per 10K",0.849206349206349
-2022-07-03,"Bangladesh","Confirmed","#D6604D","Total Count",1978689
-2022-07-03,"Bangladesh","Confirmed","#D6604D","Count per 10K",121.427721046689
-2022-07-03,"Bangladesh","Confirmed","#D6604D","New Cases per 10K",0.116721488536502
-2022-07-03,"Hungary","Confirmed","#D6604D","Total Count",1928125
-2022-07-03,"Hungary","Confirmed","#D6604D","Count per 10K",1976.95580846919
-2022-07-03,"Hungary","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Jordan","Confirmed","#D6604D","Total Count",1700526
-2022-07-03,"Jordan","Confirmed","#D6604D","Count per 10K",1798.35659898477
-2022-07-03,"Jordan","Confirmed","#D6604D","New Cases per 10K",1.40545685279188
-2022-07-03,"Georgia","Confirmed","#D6604D","Total Count",1660429
-2022-07-03,"Georgia","Confirmed","#D6604D","Count per 10K",4230.3923566879
-2022-07-03,"Georgia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Ireland","Confirmed","#D6604D","Total Count",1600614
-2022-07-03,"Ireland","Confirmed","#D6604D","Count per 10K",3386.82606855692
-2022-07-03,"Ireland","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Pakistan","Confirmed","#D6604D","Total Count",1538622
-2022-07-03,"Pakistan","Confirmed","#D6604D","Count per 10K",79.6375832673406
-2022-07-03,"Pakistan","Confirmed","#D6604D","New Cases per 10K",0.0349373456933899
-2022-07-03,"Singapore","Confirmed","#D6604D","Total Count",1467234
-2022-07-03,"Singapore","Confirmed","#D6604D","Count per 10K",2609.80789754536
-2022-07-03,"Singapore","Confirmed","#D6604D","New Cases per 10K",10.8982568480968
-2022-07-03,"Norway","Confirmed","#D6604D","Total Count",1448228
-2022-07-03,"Norway","Confirmed","#D6604D","Count per 10K",2755.90485252141
-2022-07-03,"Norway","Confirmed","#D6604D","New Cases per 10K",0.213130352045671
-2022-07-03,"Kazakhstan","Confirmed","#D6604D","Total Count",1396425
-2022-07-03,"Kazakhstan","Confirmed","#D6604D","Count per 10K",776.309206137425
-2022-07-03,"Kazakhstan","Confirmed","#D6604D","New Cases per 10K",0.21180787191461
-2022-07-03,"New Zealand","Confirmed","#D6604D","Total Count",1370507
-2022-07-03,"New Zealand","Confirmed","#D6604D","Count per 10K",2940.37116498605
-2022-07-03,"New Zealand","Confirmed","#D6604D","New Cases per 10K",14.7414717871701
-2022-07-03,"Morocco","Confirmed","#D6604D","Total Count",1225305
-2022-07-03,"Morocco","Confirmed","#D6604D","Count per 10K",347.33820903138
-2022-07-03,"Morocco","Confirmed","#D6604D","New Cases per 10K",0.487569804688607
-2022-07-03,"Bulgaria","Confirmed","#D6604D","Total Count",1173274
-2022-07-03,"Bulgaria","Confirmed","#D6604D","Count per 10K",1645.31482260553
-2022-07-03,"Bulgaria","Confirmed","#D6604D","New Cases per 10K",0.256625999158603
-2022-07-03,"Lithuania","Confirmed","#D6604D","Total Count",1162126
-2022-07-03,"Lithuania","Confirmed","#D6604D","Count per 10K",3996.30674002751
-2022-07-03,"Lithuania","Confirmed","#D6604D","New Cases per 10K",0.226960110041265
-2022-07-03,"Croatia","Confirmed","#D6604D","Total Count",1151466
-2022-07-03,"Croatia","Confirmed","#D6604D","Count per 10K",2733.12603845241
-2022-07-03,"Croatia","Confirmed","#D6604D","New Cases per 10K",1.92974127699976
-2022-07-03,"Finland","Confirmed","#D6604D","Total Count",1145610
-2022-07-03,"Finland","Confirmed","#D6604D","Count per 10K",2081.79174995457
-2022-07-03,"Finland","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Lebanon","Confirmed","#D6604D","Total Count",1115719
-2022-07-03,"Lebanon","Confirmed","#D6604D","Count per 10K",1857.36474113534
-2022-07-03,"Lebanon","Confirmed","#D6604D","New Cases per 10K",1.50657566172798
-2022-07-03,"Cuba","Confirmed","#D6604D","Total Count",1106124
-2022-07-03,"Cuba","Confirmed","#D6604D","Count per 10K",963.858487277797
-2022-07-03,"Cuba","Confirmed","#D6604D","New Cases per 10K",0.0322411990240502
-2022-07-03,"Tunisia","Confirmed","#D6604D","Total Count",1052180
-2022-07-03,"Tunisia","Confirmed","#D6604D","Count per 10K",922.722090677892
-2022-07-03,"Tunisia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Slovenia","Confirmed","#D6604D","Total Count",1039632
-2022-07-03,"Slovenia","Confirmed","#D6604D","Count per 10K",5003.04138594803
-2022-07-03,"Slovenia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Belarus","Confirmed","#D6604D","Total Count",982867
-2022-07-03,"Belarus","Confirmed","#D6604D","Count per 10K",1036.77953586498
-2022-07-03,"Belarus","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Nepal","Confirmed","#D6604D","Total Count",979801
-2022-07-03,"Nepal","Confirmed","#D6604D","Count per 10K",338.060587240796
-2022-07-03,"Nepal","Confirmed","#D6604D","New Cases per 10K",0.0134561639581824
-2022-07-03,"Uruguay","Confirmed","#D6604D","Total Count",957629
-2022-07-03,"Uruguay","Confirmed","#D6604D","Count per 10K",2780.57200929152
-2022-07-03,"Uruguay","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"United Arab Emirates","Confirmed","#D6604D","Total Count",951196
-2022-07-03,"United Arab Emirates","Confirmed","#D6604D","Count per 10K",1026.10140237325
-2022-07-03,"United Arab Emirates","Confirmed","#D6604D","New Cases per 10K",1.9546925566343
-2022-07-03,"Bolivia","Confirmed","#D6604D","Total Count",929544
-2022-07-03,"Bolivia","Confirmed","#D6604D","Count per 10K",853.732549595885
-2022-07-03,"Bolivia","Confirmed","#D6604D","New Cases per 10K",1.00477590007348
-2022-07-03,"Mongolia","Confirmed","#D6604D","Total Count",928586
-2022-07-03,"Mongolia","Confirmed","#D6604D","Count per 10K",3067.67756854972
-2022-07-03,"Mongolia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Panama","Confirmed","#D6604D","Total Count",925254
-2022-07-03,"Panama","Confirmed","#D6604D","Count per 10K",2293.63906792266
-2022-07-03,"Panama","Confirmed","#D6604D","New Cases per 10K",5.61229548834903
-2022-07-03,"Guatemala","Confirmed","#D6604D","Total Count",920294
-2022-07-03,"Guatemala","Confirmed","#D6604D","Count per 10K",554.99577855506
-2022-07-03,"Guatemala","Confirmed","#D6604D","New Cases per 10K",0.902786153660596
-2022-07-03,"Ecuador","Confirmed","#D6604D","Total Count",909882
-2022-07-03,"Ecuador","Confirmed","#D6604D","Count per 10K",555.314006713457
-2022-07-03,"Ecuador","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Costa Rica","Confirmed","#D6604D","Total Count",904934
-2022-07-03,"Costa Rica","Confirmed","#D6604D","Count per 10K",1863.15421041795
-2022-07-03,"Costa Rica","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Latvia","Confirmed","#D6604D","Total Count",836259
-2022-07-03,"Latvia","Confirmed","#D6604D","Count per 10K",4242.81582952816
-2022-07-03,"Latvia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Saudi Arabia","Confirmed","#D6604D","Total Count",796771
-2022-07-03,"Saudi Arabia","Confirmed","#D6604D","Count per 10K",246.861754864295
-2022-07-03,"Saudi Arabia","Confirmed","#D6604D","New Cases per 10K",0.15584335109679
-2022-07-03,"Azerbaijan","Confirmed","#D6604D","Total Count",793371
-2022-07-03,"Azerbaijan","Confirmed","#D6604D","Count per 10K",815.805655526992
-2022-07-03,"Azerbaijan","Confirmed","#D6604D","New Cases per 10K",0.0370179948586118
-2022-07-03,"Sri Lanka","Confirmed","#D6604D","Total Count",664167
-2022-07-03,"Sri Lanka","Confirmed","#D6604D","Count per 10K",319.341763631118
-2022-07-03,"Sri Lanka","Confirmed","#D6604D","New Cases per 10K",0.00817386287142995
-2022-07-03,"Paraguay","Confirmed","#D6604D","Total Count",660841
-2022-07-03,"Paraguay","Confirmed","#D6604D","Count per 10K",982.663197026022
-2022-07-03,"Paraguay","Confirmed","#D6604D","New Cases per 10K",7.89442379182156
-2022-07-03,"West Bank and Gaza","Confirmed","#D6604D","Total Count",659853
-2022-07-03,"West Bank and Gaza","Confirmed","#D6604D","Count per 10K",1408.43756670224
-2022-07-03,"West Bank and Gaza","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Kuwait","Confirmed","#D6604D","Total Count",644451
-2022-07-03,"Kuwait","Confirmed","#D6604D","Count per 10K",1590.059215396
-2022-07-03,"Kuwait","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Bahrain","Confirmed","#D6604D","Total Count",630059
-2022-07-03,"Bahrain","Confirmed","#D6604D","Count per 10K",4421.46666666667
-2022-07-03,"Bahrain","Confirmed","#D6604D","New Cases per 10K",9.23508771929825
-2022-07-03,"Burma","Confirmed","#D6604D","Total Count",613648
-2022-07-03,"Burma","Confirmed","#D6604D","Count per 10K",116.034414295169
-2022-07-03,"Burma","Confirmed","#D6604D","New Cases per 10K",0.00113453720336579
-2022-07-03,"Dominican Republic","Confirmed","#D6604D","Total Count",608176
-2022-07-03,"Dominican Republic","Confirmed","#D6604D","Count per 10K",571.110902432153
-2022-07-03,"Dominican Republic","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Estonia","Confirmed","#D6604D","Total Count",580114
-2022-07-03,"Estonia","Confirmed","#D6604D","Count per 10K",4421.6006097561
-2022-07-03,"Estonia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Venezuela","Confirmed","#D6604D","Total Count",526688
-2022-07-03,"Venezuela","Confirmed","#D6604D","Count per 10K",166.842372022301
-2022-07-03,"Venezuela","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Moldova","Confirmed","#D6604D","Total Count",520321
-2022-07-03,"Moldova","Confirmed","#D6604D","Count per 10K",1281.57881773399
-2022-07-03,"Moldova","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Egypt","Confirmed","#D6604D","Total Count",515645
-2022-07-03,"Egypt","Confirmed","#D6604D","Count per 10K",53.8875941853296
-2022-07-03,"Egypt","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Cyprus","Confirmed","#D6604D","Total Count",515596
-2022-07-03,"Cyprus","Confirmed","#D6604D","Count per 10K",4406.80341880342
-2022-07-03,"Cyprus","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Libya","Confirmed","#D6604D","Total Count",502138
-2022-07-03,"Libya","Confirmed","#D6604D","Count per 10K",797.931034482759
-2022-07-03,"Libya","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Ethiopia","Confirmed","#D6604D","Total Count",489341
-2022-07-03,"Ethiopia","Confirmed","#D6604D","Count per 10K",47.7858070564339
-2022-07-03,"Ethiopia","Confirmed","#D6604D","New Cases per 10K",0.00839819145923459
-2022-07-03,"Honduras","Confirmed","#D6604D","Total Count",427718
-2022-07-03,"Honduras","Confirmed","#D6604D","Count per 10K",469.349281246571
-2022-07-03,"Honduras","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Armenia","Confirmed","#D6604D","Total Count",423243
-2022-07-03,"Armenia","Confirmed","#D6604D","Count per 10K",1446.98461538462
-2022-07-03,"Armenia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Oman","Confirmed","#D6604D","Total Count",390244
-2022-07-03,"Oman","Confirmed","#D6604D","Count per 10K",881.907344632768
-2022-07-03,"Oman","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Qatar","Confirmed","#D6604D","Total Count",383807
-2022-07-03,"Qatar","Confirmed","#D6604D","Count per 10K",1493.41245136187
-2022-07-03,"Qatar","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Bosnia and Herzegovina","Confirmed","#D6604D","Total Count",378797
-2022-07-03,"Bosnia and Herzegovina","Confirmed","#D6604D","Count per 10K",1077.04577765141
-2022-07-03,"Bosnia and Herzegovina","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Kenya","Confirmed","#D6604D","Total Count",334249
-2022-07-03,"Kenya","Confirmed","#D6604D","Count per 10K",68.9713590029301
-2022-07-03,"Kenya","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Zambia","Confirmed","#D6604D","Total Count",326259
-2022-07-03,"Zambia","Confirmed","#D6604D","Count per 10K",196.648182749684
-2022-07-03,"Zambia","Confirmed","#D6604D","New Cases per 10K",0.24230004219155
-2022-07-03,"Botswana","Confirmed","#D6604D","Total Count",322769
-2022-07-03,"Botswana","Confirmed","#D6604D","Count per 10K",1408.24171029668
-2022-07-03,"Botswana","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"North Macedonia","Confirmed","#D6604D","Total Count",314211
-2022-07-03,"North Macedonia","Confirmed","#D6604D","Count per 10K",1509.90389235944
-2022-07-03,"North Macedonia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Albania","Confirmed","#D6604D","Total Count",282690
-2022-07-03,"Albania","Confirmed","#D6604D","Count per 10K",966.131237183869
-2022-07-03,"Albania","Confirmed","#D6604D","New Cases per 10K",1.87628161312372
-2022-07-03,"Algeria","Confirmed","#D6604D","Total Count",266128
-2022-07-03,"Algeria","Confirmed","#D6604D","Count per 10K",65.5390828941536
-2022-07-03,"Algeria","Confirmed","#D6604D","New Cases per 10K",0.00320149731566764
-2022-07-03,"Luxembourg","Confirmed","#D6604D","Total Count",264571
-2022-07-03,"Luxembourg","Confirmed","#D6604D","Count per 10K",4593.24652777778
-2022-07-03,"Luxembourg","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Nigeria","Confirmed","#D6604D","Total Count",257637
-2022-07-03,"Nigeria","Confirmed","#D6604D","Count per 10K",13.8521963546427
-2022-07-03,"Nigeria","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Zimbabwe","Confirmed","#D6604D","Total Count",255586
-2022-07-03,"Zimbabwe","Confirmed","#D6604D","Count per 10K",158.257585139319
-2022-07-03,"Zimbabwe","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Uzbekistan","Confirmed","#D6604D","Total Count",241040
-2022-07-03,"Uzbekistan","Confirmed","#D6604D","Count per 10K",76.6496009158266
-2022-07-03,"Uzbekistan","Confirmed","#D6604D","New Cases per 10K",0.0302095589404395
-2022-07-03,"Montenegro","Confirmed","#D6604D","Total Count",241003
-2022-07-03,"Montenegro","Confirmed","#D6604D","Count per 10K",3831.52623211447
-2022-07-03,"Montenegro","Confirmed","#D6604D","New Cases per 10K",4.1335453100159
-2022-07-03,"Mauritius","Confirmed","#D6604D","Total Count",231036
-2022-07-03,"Mauritius","Confirmed","#D6604D","Count per 10K",1830.71315372425
-2022-07-03,"Mauritius","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Kosovo","Confirmed","#D6604D","Total Count",229571
-2022-07-03,"Kosovo","Confirmed","#D6604D","Count per 10K",1253.80120152922
-2022-07-03,"Kosovo","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Mozambique","Confirmed","#D6604D","Total Count",228183
-2022-07-03,"Mozambique","Confirmed","#D6604D","Count per 10K",79.1505081688577
-2022-07-03,"Mozambique","Confirmed","#D6604D","New Cases per 10K",0.0183842658434216
-2022-07-03,"Laos","Confirmed","#D6604D","Total Count",210307
-2022-07-03,"Laos","Confirmed","#D6604D","Count per 10K",311.197099733649
-2022-07-03,"Laos","Confirmed","#D6604D","New Cases per 10K",0.00147972773009766
-2022-07-03,"Kyrgyzstan","Confirmed","#D6604D","Total Count",201053
-2022-07-03,"Kyrgyzstan","Confirmed","#D6604D","Count per 10K",337.563801208865
-2022-07-03,"Kyrgyzstan","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Iceland","Confirmed","#D6604D","Total Count",195259
-2022-07-03,"Iceland","Confirmed","#D6604D","Count per 10K",5881.29518072289
-2022-07-03,"Iceland","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Afghanistan","Confirmed","#D6604D","Total Count",182724
-2022-07-03,"Afghanistan","Confirmed","#D6604D","Count per 10K",52.7250692520776
-2022-07-03,"Afghanistan","Confirmed","#D6604D","New Cases per 10K",0.0233725761772853
-2022-07-03,"Maldives","Confirmed","#D6604D","Total Count",181586
-2022-07-03,"Maldives","Confirmed","#D6604D","Count per 10K",4242.66355140187
-2022-07-03,"Maldives","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"El Salvador","Confirmed","#D6604D","Total Count",169646
-2022-07-03,"El Salvador","Confirmed","#D6604D","Count per 10K",267.369582348306
-2022-07-03,"El Salvador","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Namibia","Confirmed","#D6604D","Total Count",169230
-2022-07-03,"Namibia","Confirmed","#D6604D","Count per 10K",682.379032258065
-2022-07-03,"Namibia","Confirmed","#D6604D","New Cases per 10K",0.108870967741935
-2022-07-03,"Uganda","Confirmed","#D6604D","Total Count",167935
-2022-07-03,"Uganda","Confirmed","#D6604D","Count per 10K",40.477969533359
-2022-07-03,"Uganda","Confirmed","#D6604D","New Cases per 10K",0.0142209795603548
-2022-07-03,"Trinidad and Tobago","Confirmed","#D6604D","Total Count",167495
-2022-07-03,"Trinidad and Tobago","Confirmed","#D6604D","Count per 10K",1227.0695970696
-2022-07-03,"Trinidad and Tobago","Confirmed","#D6604D","New Cases per 10K",0.402930402930403
-2022-07-03,"Ghana","Confirmed","#D6604D","Total Count",166397
-2022-07-03,"Ghana","Confirmed","#D6604D","Count per 10K",58.9913851171695
-2022-07-03,"Ghana","Confirmed","#D6604D","New Cases per 10K",0.0935937887758358
-2022-07-03,"Brunei","Confirmed","#D6604D","Total Count",164727
-2022-07-03,"Brunei","Confirmed","#D6604D","Count per 10K",3894.25531914894
-2022-07-03,"Brunei","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Jamaica","Confirmed","#D6604D","Total Count",143240
-2022-07-03,"Jamaica","Confirmed","#D6604D","Count per 10K",497.188476223533
-2022-07-03,"Jamaica","Confirmed","#D6604D","New Cases per 10K",0.496355432141617
-2022-07-03,"Cambodia","Confirmed","#D6604D","Total Count",136296
-2022-07-03,"Cambodia","Confirmed","#D6604D","Count per 10K",86.4712599923867
-2022-07-03,"Cambodia","Confirmed","#D6604D","New Cases per 10K",0.00380662352493338
-2022-07-03,"Rwanda","Confirmed","#D6604D","Total Count",131233
-2022-07-03,"Rwanda","Confirmed","#D6604D","Count per 10K",110.113274039268
-2022-07-03,"Rwanda","Confirmed","#D6604D","New Cases per 10K",0.0662862896459137
-2022-07-03,"Cameroon","Confirmed","#D6604D","Total Count",120068
-2022-07-03,"Cameroon","Confirmed","#D6604D","Count per 10K",51.2257348863006
-2022-07-03,"Cameroon","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Malta","Confirmed","#D6604D","Total Count",104919
-2022-07-03,"Malta","Confirmed","#D6604D","Count per 10K",2445.66433566434
-2022-07-03,"Malta","Confirmed","#D6604D","New Cases per 10K",11.6550116550117
-2022-07-03,"Angola","Confirmed","#D6604D","Total Count",101320
-2022-07-03,"Angola","Confirmed","#D6604D","Count per 10K",35.1646826085448
-2022-07-03,"Angola","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Congo (Kinshasa)","Confirmed","#D6604D","Total Count",91393
-2022-07-03,"Congo (Kinshasa)","Confirmed","#D6604D","Count per 10K",11.6075238772607
-2022-07-03,"Congo (Kinshasa)","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Malawi","Confirmed","#D6604D","Total Count",86576
-2022-07-03,"Malawi","Confirmed","#D6604D","Count per 10K",46.4962406015038
-2022-07-03,"Malawi","Confirmed","#D6604D","New Cases per 10K",0.00590762620837809
-2022-07-03,"Senegal","Confirmed","#D6604D","Total Count",86363
-2022-07-03,"Senegal","Confirmed","#D6604D","Count per 10K",56.0362055541137
-2022-07-03,"Senegal","Confirmed","#D6604D","New Cases per 10K",0.00973267583701012
-2022-07-03,"Barbados","Confirmed","#D6604D","Total Count",84830
-2022-07-03,"Barbados","Confirmed","#D6604D","Count per 10K",2976.49122807018
-2022-07-03,"Barbados","Confirmed","#D6604D","New Cases per 10K",4.24561403508772
-2022-07-03,"Cote d'Ivoire","Confirmed","#D6604D","Total Count",83659
-2022-07-03,"Cote d'Ivoire","Confirmed","#D6604D","Count per 10K",35.3051147873059
-2022-07-03,"Cote d'Ivoire","Confirmed","#D6604D","New Cases per 10K",0.00928426738690074
-2022-07-03,"Suriname","Confirmed","#D6604D","Total Count",80864
-2022-07-03,"Suriname","Confirmed","#D6604D","Count per 10K",1449.17562724014
-2022-07-03,"Suriname","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Eswatini","Confirmed","#D6604D","Total Count",73136
-2022-07-03,"Eswatini","Confirmed","#D6604D","Count per 10K",544.571854058079
-2022-07-03,"Eswatini","Confirmed","#D6604D","New Cases per 10K",0.0223380491437081
-2022-07-03,"Guyana","Confirmed","#D6604D","Total Count",67615
-2022-07-03,"Guyana","Confirmed","#D6604D","Count per 10K",874.70892626132
-2022-07-03,"Guyana","Confirmed","#D6604D","New Cases per 10K",0.310478654592497
-2022-07-03,"Madagascar","Confirmed","#D6604D","Total Count",65787
-2022-07-03,"Madagascar","Confirmed","#D6604D","Count per 10K",26.4257883109058
-2022-07-03,"Madagascar","Confirmed","#D6604D","New Cases per 10K",0.163084956818638
-2022-07-03,"Fiji","Confirmed","#D6604D","Total Count",65713
-2022-07-03,"Fiji","Confirmed","#D6604D","Count per 10K",730.956618464961
-2022-07-03,"Fiji","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Belize","Confirmed","#D6604D","Total Count",64138
-2022-07-03,"Belize","Confirmed","#D6604D","Count per 10K",1747.62942779292
-2022-07-03,"Belize","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Sudan","Confirmed","#D6604D","Total Count",62624
-2022-07-03,"Sudan","Confirmed","#D6604D","Count per 10K",15.8225321508881
-2022-07-03,"Sudan","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Cabo Verde","Confirmed","#D6604D","Total Count",61002
-2022-07-03,"Cabo Verde","Confirmed","#D6604D","Count per 10K",1129.66666666667
-2022-07-03,"Cabo Verde","Confirmed","#D6604D","New Cases per 10K",1.14814814814815
-2022-07-03,"Mauritania","Confirmed","#D6604D","Total Count",60252
-2022-07-03,"Mauritania","Confirmed","#D6604D","Count per 10K",140.088351546152
-2022-07-03,"Mauritania","Confirmed","#D6604D","New Cases per 10K",0.290630086026505
-2022-07-03,"Bhutan","Confirmed","#D6604D","Total Count",59729
-2022-07-03,"Bhutan","Confirmed","#D6604D","Count per 10K",748.483709273183
-2022-07-03,"Bhutan","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Syria","Confirmed","#D6604D","Total Count",55929
-2022-07-03,"Syria","Confirmed","#D6604D","Count per 10K",30.3467173087358
-2022-07-03,"Syria","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Gabon","Confirmed","#D6604D","Total Count",47939
-2022-07-03,"Gabon","Confirmed","#D6604D","Count per 10K",242.116161616162
-2022-07-03,"Gabon","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Seychelles","Confirmed","#D6604D","Total Count",44847
-2022-07-03,"Seychelles","Confirmed","#D6604D","Count per 10K",4770.95744680851
-2022-07-03,"Seychelles","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Papua New Guinea","Confirmed","#D6604D","Total Count",44725
-2022-07-03,"Papua New Guinea","Confirmed","#D6604D","Count per 10K",55.3184910327767
-2022-07-03,"Papua New Guinea","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Andorra","Confirmed","#D6604D","Total Count",44177
-2022-07-03,"Andorra","Confirmed","#D6604D","Count per 10K",5737.27272727273
-2022-07-03,"Andorra","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Burundi","Confirmed","#D6604D","Total Count",42698
-2022-07-03,"Burundi","Confirmed","#D6604D","Count per 10K",39.316758747698
-2022-07-03,"Burundi","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Togo","Confirmed","#D6604D","Total Count",37468
-2022-07-03,"Togo","Confirmed","#D6604D","Count per 10K",49.2611096502761
-2022-07-03,"Togo","Confirmed","#D6604D","New Cases per 10K",0.0262950302392848
-2022-07-03,"Guinea","Confirmed","#D6604D","Total Count",37123
-2022-07-03,"Guinea","Confirmed","#D6604D","Count per 10K",29.9475637302356
-2022-07-03,"Guinea","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Bahamas","Confirmed","#D6604D","Total Count",36029
-2022-07-03,"Bahamas","Confirmed","#D6604D","Count per 10K",921.457800511509
-2022-07-03,"Bahamas","Confirmed","#D6604D","New Cases per 10K",0.895140664961637
-2022-07-03,"Tanzania","Confirmed","#D6604D","Total Count",35768
-2022-07-03,"Tanzania","Confirmed","#D6604D","Count per 10K",6.43633484488591
-2022-07-03,"Tanzania","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Lesotho","Confirmed","#D6604D","Total Count",33938
-2022-07-03,"Lesotho","Confirmed","#D6604D","Count per 10K",160.996204933586
-2022-07-03,"Lesotho","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Haiti","Confirmed","#D6604D","Total Count",31603
-2022-07-03,"Haiti","Confirmed","#D6604D","Count per 10K",29.1352447681387
-2022-07-03,"Haiti","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Mali","Confirmed","#D6604D","Total Count",31171
-2022-07-03,"Mali","Confirmed","#D6604D","Count per 10K",17.3220338983051
-2022-07-03,"Mali","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Benin","Confirmed","#D6604D","Total Count",27216
-2022-07-03,"Benin","Confirmed","#D6604D","Count per 10K",25.0331125827815
-2022-07-03,"Benin","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Saint Lucia","Confirmed","#D6604D","Total Count",27094
-2022-07-03,"Saint Lucia","Confirmed","#D6604D","Count per 10K",1522.13483146067
-2022-07-03,"Saint Lucia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Somalia","Confirmed","#D6604D","Total Count",26803
-2022-07-03,"Somalia","Confirmed","#D6604D","Count per 10K",18.7197932672161
-2022-07-03,"Somalia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Congo (Brazzaville)","Confirmed","#D6604D","Total Count",24128
-2022-07-03,"Congo (Brazzaville)","Confirmed","#D6604D","Count per 10K",47.0698400312134
-2022-07-03,"Congo (Brazzaville)","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Timor-Leste","Confirmed","#D6604D","Total Count",22958
-2022-07-03,"Timor-Leste","Confirmed","#D6604D","Count per 10K",180.914105594957
-2022-07-03,"Timor-Leste","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Solomon Islands","Confirmed","#D6604D","Total Count",21544
-2022-07-03,"Solomon Islands","Confirmed","#D6604D","Count per 10K",329.923430321593
-2022-07-03,"Solomon Islands","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Burkina Faso","Confirmed","#D6604D","Total Count",21044
-2022-07-03,"Burkina Faso","Confirmed","#D6604D","Count per 10K",11.2860667167221
-2022-07-03,"Burkina Faso","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Grenada","Confirmed","#D6604D","Total Count",18376
-2022-07-03,"Grenada","Confirmed","#D6604D","Count per 10K",1717.38317757009
-2022-07-03,"Grenada","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"San Marino","Confirmed","#D6604D","Total Count",18092
-2022-07-03,"San Marino","Confirmed","#D6604D","Count per 10K",5482.42424242424
-2022-07-03,"San Marino","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Liechtenstein","Confirmed","#D6604D","Total Count",17935
-2022-07-03,"Liechtenstein","Confirmed","#D6604D","Count per 10K",4598.71794871795
-2022-07-03,"Liechtenstein","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Tajikistan","Confirmed","#D6604D","Total Count",17786
-2022-07-03,"Tajikistan","Confirmed","#D6604D","Count per 10K",18.6475152023485
-2022-07-03,"Tajikistan","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"South Sudan","Confirmed","#D6604D","Total Count",17722
-2022-07-03,"South Sudan","Confirmed","#D6604D","Count per 10K",14.087440381558
-2022-07-03,"South Sudan","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Equatorial Guinea","Confirmed","#D6604D","Total Count",16087
-2022-07-03,"Equatorial Guinea","Confirmed","#D6604D","Count per 10K",131.752661752662
-2022-07-03,"Equatorial Guinea","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Djibouti","Confirmed","#D6604D","Total Count",15690
-2022-07-03,"Djibouti","Confirmed","#D6604D","Count per 10K",166.56050955414
-2022-07-03,"Djibouti","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Samoa","Confirmed","#D6604D","Total Count",14964
-2022-07-03,"Samoa","Confirmed","#D6604D","Count per 10K",763.469387755102
-2022-07-03,"Samoa","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Dominica","Confirmed","#D6604D","Total Count",14852
-2022-07-03,"Dominica","Confirmed","#D6604D","Count per 10K",2007.02702702703
-2022-07-03,"Dominica","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Nicaragua","Confirmed","#D6604D","Total Count",14690
-2022-07-03,"Nicaragua","Confirmed","#D6604D","Count per 10K",23.8861788617886
-2022-07-03,"Nicaragua","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Central African Republic","Confirmed","#D6604D","Total Count",14649
-2022-07-03,"Central African Republic","Confirmed","#D6604D","Count per 10K",31.8803046789989
-2022-07-03,"Central African Republic","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Monaco","Confirmed","#D6604D","Total Count",13100
-2022-07-03,"Monaco","Confirmed","#D6604D","Count per 10K",3447.36842105263
-2022-07-03,"Monaco","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Tonga","Confirmed","#D6604D","Total Count",12301
-2022-07-03,"Tonga","Confirmed","#D6604D","Count per 10K",1160.47169811321
-2022-07-03,"Tonga","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Gambia","Confirmed","#D6604D","Total Count",12002
-2022-07-03,"Gambia","Confirmed","#D6604D","Count per 10K",58.8621873467386
-2022-07-03,"Gambia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Yemen","Confirmed","#D6604D","Total Count",11824
-2022-07-03,"Yemen","Confirmed","#D6604D","Count per 10K",3.96432642660766
-2022-07-03,"Yemen","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Vanuatu","Confirmed","#D6604D","Total Count",11353
-2022-07-03,"Vanuatu","Confirmed","#D6604D","Count per 10K",387.474402730375
-2022-07-03,"Vanuatu","Confirmed","#D6604D","New Cases per 10K",2.73037542662116
-2022-07-03,"Eritrea","Confirmed","#D6604D","Total Count",9801
-2022-07-03,"Eritrea","Confirmed","#D6604D","Count per 10K",19.7800201816347
-2022-07-03,"Eritrea","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Saint Vincent and the Grenadines","Confirmed","#D6604D","Total Count",9058
-2022-07-03,"Saint Vincent and the Grenadines","Confirmed","#D6604D","Count per 10K",823.454545454545
-2022-07-03,"Saint Vincent and the Grenadines","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Niger","Confirmed","#D6604D","Total Count",9031
-2022-07-03,"Niger","Confirmed","#D6604D","Count per 10K",4.36849997581386
-2022-07-03,"Niger","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Antigua and Barbuda","Confirmed","#D6604D","Total Count",8665
-2022-07-03,"Antigua and Barbuda","Confirmed","#D6604D","Count per 10K",857.920792079208
-2022-07-03,"Antigua and Barbuda","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Guinea-Bissau","Confirmed","#D6604D","Total Count",8369
-2022-07-03,"Guinea-Bissau","Confirmed","#D6604D","Count per 10K",46.0848017621145
-2022-07-03,"Guinea-Bissau","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Comoros","Confirmed","#D6604D","Total Count",8139
-2022-07-03,"Comoros","Confirmed","#D6604D","Count per 10K",93.551724137931
-2022-07-03,"Comoros","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Sierra Leone","Confirmed","#D6604D","Total Count",7702
-2022-07-03,"Sierra Leone","Confirmed","#D6604D","Count per 10K",10.1918750827048
-2022-07-03,"Sierra Leone","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Liberia","Confirmed","#D6604D","Total Count",7497
-2022-07-03,"Liberia","Confirmed","#D6604D","Count per 10K",15.8431952662722
-2022-07-03,"Liberia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Chad","Confirmed","#D6604D","Total Count",7425
-2022-07-03,"Chad","Confirmed","#D6604D","Count per 10K",5.13734172836089
-2022-07-03,"Chad","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Saint Kitts and Nevis","Confirmed","#D6604D","Total Count",6157
-2022-07-03,"Saint Kitts and Nevis","Confirmed","#D6604D","Count per 10K",1119.45454545455
-2022-07-03,"Saint Kitts and Nevis","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Sao Tome and Principe","Confirmed","#D6604D","Total Count",6043
-2022-07-03,"Sao Tome and Principe","Confirmed","#D6604D","Count per 10K",296.225490196078
-2022-07-03,"Sao Tome and Principe","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Palau","Confirmed","#D6604D","Total Count",5237
-2022-07-03,"Palau","Confirmed","#D6604D","Count per 10K",2909.44444444444
-2022-07-03,"Palau","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Kiribati","Confirmed","#D6604D","Total Count",3236
-2022-07-03,"Kiribati","Confirmed","#D6604D","Count per 10K",271.932773109244
-2022-07-03,"Kiribati","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Micronesia","Confirmed","#D6604D","Total Count",38
-2022-07-03,"Micronesia","Confirmed","#D6604D","Count per 10K",0.690909090909091
-2022-07-03,"Micronesia","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Marshall Islands","Confirmed","#D6604D","Total Count",18
-2022-07-03,"Marshall Islands","Confirmed","#D6604D","Count per 10K",3.10344827586207
-2022-07-03,"Marshall Islands","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"Korea, North","Confirmed","#D6604D","Total Count",1
-2022-07-03,"Korea, North","Confirmed","#D6604D","Count per 10K",0.000384867028441673
-2022-07-03,"Korea, North","Confirmed","#D6604D","New Cases per 10K",0
-2022-07-03,"US","Fatal","#202226","Total Count",1017848
-2022-07-03,"US","Fatal","#202226","Count per 10K",31.5925259171891
-2022-07-03,"US","Fatal","#202226","New Cases per 10K",0.0000620770997578993
-2022-07-03,"Brazil","Fatal","#202226","Total Count",671911
-2022-07-03,"Brazil","Fatal","#202226","Count per 10K",32.3573943068484
-2022-07-03,"Brazil","Fatal","#202226","New Cases per 10K",0.00255233490486533
-2022-07-03,"India","Fatal","#202226","Total Count",525223
-2022-07-03,"India","Fatal","#202226","Count per 10K",3.96642880715557
-2022-07-03,"India","Fatal","#202226","New Cases per 10K",0.000181245473583095
-2022-07-03,"Russia","Fatal","#202226","Total Count",373552
-2022-07-03,"Russia","Fatal","#202226","Count per 10K",25.9474177751537
-2022-07-03,"Russia","Fatal","#202226","New Cases per 10K",0.00326468238808044
-2022-07-03,"Mexico","Fatal","#202226","Total Count",325788
-2022-07-03,"Mexico","Fatal","#202226","Count per 10K",25.5439862004077
-2022-07-03,"Mexico","Fatal","#202226","New Cases per 10K",0.00321467774815744
-2022-07-03,"Peru","Fatal","#202226","Total Count",213551
-2022-07-03,"Peru","Fatal","#202226","Count per 10K",67.2093535595141
-2022-07-03,"Peru","Fatal","#202226","New Cases per 10K",0.00188833637565305
-2022-07-03,"United Kingdom","Fatal","#202226","Total Count",181093
-2022-07-03,"United Kingdom","Fatal","#202226","Count per 10K",27.5263341896062
-2022-07-03,"United Kingdom","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Italy","Fatal","#202226","Total Count",168545
-2022-07-03,"Italy","Fatal","#202226","Count per 10K",28.3602557630826
-2022-07-03,"Italy","Fatal","#202226","New Cases per 10K",0.00959111559818274
-2022-07-03,"Indonesia","Fatal","#202226","Total Count",156749
-2022-07-03,"Indonesia","Fatal","#202226","Count per 10K",6.00306378415641
-2022-07-03,"Indonesia","Fatal","#202226","New Cases per 10K",0.000153189207820309
-2022-07-03,"France","Fatal","#202226","Total Count",150624
-2022-07-03,"France","Fatal","#202226","Count per 10K",23.2728171690796
-2022-07-03,"France","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Iran","Fatal","#202226","Total Count",141396
-2022-07-03,"Iran","Fatal","#202226","Count per 10K",17.6135132105086
-2022-07-03,"Iran","Fatal","#202226","New Cases per 10K",0.000747412085653425
-2022-07-03,"Germany","Fatal","#202226","Total Count",141295
-2022-07-03,"Germany","Fatal","#202226","Count per 10K",17.2489775987304
-2022-07-03,"Germany","Fatal","#202226","New Cases per 10K",0.000366233290606116
-2022-07-03,"Colombia","Fatal","#202226","Total Count",140070
-2022-07-03,"Colombia","Fatal","#202226","Count per 10K",28.7895915976404
-2022-07-03,"Colombia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Argentina","Fatal","#202226","Total Count",129109
-2022-07-03,"Argentina","Fatal","#202226","Count per 10K",29.4453440372203
-2022-07-03,"Argentina","Fatal","#202226","New Cases per 10K",0.00889456519260155
-2022-07-03,"Poland","Fatal","#202226","Total Count",116435
-2022-07-03,"Poland","Fatal","#202226","Count per 10K",30.4612285475094
-2022-07-03,"Poland","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Ukraine","Fatal","#202226","Total Count",112459
-2022-07-03,"Ukraine","Fatal","#202226","Count per 10K",25.3063750309413
-2022-07-03,"Ukraine","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Spain","Fatal","#202226","Total Count",108111
-2022-07-03,"Spain","Fatal","#202226","Count per 10K",23.3259256062829
-2022-07-03,"Spain","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"South Africa","Fatal","#202226","Total Count",101812
-2022-07-03,"South Africa","Fatal","#202226","Count per 10K",18.1758457556012
-2022-07-03,"South Africa","Fatal","#202226","New Cases per 10K",0.000535570829242167
-2022-07-03,"Turkey","Fatal","#202226","Total Count",99032
-2022-07-03,"Turkey","Fatal","#202226","Count per 10K",12.4549753496328
-2022-07-03,"Turkey","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Romania","Fatal","#202226","Total Count",65739
-2022-07-03,"Romania","Fatal","#202226","Count per 10K",33.2384467590252
-2022-07-03,"Romania","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Philippines","Fatal","#202226","Total Count",60592
-2022-07-03,"Philippines","Fatal","#202226","Count per 10K",5.86449864498645
-2022-07-03,"Philippines","Fatal","#202226","New Cases per 10K",0.0013550135501355
-2022-07-03,"Chile","Fatal","#202226","Total Count",58589
-2022-07-03,"Chile","Fatal","#202226","Count per 10K",32.713009491904
-2022-07-03,"Chile","Fatal","#202226","New Cases per 10K",0.0145170295924065
-2022-07-03,"Hungary","Fatal","#202226","Total Count",46647
-2022-07-03,"Hungary","Fatal","#202226","Count per 10K",47.8283605044602
-2022-07-03,"Hungary","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Vietnam","Fatal","#202226","Total Count",43087
-2022-07-03,"Vietnam","Fatal","#202226","Count per 10K",4.55614419101397
-2022-07-03,"Vietnam","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Canada","Fatal","#202226","Total Count",42001
-2022-07-03,"Canada","Fatal","#202226","Count per 10K",11.5737117663268
-2022-07-03,"Canada","Fatal","#202226","New Cases per 10K",0.000275558004960044
-2022-07-03,"Czechia","Fatal","#202226","Total Count",40322
-2022-07-03,"Czechia","Fatal","#202226","Count per 10K",38.000188483649
-2022-07-03,"Czechia","Fatal","#202226","New Cases per 10K",0.000942418245217227
-2022-07-03,"Bulgaria","Fatal","#202226","Total Count",37257
-2022-07-03,"Bulgaria","Fatal","#202226","Count per 10K",52.246529238536
-2022-07-03,"Bulgaria","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Malaysia","Fatal","#202226","Total Count",35776
-2022-07-03,"Malaysia","Fatal","#202226","Count per 10K",11.471446436015
-2022-07-03,"Malaysia","Fatal","#202226","New Cases per 10K",0.00160323211594575
-2022-07-03,"Ecuador","Fatal","#202226","Total Count",35725
-2022-07-03,"Ecuador","Fatal","#202226","Count per 10K",21.8034787915777
-2022-07-03,"Ecuador","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Belgium","Fatal","#202226","Total Count",31918
-2022-07-03,"Belgium","Fatal","#202226","Count per 10K",28.1017784821271
-2022-07-03,"Belgium","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Japan","Fatal","#202226","Total Count",31314
-2022-07-03,"Japan","Fatal","#202226","Count per 10K",2.4512129253458
-2022-07-03,"Japan","Fatal","#202226","New Cases per 10K",0.000391392496223062
-2022-07-03,"Thailand","Fatal","#202226","Total Count",30718
-2022-07-03,"Thailand","Fatal","#202226","Count per 10K",4.46067611524164
-2022-07-03,"Thailand","Fatal","#202226","New Cases per 10K",0.00261384758364312
-2022-07-03,"Pakistan","Fatal","#202226","Total Count",30403
-2022-07-03,"Pakistan","Fatal","#202226","Count per 10K",1.57362980906094
-2022-07-03,"Pakistan","Fatal","#202226","New Cases per 10K",0.000103518061313748
-2022-07-03,"Greece","Fatal","#202226","Total Count",30302
-2022-07-03,"Greece","Fatal","#202226","Count per 10K",27.0940629470672
-2022-07-03,"Greece","Fatal","#202226","New Cases per 10K",0.0232474964234621
-2022-07-03,"Bangladesh","Fatal","#202226","Total Count",29162
-2022-07-03,"Bangladesh","Fatal","#202226","Count per 10K",1.78960675536354
-2022-07-03,"Bangladesh","Fatal","#202226","New Cases per 10K",0.000122735529481074
-2022-07-03,"Tunisia","Fatal","#202226","Total Count",28691
-2022-07-03,"Tunisia","Fatal","#202226","Count per 10K",25.1609225642375
-2022-07-03,"Tunisia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Iraq","Fatal","#202226","Total Count",25243
-2022-07-03,"Iraq","Fatal","#202226","Count per 10K",6.78520549418058
-2022-07-03,"Iraq","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Egypt","Fatal","#202226","Total Count",24723
-2022-07-03,"Egypt","Fatal","#202226","Count per 10K",2.58368255494362
-2022-07-03,"Egypt","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Korea, South","Fatal","#202226","Total Count",24574
-2022-07-03,"Korea, South","Fatal","#202226","Count per 10K",4.77443170779095
-2022-07-03,"Korea, South","Fatal","#202226","New Cases per 10K",0.000777151738877016
-2022-07-03,"Portugal","Fatal","#202226","Total Count",24149
-2022-07-03,"Portugal","Fatal","#202226","Count per 10K",23.2828769764751
-2022-07-03,"Portugal","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Netherlands","Fatal","#202226","Total Count",23003
-2022-07-03,"Netherlands","Fatal","#202226","Count per 10K",13.5415317595809
-2022-07-03,"Netherlands","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Bolivia","Fatal","#202226","Total Count",21957
-2022-07-03,"Bolivia","Fatal","#202226","Count per 10K",20.1662380602498
-2022-07-03,"Bolivia","Fatal","#202226","New Cases per 10K",0.00183688464364438
-2022-07-03,"Slovakia","Fatal","#202226","Total Count",20147
-2022-07-03,"Slovakia","Fatal","#202226","Count per 10K",37.0077149155033
-2022-07-03,"Slovakia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Austria","Fatal","#202226","Total Count",20057
-2022-07-03,"Austria","Fatal","#202226","Count per 10K",23.0222681359045
-2022-07-03,"Austria","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Burma","Fatal","#202226","Total Count",19434
-2022-07-03,"Burma","Fatal","#202226","Count per 10K",3.67476600170181
-2022-07-03,"Burma","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Sweden","Fatal","#202226","Total Count",19124
-2022-07-03,"Sweden","Fatal","#202226","Count per 10K",19.4389103476316
-2022-07-03,"Sweden","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Kazakhstan","Fatal","#202226","Total Count",19018
-2022-07-03,"Kazakhstan","Fatal","#202226","Count per 10K",10.5726039581944
-2022-07-03,"Kazakhstan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Paraguay","Fatal","#202226","Total Count",18994
-2022-07-03,"Paraguay","Fatal","#202226","Count per 10K",28.2438661710037
-2022-07-03,"Paraguay","Fatal","#202226","New Cases per 10K",0.0460966542750929
-2022-07-03,"Guatemala","Fatal","#202226","Total Count",18600
-2022-07-03,"Guatemala","Fatal","#202226","Count per 10K",11.2169822699313
-2022-07-03,"Guatemala","Fatal","#202226","New Cases per 10K",0.00542757206609577
-2022-07-03,"Georgia","Fatal","#202226","Total Count",16841
-2022-07-03,"Georgia","Fatal","#202226","Count per 10K",42.9070063694268
-2022-07-03,"Georgia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Sri Lanka","Fatal","#202226","Total Count",16522
-2022-07-03,"Sri Lanka","Fatal","#202226","Count per 10K",7.94403308010386
-2022-07-03,"Sri Lanka","Fatal","#202226","New Cases per 10K",0.000480815463025291
-2022-07-03,"Serbia","Fatal","#202226","Total Count",16131
-2022-07-03,"Serbia","Fatal","#202226","Count per 10K",18.2891156462585
-2022-07-03,"Serbia","Fatal","#202226","New Cases per 10K",0.00226757369614512
-2022-07-03,"Morocco","Fatal","#202226","Total Count",16117
-2022-07-03,"Morocco","Fatal","#202226","Count per 10K",4.56869915242226
-2022-07-03,"Morocco","Fatal","#202226","New Cases per 10K",0.000283470816679423
-2022-07-03,"Croatia","Fatal","#202226","Total Count",16079
-2022-07-03,"Croatia","Fatal","#202226","Count per 10K",38.1652029432708
-2022-07-03,"Croatia","Fatal","#202226","New Cases per 10K",0.0142416330405887
-2022-07-03,"Bosnia and Herzegovina","Fatal","#202226","Total Count",15806
-2022-07-03,"Bosnia and Herzegovina","Fatal","#202226","Count per 10K",44.9417116860961
-2022-07-03,"Bosnia and Herzegovina","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"China","Fatal","#202226","Total Count",14633
-2022-07-03,"China","Fatal","#202226","Count per 10K",0.103676098100134
-2022-07-03,"China","Fatal","#202226","New Cases per 10K",0.0000141701767375294
-2022-07-03,"Jordan","Fatal","#202226","Total Count",14068
-2022-07-03,"Jordan","Fatal","#202226","Count per 10K",14.8773265651438
-2022-07-03,"Jordan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Switzerland","Fatal","#202226","Total Count",13832
-2022-07-03,"Switzerland","Fatal","#202226","Count per 10K",16.4627469650083
-2022-07-03,"Switzerland","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Nepal","Fatal","#202226","Total Count",11952
-2022-07-03,"Nepal","Fatal","#202226","Count per 10K",4.12379670841528
-2022-07-03,"Nepal","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Moldova","Fatal","#202226","Total Count",11567
-2022-07-03,"Moldova","Fatal","#202226","Count per 10K",28.4901477832512
-2022-07-03,"Moldova","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Israel","Fatal","#202226","Total Count",10977
-2022-07-03,"Israel","Fatal","#202226","Count per 10K",13.399658203125
-2022-07-03,"Israel","Fatal","#202226","New Cases per 10K",-0.001220703125
-2022-07-03,"Honduras","Fatal","#202226","Total Count",10906
-2022-07-03,"Honduras","Fatal","#202226","Count per 10K",11.9675189290025
-2022-07-03,"Honduras","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Lebanon","Fatal","#202226","Total Count",10468
-2022-07-03,"Lebanon","Fatal","#202226","Count per 10K",17.4263359414017
-2022-07-03,"Lebanon","Fatal","#202226","New Cases per 10K",0.00166472448809722
-2022-07-03,"Australia","Fatal","#202226","Total Count",10040
-2022-07-03,"Australia","Fatal","#202226","Count per 10K",4.16148553427837
-2022-07-03,"Australia","Fatal","#202226","New Cases per 10K",0.0107767553676532
-2022-07-03,"Azerbaijan","Fatal","#202226","Total Count",9717
-2022-07-03,"Azerbaijan","Fatal","#202226","Count per 10K",9.99177377892031
-2022-07-03,"Azerbaijan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"North Macedonia","Fatal","#202226","Total Count",9327
-2022-07-03,"North Macedonia","Fatal","#202226","Count per 10K",44.8197981739548
-2022-07-03,"North Macedonia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Saudi Arabia","Fatal","#202226","Total Count",9211
-2022-07-03,"Saudi Arabia","Fatal","#202226","Count per 10K",2.85382327425951
-2022-07-03,"Saudi Arabia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Lithuania","Fatal","#202226","Total Count",9174
-2022-07-03,"Lithuania","Fatal","#202226","Count per 10K",31.5474552957359
-2022-07-03,"Lithuania","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Armenia","Fatal","#202226","Total Count",8629
-2022-07-03,"Armenia","Fatal","#202226","Count per 10K",29.5008547008547
-2022-07-03,"Armenia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cuba","Fatal","#202226","Total Count",8529
-2022-07-03,"Cuba","Fatal","#202226","Count per 10K",7.43203206692227
-2022-07-03,"Cuba","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Costa Rica","Fatal","#202226","Total Count",8525
-2022-07-03,"Costa Rica","Fatal","#202226","Count per 10K",17.5519868231419
-2022-07-03,"Costa Rica","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Panama","Fatal","#202226","Total Count",8373
-2022-07-03,"Panama","Fatal","#202226","Count per 10K",20.7560733763014
-2022-07-03,"Panama","Fatal","#202226","New Cases per 10K",0.0123946455131383
-2022-07-03,"Afghanistan","Fatal","#202226","Total Count",7724
-2022-07-03,"Afghanistan","Fatal","#202226","Count per 10K",2.22876269621422
-2022-07-03,"Afghanistan","Fatal","#202226","New Cases per 10K",0.000288550323176362
-2022-07-03,"Ethiopia","Fatal","#202226","Total Count",7541
-2022-07-03,"Ethiopia","Fatal","#202226","Count per 10K",0.736404206908001
-2022-07-03,"Ethiopia","Fatal","#202226","New Cases per 10K",0.000292960167182602
-2022-07-03,"Ireland","Fatal","#202226","Total Count",7499
-2022-07-03,"Ireland","Fatal","#202226","Count per 10K",15.8675412611088
-2022-07-03,"Ireland","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Uruguay","Fatal","#202226","Total Count",7331
-2022-07-03,"Uruguay","Fatal","#202226","Count per 10K",21.2862950058072
-2022-07-03,"Uruguay","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Belarus","Fatal","#202226","Total Count",6978
-2022-07-03,"Belarus","Fatal","#202226","Count per 10K",7.36075949367089
-2022-07-03,"Belarus","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Taiwan","Fatal","#202226","Total Count",6956
-2022-07-03,"Taiwan","Fatal","#202226","Count per 10K",2.92514718250631
-2022-07-03,"Taiwan","Fatal","#202226","New Cases per 10K",0.0370058873002523
-2022-07-03,"Algeria","Fatal","#202226","Total Count",6875
-2022-07-03,"Algeria","Fatal","#202226","Count per 10K",1.69309954193961
-2022-07-03,"Algeria","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Slovenia","Fatal","#202226","Total Count",6652
-2022-07-03,"Slovenia","Fatal","#202226","Count per 10K",32.0115495668912
-2022-07-03,"Slovenia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Denmark","Fatal","#202226","Total Count",6520
-2022-07-03,"Denmark","Fatal","#202226","Count per 10K",11.4145658263305
-2022-07-03,"Denmark","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Libya","Fatal","#202226","Total Count",6430
-2022-07-03,"Libya","Fatal","#202226","Count per 10K",10.2177022088034
-2022-07-03,"Libya","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Latvia","Fatal","#202226","Total Count",5860
-2022-07-03,"Latvia","Fatal","#202226","Count per 10K",29.7311009639777
-2022-07-03,"Latvia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Venezuela","Fatal","#202226","Total Count",5735
-2022-07-03,"Venezuela","Fatal","#202226","Count per 10K",1.81671312721744
-2022-07-03,"Venezuela","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"West Bank and Gaza","Fatal","#202226","Total Count",5660
-2022-07-03,"West Bank and Gaza","Fatal","#202226","Count per 10K",12.0811099252935
-2022-07-03,"West Bank and Gaza","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Kenya","Fatal","#202226","Total Count",5655
-2022-07-03,"Kenya","Fatal","#202226","Count per 10K",1.16689364863192
-2022-07-03,"Kenya","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Zimbabwe","Fatal","#202226","Total Count",5555
-2022-07-03,"Zimbabwe","Fatal","#202226","Count per 10K",3.43962848297214
-2022-07-03,"Zimbabwe","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Sudan","Fatal","#202226","Total Count",4951
-2022-07-03,"Sudan","Fatal","#202226","Count per 10K",1.25091588973951
-2022-07-03,"Sudan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Finland","Fatal","#202226","Total Count",4875
-2022-07-03,"Finland","Fatal","#202226","Count per 10K",8.85880428856987
-2022-07-03,"Finland","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Oman","Fatal","#202226","Total Count",4628
-2022-07-03,"Oman","Fatal","#202226","Count per 10K",10.4587570621469
-2022-07-03,"Oman","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Dominican Republic","Fatal","#202226","Total Count",4383
-2022-07-03,"Dominican Republic","Fatal","#202226","Count per 10K",4.11587942529815
-2022-07-03,"Dominican Republic","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"El Salvador","Fatal","#202226","Total Count",4149
-2022-07-03,"El Salvador","Fatal","#202226","Count per 10K",6.53900709219858
-2022-07-03,"El Salvador","Fatal","#202226","New Cases per 10K",0.00472813238770686
-2022-07-03,"Namibia","Fatal","#202226","Total Count",4065
-2022-07-03,"Namibia","Fatal","#202226","Count per 10K",16.3911290322581
-2022-07-03,"Namibia","Fatal","#202226","New Cases per 10K",0.00403225806451613
-2022-07-03,"Trinidad and Tobago","Fatal","#202226","Total Count",4013
-2022-07-03,"Trinidad and Tobago","Fatal","#202226","Count per 10K",29.3992673992674
-2022-07-03,"Trinidad and Tobago","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Zambia","Fatal","#202226","Total Count",4007
-2022-07-03,"Zambia","Fatal","#202226","Count per 10K",2.41516484841179
-2022-07-03,"Zambia","Fatal","#202226","New Cases per 10K",0.000602736423362064
-2022-07-03,"Uganda","Fatal","#202226","Total Count",3621
-2022-07-03,"Uganda","Fatal","#202226","Count per 10K",0.872782491322792
-2022-07-03,"Uganda","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Albania","Fatal","#202226","Total Count",3502
-2022-07-03,"Albania","Fatal","#202226","Count per 10K",11.9685577580314
-2022-07-03,"Albania","Fatal","#202226","New Cases per 10K",0.00341763499658236
-2022-07-03,"Norway","Fatal","#202226","Total Count",3337
-2022-07-03,"Norway","Fatal","#202226","Count per 10K",6.35014272121789
-2022-07-03,"Norway","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Syria","Fatal","#202226","Total Count",3150
-2022-07-03,"Syria","Fatal","#202226","Count per 10K",1.70916983179598
-2022-07-03,"Syria","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Nigeria","Fatal","#202226","Total Count",3144
-2022-07-03,"Nigeria","Fatal","#202226","Count per 10K",0.169041346308941
-2022-07-03,"Nigeria","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Jamaica","Fatal","#202226","Total Count",3140
-2022-07-03,"Jamaica","Fatal","#202226","Count per 10K",10.8989934050677
-2022-07-03,"Jamaica","Fatal","#202226","New Cases per 10K",0.0208261020479
-2022-07-03,"Kosovo","Fatal","#202226","Total Count",3140
-2022-07-03,"Kosovo","Fatal","#202226","Count per 10K",17.1490988530857
-2022-07-03,"Kosovo","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cambodia","Fatal","#202226","Total Count",3056
-2022-07-03,"Cambodia","Fatal","#202226","Count per 10K",1.9388402486994
-2022-07-03,"Cambodia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Kyrgyzstan","Fatal","#202226","Total Count",2991
-2022-07-03,"Kyrgyzstan","Fatal","#202226","Count per 10K",5.02182672934856
-2022-07-03,"Kyrgyzstan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Botswana","Fatal","#202226","Total Count",2750
-2022-07-03,"Botswana","Fatal","#202226","Count per 10K",11.9982547993019
-2022-07-03,"Botswana","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Montenegro","Fatal","#202226","Total Count",2729
-2022-07-03,"Montenegro","Fatal","#202226","Count per 10K",43.3863275039746
-2022-07-03,"Montenegro","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Malawi","Fatal","#202226","Total Count",2646
-2022-07-03,"Malawi","Fatal","#202226","Count per 10K",1.42105263157895
-2022-07-03,"Malawi","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Estonia","Fatal","#202226","Total Count",2591
-2022-07-03,"Estonia","Fatal","#202226","Count per 10K",19.7484756097561
-2022-07-03,"Estonia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Kuwait","Fatal","#202226","Total Count",2555
-2022-07-03,"Kuwait","Fatal","#202226","Count per 10K",6.30397236614853
-2022-07-03,"Kuwait","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"United Arab Emirates","Fatal","#202226","Total Count",2319
-2022-07-03,"United Arab Emirates","Fatal","#202226","Count per 10K",2.50161812297735
-2022-07-03,"United Arab Emirates","Fatal","#202226","New Cases per 10K",0.00215749730312837
-2022-07-03,"Mozambique","Fatal","#202226","Total Count",2212
-2022-07-03,"Mozambique","Fatal","#202226","Count per 10K",0.767282944257518
-2022-07-03,"Mozambique","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Mongolia","Fatal","#202226","Total Count",2179
-2022-07-03,"Mongolia","Fatal","#202226","Count per 10K",7.198546415593
-2022-07-03,"Mongolia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Yemen","Fatal","#202226","Total Count",2149
-2022-07-03,"Yemen","Fatal","#202226","Count per 10K",0.720512304700597
-2022-07-03,"Yemen","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Senegal","Fatal","#202226","Total Count",1968
-2022-07-03,"Senegal","Fatal","#202226","Count per 10K",1.27692706981573
-2022-07-03,"Senegal","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cameroon","Fatal","#202226","Total Count",1931
-2022-07-03,"Cameroon","Fatal","#202226","Count per 10K",0.823840607534451
-2022-07-03,"Cameroon","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Angola","Fatal","#202226","Total Count",1900
-2022-07-03,"Angola","Fatal","#202226","Count per 10K",0.659424565300385
-2022-07-03,"Angola","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Uzbekistan","Fatal","#202226","Total Count",1637
-2022-07-03,"Uzbekistan","Fatal","#202226","Count per 10K",0.520558399847362
-2022-07-03,"Uzbekistan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"New Zealand","Fatal","#202226","Total Count",1513
-2022-07-03,"New Zealand","Fatal","#202226","Count per 10K",3.24608453121648
-2022-07-03,"New Zealand","Fatal","#202226","New Cases per 10K",0.0150182364299507
-2022-07-03,"Bahrain","Fatal","#202226","Total Count",1494
-2022-07-03,"Bahrain","Fatal","#202226","Count per 10K",10.4842105263158
-2022-07-03,"Bahrain","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Rwanda","Fatal","#202226","Total Count",1460
-2022-07-03,"Rwanda","Fatal","#202226","Count per 10K",1.22503775801309
-2022-07-03,"Rwanda","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Ghana","Fatal","#202226","Total Count",1451
-2022-07-03,"Ghana","Fatal","#202226","Count per 10K",0.514411316339916
-2022-07-03,"Ghana","Fatal","#202226","New Cases per 10K",0.000354521927181196
-2022-07-03,"Singapore","Fatal","#202226","Total Count",1418
-2022-07-03,"Singapore","Fatal","#202226","Count per 10K",2.52223408039843
-2022-07-03,"Singapore","Fatal","#202226","New Cases per 10K",0.00355745286374956
-2022-07-03,"Eswatini","Fatal","#202226","Total Count",1416
-2022-07-03,"Eswatini","Fatal","#202226","Count per 10K",10.5435591958302
-2022-07-03,"Eswatini","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Madagascar","Fatal","#202226","Total Count",1401
-2022-07-03,"Madagascar","Fatal","#202226","Count per 10K",0.56276360715003
-2022-07-03,"Madagascar","Fatal","#202226","New Cases per 10K",0.00120506125728058
-2022-07-03,"Congo (Kinshasa)","Fatal","#202226","Total Count",1375
-2022-07-03,"Congo (Kinshasa)","Fatal","#202226","Count per 10K",0.174634220686852
-2022-07-03,"Congo (Kinshasa)","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Suriname","Fatal","#202226","Total Count",1369
-2022-07-03,"Suriname","Fatal","#202226","Count per 10K",24.5340501792115
-2022-07-03,"Suriname","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Somalia","Fatal","#202226","Total Count",1361
-2022-07-03,"Somalia","Fatal","#202226","Count per 10K",0.950551753038134
-2022-07-03,"Somalia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Guyana","Fatal","#202226","Total Count",1255
-2022-07-03,"Guyana","Fatal","#202226","Count per 10K",16.235446313066
-2022-07-03,"Guyana","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Luxembourg","Fatal","#202226","Total Count",1094
-2022-07-03,"Luxembourg","Fatal","#202226","Count per 10K",18.9930555555556
-2022-07-03,"Luxembourg","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cyprus","Fatal","#202226","Total Count",1075
-2022-07-03,"Cyprus","Fatal","#202226","Count per 10K",9.18803418803419
-2022-07-03,"Cyprus","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Mauritius","Fatal","#202226","Total Count",1004
-2022-07-03,"Mauritius","Fatal","#202226","Count per 10K",7.95562599049128
-2022-07-03,"Mauritius","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Mauritania","Fatal","#202226","Total Count",984
-2022-07-03,"Mauritania","Fatal","#202226","Count per 10K",2.28784003720065
-2022-07-03,"Mauritania","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Fiji","Fatal","#202226","Total Count",866
-2022-07-03,"Fiji","Fatal","#202226","Count per 10K",9.6329254727475
-2022-07-03,"Fiji","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Tanzania","Fatal","#202226","Total Count",841
-2022-07-03,"Tanzania","Fatal","#202226","Count per 10K",0.151335204779385
-2022-07-03,"Tanzania","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Haiti","Fatal","#202226","Total Count",837
-2022-07-03,"Haiti","Fatal","#202226","Count per 10K",0.771641928643865
-2022-07-03,"Haiti","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Bahamas","Fatal","#202226","Total Count",818
-2022-07-03,"Bahamas","Fatal","#202226","Count per 10K",20.920716112532
-2022-07-03,"Bahamas","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cote d'Ivoire","Fatal","#202226","Total Count",805
-2022-07-03,"Cote d'Ivoire","Fatal","#202226","Count per 10K",0.339719783929777
-2022-07-03,"Cote d'Ivoire","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Laos","Fatal","#202226","Total Count",757
-2022-07-03,"Laos","Fatal","#202226","Count per 10K",1.12015389168393
-2022-07-03,"Laos","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Malta","Fatal","#202226","Total Count",748
-2022-07-03,"Malta","Fatal","#202226","Count per 10K",17.4358974358974
-2022-07-03,"Malta","Fatal","#202226","New Cases per 10K",0.0233100233100233
-2022-07-03,"Mali","Fatal","#202226","Total Count",737
-2022-07-03,"Mali","Fatal","#202226","Count per 10K",0.409558210614059
-2022-07-03,"Mali","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Lesotho","Fatal","#202226","Total Count",699
-2022-07-03,"Lesotho","Fatal","#202226","Count per 10K",3.31593927893738
-2022-07-03,"Lesotho","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Belize","Fatal","#202226","Total Count",680
-2022-07-03,"Belize","Fatal","#202226","Count per 10K",18.5286103542234
-2022-07-03,"Belize","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Qatar","Fatal","#202226","Total Count",679
-2022-07-03,"Qatar","Fatal","#202226","Count per 10K",2.6420233463035
-2022-07-03,"Qatar","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Papua New Guinea","Fatal","#202226","Total Count",662
-2022-07-03,"Papua New Guinea","Fatal","#202226","Count per 10K",0.818800247371676
-2022-07-03,"Papua New Guinea","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Barbados","Fatal","#202226","Total Count",477
-2022-07-03,"Barbados","Fatal","#202226","Count per 10K",16.7368421052632
-2022-07-03,"Barbados","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Guinea","Fatal","#202226","Total Count",443
-2022-07-03,"Guinea","Fatal","#202226","Count per 10K",0.357373346240723
-2022-07-03,"Guinea","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Cabo Verde","Fatal","#202226","Total Count",405
-2022-07-03,"Cabo Verde","Fatal","#202226","Count per 10K",7.5
-2022-07-03,"Cabo Verde","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Burkina Faso","Fatal","#202226","Total Count",387
-2022-07-03,"Burkina Faso","Fatal","#202226","Count per 10K",0.207551217419286
-2022-07-03,"Burkina Faso","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Congo (Brazzaville)","Fatal","#202226","Total Count",385
-2022-07-03,"Congo (Brazzaville)","Fatal","#202226","Count per 10K",0.751072961373391
-2022-07-03,"Congo (Brazzaville)","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Saint Lucia","Fatal","#202226","Total Count",383
-2022-07-03,"Saint Lucia","Fatal","#202226","Count per 10K",21.5168539325843
-2022-07-03,"Saint Lucia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Gambia","Fatal","#202226","Total Count",365
-2022-07-03,"Gambia","Fatal","#202226","Count per 10K",1.79009318293281
-2022-07-03,"Gambia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Niger","Fatal","#202226","Total Count",310
-2022-07-03,"Niger","Fatal","#202226","Count per 10K",0.149954046340638
-2022-07-03,"Niger","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Gabon","Fatal","#202226","Total Count",305
-2022-07-03,"Gabon","Fatal","#202226","Count per 10K",1.54040404040404
-2022-07-03,"Gabon","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Maldives","Fatal","#202226","Total Count",305
-2022-07-03,"Maldives","Fatal","#202226","Count per 10K",7.12616822429907
-2022-07-03,"Maldives","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Liberia","Fatal","#202226","Total Count",294
-2022-07-03,"Liberia","Fatal","#202226","Count per 10K",0.621301775147929
-2022-07-03,"Liberia","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Togo","Fatal","#202226","Total Count",275
-2022-07-03,"Togo","Fatal","#202226","Count per 10K",0.361556665790166
-2022-07-03,"Togo","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Nicaragua","Fatal","#202226","Total Count",242
-2022-07-03,"Nicaragua","Fatal","#202226","Count per 10K",0.39349593495935
-2022-07-03,"Nicaragua","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Grenada","Fatal","#202226","Total Count",232
-2022-07-03,"Grenada","Fatal","#202226","Count per 10K",21.6822429906542
-2022-07-03,"Grenada","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Brunei","Fatal","#202226","Total Count",225
-2022-07-03,"Brunei","Fatal","#202226","Count per 10K",5.31914893617021
-2022-07-03,"Brunei","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Chad","Fatal","#202226","Total Count",193
-2022-07-03,"Chad","Fatal","#202226","Count per 10K",0.13353629004359
-2022-07-03,"Chad","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Djibouti","Fatal","#202226","Total Count",189
-2022-07-03,"Djibouti","Fatal","#202226","Count per 10K",2.00636942675159
-2022-07-03,"Djibouti","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Equatorial Guinea","Fatal","#202226","Total Count",183
-2022-07-03,"Equatorial Guinea","Fatal","#202226","Count per 10K",1.4987714987715
-2022-07-03,"Equatorial Guinea","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Iceland","Fatal","#202226","Total Count",179
-2022-07-03,"Iceland","Fatal","#202226","Count per 10K",5.39156626506024
-2022-07-03,"Iceland","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Guinea-Bissau","Fatal","#202226","Total Count",171
-2022-07-03,"Guinea-Bissau","Fatal","#202226","Count per 10K",0.941629955947137
-2022-07-03,"Guinea-Bissau","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Seychelles","Fatal","#202226","Total Count",167
-2022-07-03,"Seychelles","Fatal","#202226","Count per 10K",17.7659574468085
-2022-07-03,"Seychelles","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Benin","Fatal","#202226","Total Count",163
-2022-07-03,"Benin","Fatal","#202226","Count per 10K",0.149926416482708
-2022-07-03,"Benin","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Comoros","Fatal","#202226","Total Count",160
-2022-07-03,"Comoros","Fatal","#202226","Count per 10K",1.83908045977011
-2022-07-03,"Comoros","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Andorra","Fatal","#202226","Total Count",153
-2022-07-03,"Andorra","Fatal","#202226","Count per 10K",19.8701298701299
-2022-07-03,"Andorra","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Solomon Islands","Fatal","#202226","Total Count",153
-2022-07-03,"Solomon Islands","Fatal","#202226","Count per 10K",2.34303215926493
-2022-07-03,"Solomon Islands","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Antigua and Barbuda","Fatal","#202226","Total Count",141
-2022-07-03,"Antigua and Barbuda","Fatal","#202226","Count per 10K",13.960396039604
-2022-07-03,"Antigua and Barbuda","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"South Sudan","Fatal","#202226","Total Count",138
-2022-07-03,"South Sudan","Fatal","#202226","Count per 10K",0.109697933227345
-2022-07-03,"South Sudan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Timor-Leste","Fatal","#202226","Total Count",133
-2022-07-03,"Timor-Leste","Fatal","#202226","Count per 10K",1.04806934594169
-2022-07-03,"Timor-Leste","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Sierra Leone","Fatal","#202226","Total Count",125
-2022-07-03,"Sierra Leone","Fatal","#202226","Count per 10K",0.165409554055842
-2022-07-03,"Sierra Leone","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Tajikistan","Fatal","#202226","Total Count",125
-2022-07-03,"Tajikistan","Fatal","#202226","Count per 10K",0.131054728454603
-2022-07-03,"Tajikistan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"San Marino","Fatal","#202226","Total Count",115
-2022-07-03,"San Marino","Fatal","#202226","Count per 10K",34.8484848484849
-2022-07-03,"San Marino","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Saint Vincent and the Grenadines","Fatal","#202226","Total Count",114
-2022-07-03,"Saint Vincent and the Grenadines","Fatal","#202226","Count per 10K",10.3636363636364
-2022-07-03,"Saint Vincent and the Grenadines","Fatal","#202226","New Cases per 10K",0.181818181818182
-2022-07-03,"Central African Republic","Fatal","#202226","Total Count",113
-2022-07-03,"Central African Republic","Fatal","#202226","Count per 10K",0.245919477693145
-2022-07-03,"Central African Republic","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Eritrea","Fatal","#202226","Total Count",103
-2022-07-03,"Eritrea","Fatal","#202226","Count per 10K",0.207870837537841
-2022-07-03,"Eritrea","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Liechtenstein","Fatal","#202226","Total Count",85
-2022-07-03,"Liechtenstein","Fatal","#202226","Count per 10K",21.7948717948718
-2022-07-03,"Liechtenstein","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Sao Tome and Principe","Fatal","#202226","Total Count",73
-2022-07-03,"Sao Tome and Principe","Fatal","#202226","Count per 10K",3.57843137254902
-2022-07-03,"Sao Tome and Principe","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Dominica","Fatal","#202226","Total Count",68
-2022-07-03,"Dominica","Fatal","#202226","Count per 10K",9.18918918918919
-2022-07-03,"Dominica","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Monaco","Fatal","#202226","Total Count",58
-2022-07-03,"Monaco","Fatal","#202226","Count per 10K",15.2631578947368
-2022-07-03,"Monaco","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Saint Kitts and Nevis","Fatal","#202226","Total Count",43
-2022-07-03,"Saint Kitts and Nevis","Fatal","#202226","Count per 10K",7.81818181818182
-2022-07-03,"Saint Kitts and Nevis","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Burundi","Fatal","#202226","Total Count",38
-2022-07-03,"Burundi","Fatal","#202226","Count per 10K",0.0349907918968692
-2022-07-03,"Burundi","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Samoa","Fatal","#202226","Total Count",29
-2022-07-03,"Samoa","Fatal","#202226","Count per 10K",1.47959183673469
-2022-07-03,"Samoa","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Bhutan","Fatal","#202226","Total Count",21
-2022-07-03,"Bhutan","Fatal","#202226","Count per 10K",0.263157894736842
-2022-07-03,"Bhutan","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Vanuatu","Fatal","#202226","Total Count",14
-2022-07-03,"Vanuatu","Fatal","#202226","Count per 10K",0.477815699658703
-2022-07-03,"Vanuatu","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Kiribati","Fatal","#202226","Total Count",13
-2022-07-03,"Kiribati","Fatal","#202226","Count per 10K",1.09243697478992
-2022-07-03,"Kiribati","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Tonga","Fatal","#202226","Total Count",12
-2022-07-03,"Tonga","Fatal","#202226","Count per 10K",1.13207547169811
-2022-07-03,"Tonga","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Korea, North","Fatal","#202226","Total Count",6
-2022-07-03,"Korea, North","Fatal","#202226","Count per 10K",0.00230920217065004
-2022-07-03,"Korea, North","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Palau","Fatal","#202226","Total Count",6
-2022-07-03,"Palau","Fatal","#202226","Count per 10K",3.33333333333333
-2022-07-03,"Palau","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Marshall Islands","Fatal","#202226","Total Count",0
-2022-07-03,"Marshall Islands","Fatal","#202226","Count per 10K",0
-2022-07-03,"Marshall Islands","Fatal","#202226","New Cases per 10K",0
-2022-07-03,"Micronesia","Fatal","#202226","Total Count",0
-2022-07-03,"Micronesia","Fatal","#202226","Count per 10K",0
-2022-07-03,"Micronesia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"US","Confirmed","#D6604D","Total Count",87886589
+2022-07-04,"US","Confirmed","#D6604D","Count per 10K",2727.87227636725
+2022-07-04,"US","Confirmed","#D6604D","New Cases per 10K",1.33552672419145
+2022-07-04,"India","Confirmed","#D6604D","Total Count",43531650
+2022-07-04,"India","Confirmed","#D6604D","Count per 10K",328.746438337647
+2022-07-04,"India","Confirmed","#D6604D","New Cases per 10K",0.0988240944711823
+2022-07-04,"Brazil","Confirmed","#D6604D","Total Count",32535923
+2022-07-04,"Brazil","Confirmed","#D6604D","Count per 10K",1566.84097990397
+2022-07-04,"Brazil","Confirmed","#D6604D","New Cases per 10K",2.19120359445806
+2022-07-04,"France","Confirmed","#D6604D","Total Count",31653749
+2022-07-04,"France","Confirmed","#D6604D","Count per 10K",4890.8003584617
+2022-07-04,"France","Confirmed","#D6604D","New Cases per 10K",37.6023238207073
+2022-07-04,"Germany","Confirmed","#D6604D","Total Count",28542484
+2022-07-04,"Germany","Confirmed","#D6604D","Count per 10K",3484.40261246414
+2022-07-04,"Germany","Confirmed","#D6604D","New Cases per 10K",18.0051272660685
+2022-07-04,"United Kingdom","Confirmed","#D6604D","Total Count",22941382
+2022-07-04,"United Kingdom","Confirmed","#D6604D","Count per 10K",3487.11517122923
+2022-07-04,"United Kingdom","Confirmed","#D6604D","New Cases per 10K",0.00304002188815759
+2022-07-04,"Italy","Confirmed","#D6604D","Total Count",18805756
+2022-07-04,"Italy","Confirmed","#D6604D","Count per 10K",3164.3540299512
+2022-07-04,"Italy","Confirmed","#D6604D","New Cases per 10K",6.20646138313983
+2022-07-04,"Korea, South","Confirmed","#D6604D","Total Count",18413997
+2022-07-04,"Korea, South","Confirmed","#D6604D","Count per 10K",3577.61744705654
+2022-07-04,"Korea, South","Confirmed","#D6604D","New Cases per 10K",3.52302312026423
+2022-07-04,"Russia","Confirmed","#D6604D","Total Count",18173480
+2022-07-04,"Russia","Confirmed","#D6604D","Count per 10K",1262.35404438579
+2022-07-04,"Russia","Confirmed","#D6604D","New Cases per 10K",0.19615878859445
+2022-07-04,"Turkey","Confirmed","#D6604D","Total Count",15180444
+2022-07-04,"Turkey","Confirmed","#D6604D","Count per 10K",1909.20162994265
+2022-07-04,"Turkey","Confirmed","#D6604D","New Cases per 10K",7.18294093973237
+2022-07-04,"Spain","Confirmed","#D6604D","Total Count",12818184
+2022-07-04,"Spain","Confirmed","#D6604D","Count per 10K",2765.63907827738
+2022-07-04,"Spain","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Vietnam","Confirmed","#D6604D","Total Count",10749324
+2022-07-04,"Vietnam","Confirmed","#D6604D","Count per 10K",1136.66465755163
+2022-07-04,"Vietnam","Confirmed","#D6604D","New Cases per 10K",0.0724338842538252
+2022-07-04,"Japan","Confirmed","#D6604D","Total Count",9405007
+2022-07-04,"Japan","Confirmed","#D6604D","Count per 10K",736.209833345075
+2022-07-04,"Japan","Confirmed","#D6604D","New Cases per 10K",1.31390460982082
+2022-07-04,"Argentina","Confirmed","#D6604D","Total Count",9394326
+2022-07-04,"Argentina","Confirmed","#D6604D","Count per 10K",2142.52423198851
+2022-07-04,"Argentina","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Netherlands","Confirmed","#D6604D","Total Count",8310449
+2022-07-04,"Netherlands","Confirmed","#D6604D","Count per 10K",4892.24053688114
+2022-07-04,"Netherlands","Confirmed","#D6604D","New Cases per 10K",8.26690998999235
+2022-07-04,"Australia","Confirmed","#D6604D","Total Count",8291399
+2022-07-04,"Australia","Confirmed","#D6604D","Count per 10K",3436.706872254
+2022-07-04,"Australia","Confirmed","#D6604D","New Cases per 10K",15.1504600845561
+2022-07-04,"Iran","Confirmed","#D6604D","Total Count",7240564
+2022-07-04,"Iran","Confirmed","#D6604D","Count per 10K",901.947506757851
+2022-07-04,"Iran","Confirmed","#D6604D","New Cases per 10K",0.125440661708833
+2022-07-04,"Colombia","Confirmed","#D6604D","Total Count",6175181
+2022-07-04,"Colombia","Confirmed","#D6604D","Count per 10K",1269.22923560726
+2022-07-04,"Colombia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Indonesia","Confirmed","#D6604D","Total Count",6095351
+2022-07-04,"Indonesia","Confirmed","#D6604D","Count per 10K",233.435497769182
+2022-07-04,"Indonesia","Confirmed","#D6604D","New Cases per 10K",0.0549183310035808
+2022-07-04,"Mexico","Confirmed","#D6604D","Total Count",6093835
+2022-07-04,"Mexico","Confirmed","#D6604D","Count per 10K",477.797945742512
+2022-07-04,"Mexico","Confirmed","#D6604D","New Cases per 10K",0.33205268935236
+2022-07-04,"Poland","Confirmed","#D6604D","Total Count",6016526
+2022-07-04,"Poland","Confirmed","#D6604D","Count per 10K",1574.01789451653
+2022-07-04,"Poland","Confirmed","#D6604D","New Cases per 10K",0.0311322729175387
+2022-07-04,"Portugal","Confirmed","#D6604D","Total Count",5171236
+2022-07-04,"Portugal","Confirmed","#D6604D","Count per 10K",4985.76552256074
+2022-07-04,"Portugal","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Ukraine","Confirmed","#D6604D","Total Count",5040518
+2022-07-04,"Ukraine","Confirmed","#D6604D","Count per 10K",1134.2554962983
+2022-07-04,"Ukraine","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Malaysia","Confirmed","#D6604D","Total Count",4575809
+2022-07-04,"Malaysia","Confirmed","#D6604D","Count per 10K",1467.21678904672
+2022-07-04,"Malaysia","Confirmed","#D6604D","New Cases per 10K",0.614999839676788
+2022-07-04,"Thailand","Confirmed","#D6604D","Total Count",4534017
+2022-07-04,"Thailand","Confirmed","#D6604D","Count per 10K",658.401632202602
+2022-07-04,"Thailand","Confirmed","#D6604D","New Cases per 10K",0.278374767657993
+2022-07-04,"Austria","Confirmed","#D6604D","Total Count",4499570
+2022-07-04,"Austria","Confirmed","#D6604D","Count per 10K",5164.79568411387
+2022-07-04,"Austria","Confirmed","#D6604D","New Cases per 10K",32.619375573921
+2022-07-04,"Israel","Confirmed","#D6604D","Total Count",4391275
+2022-07-04,"Israel","Confirmed","#D6604D","Count per 10K",5360.44311523438
+2022-07-04,"Israel","Confirmed","#D6604D","New Cases per 10K",16.719970703125
+2022-07-04,"Belgium","Confirmed","#D6604D","Total Count",4265296
+2022-07-04,"Belgium","Confirmed","#D6604D","Count per 10K",3755.32312026765
+2022-07-04,"Belgium","Confirmed","#D6604D","New Cases per 10K",16.9202324352879
+2022-07-04,"Chile","Confirmed","#D6604D","Total Count",4030267
+2022-07-04,"Chile","Confirmed","#D6604D","Count per 10K",2250.28866554997
+2022-07-04,"Chile","Confirmed","#D6604D","New Cases per 10K",3.66834170854271
+2022-07-04,"South Africa","Confirmed","#D6604D","Total Count",3995291
+2022-07-04,"South Africa","Confirmed","#D6604D","Count per 10K",713.253771311256
+2022-07-04,"South Africa","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Canada","Confirmed","#D6604D","Total Count",3958155
+2022-07-04,"Canada","Confirmed","#D6604D","Count per 10K",1090.70129512262
+2022-07-04,"Canada","Confirmed","#D6604D","New Cases per 10K",0.0914852576467346
+2022-07-04,"Czechia","Confirmed","#D6604D","Total Count",3936870
+2022-07-04,"Czechia","Confirmed","#D6604D","Count per 10K",3710.17811704835
+2022-07-04,"Czechia","Confirmed","#D6604D","New Cases per 10K",1.2251437187824
+2022-07-04,"Taiwan","Confirmed","#D6604D","Total Count",3893643
+2022-07-04,"Taiwan","Confirmed","#D6604D","Count per 10K",1637.36038687973
+2022-07-04,"Taiwan","Confirmed","#D6604D","New Cases per 10K",9.72035323801514
+2022-07-04,"Switzerland","Confirmed","#D6604D","Total Count",3759730
+2022-07-04,"Switzerland","Confirmed","#D6604D","Count per 10K",4474.80361818615
+2022-07-04,"Switzerland","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Greece","Confirmed","#D6604D","Total Count",3729199
+2022-07-04,"Greece","Confirmed","#D6604D","Count per 10K",3334.40540057225
+2022-07-04,"Greece","Confirmed","#D6604D","New Cases per 10K",8.36909871244635
+2022-07-04,"Philippines","Confirmed","#D6604D","Total Count",3709386
+2022-07-04,"Philippines","Confirmed","#D6604D","Count per 10K",359.019163763066
+2022-07-04,"Philippines","Confirmed","#D6604D","New Cases per 10K",0.107917150600077
+2022-07-04,"Peru","Confirmed","#D6604D","Total Count",3640061
+2022-07-04,"Peru","Confirmed","#D6604D","Count per 10K",1145.60993264934
+2022-07-04,"Peru","Confirmed","#D6604D","New Cases per 10K",0.796877950525587
+2022-07-04,"Denmark","Confirmed","#D6604D","Total Count",3224120
+2022-07-04,"Denmark","Confirmed","#D6604D","Count per 10K",5644.46778711485
+2022-07-04,"Denmark","Confirmed","#D6604D","New Cases per 10K",6.8890056022409
+2022-07-04,"Romania","Confirmed","#D6604D","Total Count",2927187
+2022-07-04,"Romania","Confirmed","#D6604D","Count per 10K",1480.02174132875
+2022-07-04,"Romania","Confirmed","#D6604D","New Cases per 10K",3.90636060268986
+2022-07-04,"Slovakia","Confirmed","#D6604D","Total Count",2551116
+2022-07-04,"Slovakia","Confirmed","#D6604D","Count per 10K",4686.10580455547
+2022-07-04,"Slovakia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Sweden","Confirmed","#D6604D","Total Count",2519199
+2022-07-04,"Sweden","Confirmed","#D6604D","Count per 10K",2560.68204919699
+2022-07-04,"Sweden","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Iraq","Confirmed","#D6604D","Total Count",2359755
+2022-07-04,"Iraq","Confirmed","#D6604D","Count per 10K",634.291589387953
+2022-07-04,"Iraq","Confirmed","#D6604D","New Cases per 10K",0.938365185603312
+2022-07-04,"China","Confirmed","#D6604D","Total Count",2144566
+2022-07-04,"China","Confirmed","#D6604D","Count per 10K",15.1944396226482
+2022-07-04,"China","Confirmed","#D6604D","New Cases per 10K",0.016649957666597
+2022-07-04,"Serbia","Confirmed","#D6604D","Total Count",2033180
+2022-07-04,"Serbia","Confirmed","#D6604D","Count per 10K",2305.19274376417
+2022-07-04,"Serbia","Confirmed","#D6604D","New Cases per 10K",1.42857142857143
+2022-07-04,"Bangladesh","Confirmed","#D6604D","Total Count",1980974
+2022-07-04,"Bangladesh","Confirmed","#D6604D","Count per 10K",121.567946389121
+2022-07-04,"Bangladesh","Confirmed","#D6604D","New Cases per 10K",0.140225342432127
+2022-07-04,"Hungary","Confirmed","#D6604D","Total Count",1928125
+2022-07-04,"Hungary","Confirmed","#D6604D","Count per 10K",1976.95580846919
+2022-07-04,"Hungary","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Jordan","Confirmed","#D6604D","Total Count",1700526
+2022-07-04,"Jordan","Confirmed","#D6604D","Count per 10K",1798.35659898477
+2022-07-04,"Jordan","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Georgia","Confirmed","#D6604D","Total Count",1660429
+2022-07-04,"Georgia","Confirmed","#D6604D","Count per 10K",4230.3923566879
+2022-07-04,"Georgia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Ireland","Confirmed","#D6604D","Total Count",1600614
+2022-07-04,"Ireland","Confirmed","#D6604D","Count per 10K",3386.82606855692
+2022-07-04,"Ireland","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Pakistan","Confirmed","#D6604D","Total Count",1539275
+2022-07-04,"Pakistan","Confirmed","#D6604D","Count per 10K",79.6713819143595
+2022-07-04,"Pakistan","Confirmed","#D6604D","New Cases per 10K",0.0337986470189386
+2022-07-04,"Singapore","Confirmed","#D6604D","Total Count",1473180
+2022-07-04,"Singapore","Confirmed","#D6604D","Count per 10K",2620.38420490929
+2022-07-04,"Singapore","Confirmed","#D6604D","New Cases per 10K",10.5763073639274
+2022-07-04,"Norway","Confirmed","#D6604D","Total Count",1448679
+2022-07-04,"Norway","Confirmed","#D6604D","Count per 10K",2756.76308277831
+2022-07-04,"Norway","Confirmed","#D6604D","New Cases per 10K",0.858230256898192
+2022-07-04,"Kazakhstan","Confirmed","#D6604D","Total Count",1396425
+2022-07-04,"Kazakhstan","Confirmed","#D6604D","Count per 10K",776.309206137425
+2022-07-04,"Kazakhstan","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"New Zealand","Confirmed","#D6604D","Total Count",1380309
+2022-07-04,"New Zealand","Confirmed","#D6604D","Count per 10K",2961.40098691268
+2022-07-04,"New Zealand","Confirmed","#D6604D","New Cases per 10K",21.0298219266252
+2022-07-04,"Morocco","Confirmed","#D6604D","Total Count",1226246
+2022-07-04,"Morocco","Confirmed","#D6604D","Count per 10K",347.604955069876
+2022-07-04,"Morocco","Confirmed","#D6604D","New Cases per 10K",0.266746038495337
+2022-07-04,"Bulgaria","Confirmed","#D6604D","Total Count",1174216
+2022-07-04,"Bulgaria","Confirmed","#D6604D","Count per 10K",1646.63581545365
+2022-07-04,"Bulgaria","Confirmed","#D6604D","New Cases per 10K",1.32099284812789
+2022-07-04,"Lithuania","Confirmed","#D6604D","Total Count",1162184
+2022-07-04,"Lithuania","Confirmed","#D6604D","Count per 10K",3996.50618982118
+2022-07-04,"Lithuania","Confirmed","#D6604D","New Cases per 10K",0.199449793672627
+2022-07-04,"Croatia","Confirmed","#D6604D","Total Count",1151523
+2022-07-04,"Croatia","Confirmed","#D6604D","Count per 10K",2733.26133396629
+2022-07-04,"Croatia","Confirmed","#D6604D","New Cases per 10K",0.135295513885592
+2022-07-04,"Finland","Confirmed","#D6604D","Total Count",1145610
+2022-07-04,"Finland","Confirmed","#D6604D","Count per 10K",2081.79174995457
+2022-07-04,"Finland","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Lebanon","Confirmed","#D6604D","Total Count",1116798
+2022-07-04,"Lebanon","Confirmed","#D6604D","Count per 10K",1859.160978858
+2022-07-04,"Lebanon","Confirmed","#D6604D","New Cases per 10K",1.7962377226569
+2022-07-04,"Cuba","Confirmed","#D6604D","Total Count",1106167
+2022-07-04,"Cuba","Confirmed","#D6604D","Count per 10K",963.895956779366
+2022-07-04,"Cuba","Confirmed","#D6604D","New Cases per 10K",0.0374695015684908
+2022-07-04,"Tunisia","Confirmed","#D6604D","Total Count",1052180
+2022-07-04,"Tunisia","Confirmed","#D6604D","Count per 10K",922.722090677892
+2022-07-04,"Tunisia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Slovenia","Confirmed","#D6604D","Total Count",1041426
+2022-07-04,"Slovenia","Confirmed","#D6604D","Count per 10K",5011.67468719923
+2022-07-04,"Slovenia","Confirmed","#D6604D","New Cases per 10K",8.63330125120308
+2022-07-04,"Belarus","Confirmed","#D6604D","Total Count",982867
+2022-07-04,"Belarus","Confirmed","#D6604D","Count per 10K",1036.77953586498
+2022-07-04,"Belarus","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Nepal","Confirmed","#D6604D","Total Count",979835
+2022-07-04,"Nepal","Confirmed","#D6604D","Count per 10K",338.072318255529
+2022-07-04,"Nepal","Confirmed","#D6604D","New Cases per 10K",0.0117310147327744
+2022-07-04,"Uruguay","Confirmed","#D6604D","Total Count",957629
+2022-07-04,"Uruguay","Confirmed","#D6604D","Count per 10K",2780.57200929152
+2022-07-04,"Uruguay","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"United Arab Emirates","Confirmed","#D6604D","Total Count",952960
+2022-07-04,"United Arab Emirates","Confirmed","#D6604D","Count per 10K",1028.00431499461
+2022-07-04,"United Arab Emirates","Confirmed","#D6604D","New Cases per 10K",1.90291262135922
+2022-07-04,"Bolivia","Confirmed","#D6604D","Total Count",931955
+2022-07-04,"Bolivia","Confirmed","#D6604D","Count per 10K",855.946914033799
+2022-07-04,"Bolivia","Confirmed","#D6604D","New Cases per 10K",2.2143644379133
+2022-07-04,"Mongolia","Confirmed","#D6604D","Total Count",928981
+2022-07-04,"Mongolia","Confirmed","#D6604D","Count per 10K",3068.9824909151
+2022-07-04,"Mongolia","Confirmed","#D6604D","New Cases per 10K",1.30492236537826
+2022-07-04,"Panama","Confirmed","#D6604D","Total Count",925254
+2022-07-04,"Panama","Confirmed","#D6604D","Count per 10K",2293.63906792266
+2022-07-04,"Panama","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Guatemala","Confirmed","#D6604D","Total Count",921146
+2022-07-04,"Guatemala","Confirmed","#D6604D","Count per 10K",555.50958871065
+2022-07-04,"Guatemala","Confirmed","#D6604D","New Cases per 10K",0.513810155590399
+2022-07-04,"Ecuador","Confirmed","#D6604D","Total Count",913798
+2022-07-04,"Ecuador","Confirmed","#D6604D","Count per 10K",557.703997558743
+2022-07-04,"Ecuador","Confirmed","#D6604D","New Cases per 10K",2.38999084528532
+2022-07-04,"Costa Rica","Confirmed","#D6604D","Total Count",904934
+2022-07-04,"Costa Rica","Confirmed","#D6604D","Count per 10K",1863.15421041795
+2022-07-04,"Costa Rica","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Latvia","Confirmed","#D6604D","Total Count",837182
+2022-07-04,"Latvia","Confirmed","#D6604D","Count per 10K",4247.49873160832
+2022-07-04,"Latvia","Confirmed","#D6604D","New Cases per 10K",4.68290208016235
+2022-07-04,"Saudi Arabia","Confirmed","#D6604D","Total Count",797374
+2022-07-04,"Saudi Arabia","Confirmed","#D6604D","Count per 10K",247.04858098897
+2022-07-04,"Saudi Arabia","Confirmed","#D6604D","New Cases per 10K",0.186826124674681
+2022-07-04,"Azerbaijan","Confirmed","#D6604D","Total Count",793388
+2022-07-04,"Azerbaijan","Confirmed","#D6604D","Count per 10K",815.823136246787
+2022-07-04,"Azerbaijan","Confirmed","#D6604D","New Cases per 10K",0.0174807197943445
+2022-07-04,"Sri Lanka","Confirmed","#D6604D","Total Count",664181
+2022-07-04,"Sri Lanka","Confirmed","#D6604D","Count per 10K",319.348495047601
+2022-07-04,"Sri Lanka","Confirmed","#D6604D","New Cases per 10K",0.00673141648235407
+2022-07-04,"West Bank and Gaza","Confirmed","#D6604D","Total Count",662490
+2022-07-04,"West Bank and Gaza","Confirmed","#D6604D","Count per 10K",1414.06616862327
+2022-07-04,"West Bank and Gaza","Confirmed","#D6604D","New Cases per 10K",5.62860192102455
+2022-07-04,"Paraguay","Confirmed","#D6604D","Total Count",660841
+2022-07-04,"Paraguay","Confirmed","#D6604D","Count per 10K",982.663197026022
+2022-07-04,"Paraguay","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Kuwait","Confirmed","#D6604D","Total Count",644451
+2022-07-04,"Kuwait","Confirmed","#D6604D","Count per 10K",1590.059215396
+2022-07-04,"Kuwait","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Bahrain","Confirmed","#D6604D","Total Count",631562
+2022-07-04,"Bahrain","Confirmed","#D6604D","Count per 10K",4432.01403508772
+2022-07-04,"Bahrain","Confirmed","#D6604D","New Cases per 10K",10.5473684210526
+2022-07-04,"Burma","Confirmed","#D6604D","Total Count",613659
+2022-07-04,"Burma","Confirmed","#D6604D","Count per 10K",116.036494280042
+2022-07-04,"Burma","Confirmed","#D6604D","New Cases per 10K",0.00207998487283729
+2022-07-04,"Dominican Republic","Confirmed","#D6604D","Total Count",611581
+2022-07-04,"Dominican Republic","Confirmed","#D6604D","Count per 10K",574.308385763921
+2022-07-04,"Dominican Republic","Confirmed","#D6604D","New Cases per 10K",3.19748333176824
+2022-07-04,"Estonia","Confirmed","#D6604D","Total Count",580114
+2022-07-04,"Estonia","Confirmed","#D6604D","Count per 10K",4421.6006097561
+2022-07-04,"Estonia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Venezuela","Confirmed","#D6604D","Total Count",527074
+2022-07-04,"Venezuela","Confirmed","#D6604D","Count per 10K",166.964647744551
+2022-07-04,"Venezuela","Confirmed","#D6604D","New Cases per 10K",0.12227572225038
+2022-07-04,"Moldova","Confirmed","#D6604D","Total Count",520321
+2022-07-04,"Moldova","Confirmed","#D6604D","Count per 10K",1281.57881773399
+2022-07-04,"Moldova","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Egypt","Confirmed","#D6604D","Total Count",515645
+2022-07-04,"Egypt","Confirmed","#D6604D","Count per 10K",53.8875941853296
+2022-07-04,"Egypt","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Cyprus","Confirmed","#D6604D","Total Count",515596
+2022-07-04,"Cyprus","Confirmed","#D6604D","Count per 10K",4406.80341880342
+2022-07-04,"Cyprus","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Libya","Confirmed","#D6604D","Total Count",502189
+2022-07-04,"Libya","Confirmed","#D6604D","Count per 10K",798.012076910853
+2022-07-04,"Libya","Confirmed","#D6604D","New Cases per 10K",0.0810424280947084
+2022-07-04,"Ethiopia","Confirmed","#D6604D","Total Count",489502
+2022-07-04,"Ethiopia","Confirmed","#D6604D","Count per 10K",47.8015292520727
+2022-07-04,"Ethiopia","Confirmed","#D6604D","New Cases per 10K",0.0157221956387996
+2022-07-04,"Honduras","Confirmed","#D6604D","Total Count",427718
+2022-07-04,"Honduras","Confirmed","#D6604D","Count per 10K",469.349281246571
+2022-07-04,"Honduras","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Armenia","Confirmed","#D6604D","Total Count",423417
+2022-07-04,"Armenia","Confirmed","#D6604D","Count per 10K",1447.57948717949
+2022-07-04,"Armenia","Confirmed","#D6604D","New Cases per 10K",0.594871794871795
+2022-07-04,"Oman","Confirmed","#D6604D","Total Count",390244
+2022-07-04,"Oman","Confirmed","#D6604D","Count per 10K",881.907344632768
+2022-07-04,"Oman","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Qatar","Confirmed","#D6604D","Total Count",385163
+2022-07-04,"Qatar","Confirmed","#D6604D","Count per 10K",1498.68871595331
+2022-07-04,"Qatar","Confirmed","#D6604D","New Cases per 10K",5.27626459143969
+2022-07-04,"Bosnia and Herzegovina","Confirmed","#D6604D","Total Count",379041
+2022-07-04,"Bosnia and Herzegovina","Confirmed","#D6604D","Count per 10K",1077.73955075348
+2022-07-04,"Bosnia and Herzegovina","Confirmed","#D6604D","New Cases per 10K",0.693773102075633
+2022-07-04,"Kenya","Confirmed","#D6604D","Total Count",334551
+2022-07-04,"Kenya","Confirmed","#D6604D","Count per 10K",69.0336758697536
+2022-07-04,"Kenya","Confirmed","#D6604D","New Cases per 10K",0.0623168668234906
+2022-07-04,"Zambia","Confirmed","#D6604D","Total Count",326259
+2022-07-04,"Zambia","Confirmed","#D6604D","Count per 10K",196.648182749684
+2022-07-04,"Zambia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Botswana","Confirmed","#D6604D","Total Count",322769
+2022-07-04,"Botswana","Confirmed","#D6604D","Count per 10K",1408.24171029668
+2022-07-04,"Botswana","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"North Macedonia","Confirmed","#D6604D","Total Count",314501
+2022-07-04,"North Macedonia","Confirmed","#D6604D","Count per 10K",1511.29745314753
+2022-07-04,"North Macedonia","Confirmed","#D6604D","New Cases per 10K",1.39356078808265
+2022-07-04,"Albania","Confirmed","#D6604D","Total Count",282690
+2022-07-04,"Albania","Confirmed","#D6604D","Count per 10K",966.131237183869
+2022-07-04,"Albania","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Algeria","Confirmed","#D6604D","Total Count",266173
+2022-07-04,"Algeria","Confirmed","#D6604D","Count per 10K",65.5501650002463
+2022-07-04,"Algeria","Confirmed","#D6604D","New Cases per 10K",0.0110821060926957
+2022-07-04,"Luxembourg","Confirmed","#D6604D","Total Count",265323
+2022-07-04,"Luxembourg","Confirmed","#D6604D","Count per 10K",4606.30208333333
+2022-07-04,"Luxembourg","Confirmed","#D6604D","New Cases per 10K",13.0555555555556
+2022-07-04,"Nigeria","Confirmed","#D6604D","Total Count",257637
+2022-07-04,"Nigeria","Confirmed","#D6604D","Count per 10K",13.8521963546427
+2022-07-04,"Nigeria","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Zimbabwe","Confirmed","#D6604D","Total Count",255726
+2022-07-04,"Zimbabwe","Confirmed","#D6604D","Count per 10K",158.34427244582
+2022-07-04,"Zimbabwe","Confirmed","#D6604D","New Cases per 10K",0.086687306501548
+2022-07-04,"Montenegro","Confirmed","#D6604D","Total Count",241190
+2022-07-04,"Montenegro","Confirmed","#D6604D","Count per 10K",3834.49920508744
+2022-07-04,"Montenegro","Confirmed","#D6604D","New Cases per 10K",2.97297297297297
+2022-07-04,"Uzbekistan","Confirmed","#D6604D","Total Count",241122
+2022-07-04,"Uzbekistan","Confirmed","#D6604D","Count per 10K",76.6756765351226
+2022-07-04,"Uzbekistan","Confirmed","#D6604D","New Cases per 10K",0.0260756192959583
+2022-07-04,"Mauritius","Confirmed","#D6604D","Total Count",231036
+2022-07-04,"Mauritius","Confirmed","#D6604D","Count per 10K",1830.71315372425
+2022-07-04,"Mauritius","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Kosovo","Confirmed","#D6604D","Total Count",229841
+2022-07-04,"Kosovo","Confirmed","#D6604D","Count per 10K",1255.27580557073
+2022-07-04,"Kosovo","Confirmed","#D6604D","New Cases per 10K",1.47460404150737
+2022-07-04,"Mozambique","Confirmed","#D6604D","Total Count",228226
+2022-07-04,"Mozambique","Confirmed","#D6604D","Count per 10K",79.1654237052967
+2022-07-04,"Mozambique","Confirmed","#D6604D","New Cases per 10K",0.0149155364390024
+2022-07-04,"Laos","Confirmed","#D6604D","Total Count",210313
+2022-07-04,"Laos","Confirmed","#D6604D","Count per 10K",311.20597810003
+2022-07-04,"Laos","Confirmed","#D6604D","New Cases per 10K",0.00887836638058597
+2022-07-04,"Kyrgyzstan","Confirmed","#D6604D","Total Count",201101
+2022-07-04,"Kyrgyzstan","Confirmed","#D6604D","Count per 10K",337.644392209537
+2022-07-04,"Kyrgyzstan","Confirmed","#D6604D","New Cases per 10K",0.0805910006715917
+2022-07-04,"Iceland","Confirmed","#D6604D","Total Count",195259
+2022-07-04,"Iceland","Confirmed","#D6604D","Count per 10K",5881.29518072289
+2022-07-04,"Iceland","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Afghanistan","Confirmed","#D6604D","Total Count",182793
+2022-07-04,"Afghanistan","Confirmed","#D6604D","Count per 10K",52.7449792243767
+2022-07-04,"Afghanistan","Confirmed","#D6604D","New Cases per 10K",0.019909972299169
+2022-07-04,"Maldives","Confirmed","#D6604D","Total Count",182720
+2022-07-04,"Maldives","Confirmed","#D6604D","Count per 10K",4269.15887850467
+2022-07-04,"Maldives","Confirmed","#D6604D","New Cases per 10K",26.4953271028037
+2022-07-04,"El Salvador","Confirmed","#D6604D","Total Count",169646
+2022-07-04,"El Salvador","Confirmed","#D6604D","Count per 10K",267.369582348306
+2022-07-04,"El Salvador","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Namibia","Confirmed","#D6604D","Total Count",169247
+2022-07-04,"Namibia","Confirmed","#D6604D","Count per 10K",682.447580645161
+2022-07-04,"Namibia","Confirmed","#D6604D","New Cases per 10K",0.0685483870967742
+2022-07-04,"Uganda","Confirmed","#D6604D","Total Count",167979
+2022-07-04,"Uganda","Confirmed","#D6604D","Count per 10K",40.4885750096413
+2022-07-04,"Uganda","Confirmed","#D6604D","New Cases per 10K",0.0106054762822985
+2022-07-04,"Brunei","Confirmed","#D6604D","Total Count",167669
+2022-07-04,"Brunei","Confirmed","#D6604D","Count per 10K",3963.8061465721
+2022-07-04,"Brunei","Confirmed","#D6604D","New Cases per 10K",69.5508274231678
+2022-07-04,"Trinidad and Tobago","Confirmed","#D6604D","Total Count",167495
+2022-07-04,"Trinidad and Tobago","Confirmed","#D6604D","Count per 10K",1227.0695970696
+2022-07-04,"Trinidad and Tobago","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Ghana","Confirmed","#D6604D","Total Count",166546
+2022-07-04,"Ghana","Confirmed","#D6604D","Count per 10K",59.0442088843195
+2022-07-04,"Ghana","Confirmed","#D6604D","New Cases per 10K",0.0528237671499982
+2022-07-04,"Jamaica","Confirmed","#D6604D","Total Count",143347
+2022-07-04,"Jamaica","Confirmed","#D6604D","Count per 10K",497.559875043388
+2022-07-04,"Jamaica","Confirmed","#D6604D","New Cases per 10K",0.371398819854217
+2022-07-04,"Cambodia","Confirmed","#D6604D","Total Count",136296
+2022-07-04,"Cambodia","Confirmed","#D6604D","Count per 10K",86.4712599923867
+2022-07-04,"Cambodia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Rwanda","Confirmed","#D6604D","Total Count",131270
+2022-07-04,"Rwanda","Confirmed","#D6604D","Count per 10K",110.144319516697
+2022-07-04,"Rwanda","Confirmed","#D6604D","New Cases per 10K",0.0310454774290988
+2022-07-04,"Cameroon","Confirmed","#D6604D","Total Count",120068
+2022-07-04,"Cameroon","Confirmed","#D6604D","Count per 10K",51.2257348863006
+2022-07-04,"Cameroon","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Malta","Confirmed","#D6604D","Total Count",105407
+2022-07-04,"Malta","Confirmed","#D6604D","Count per 10K",2457.03962703963
+2022-07-04,"Malta","Confirmed","#D6604D","New Cases per 10K",11.3752913752914
+2022-07-04,"Angola","Confirmed","#D6604D","Total Count",101320
+2022-07-04,"Angola","Confirmed","#D6604D","Count per 10K",35.1646826085448
+2022-07-04,"Angola","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Congo (Kinshasa)","Confirmed","#D6604D","Total Count",91393
+2022-07-04,"Congo (Kinshasa)","Confirmed","#D6604D","Count per 10K",11.6075238772607
+2022-07-04,"Congo (Kinshasa)","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Malawi","Confirmed","#D6604D","Total Count",86600
+2022-07-04,"Malawi","Confirmed","#D6604D","Count per 10K",46.5091299677766
+2022-07-04,"Malawi","Confirmed","#D6604D","New Cases per 10K",0.0128893662728249
+2022-07-04,"Senegal","Confirmed","#D6604D","Total Count",86382
+2022-07-04,"Senegal","Confirmed","#D6604D","Count per 10K",56.0485336101739
+2022-07-04,"Senegal","Confirmed","#D6604D","New Cases per 10K",0.0123280560602128
+2022-07-04,"Barbados","Confirmed","#D6604D","Total Count",84919
+2022-07-04,"Barbados","Confirmed","#D6604D","Count per 10K",2979.61403508772
+2022-07-04,"Barbados","Confirmed","#D6604D","New Cases per 10K",3.12280701754386
+2022-07-04,"Cote d'Ivoire","Confirmed","#D6604D","Total Count",83679
+2022-07-04,"Cote d'Ivoire","Confirmed","#D6604D","Count per 10K",35.3135550303849
+2022-07-04,"Cote d'Ivoire","Confirmed","#D6604D","New Cases per 10K",0.00844024307900068
+2022-07-04,"Suriname","Confirmed","#D6604D","Total Count",80864
+2022-07-04,"Suriname","Confirmed","#D6604D","Count per 10K",1449.17562724014
+2022-07-04,"Suriname","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Eswatini","Confirmed","#D6604D","Total Count",73148
+2022-07-04,"Eswatini","Confirmed","#D6604D","Count per 10K",544.661206254654
+2022-07-04,"Eswatini","Confirmed","#D6604D","New Cases per 10K",0.0893521965748325
+2022-07-04,"Guyana","Confirmed","#D6604D","Total Count",67657
+2022-07-04,"Guyana","Confirmed","#D6604D","Count per 10K",875.252263906856
+2022-07-04,"Guyana","Confirmed","#D6604D","New Cases per 10K",0.543337645536869
+2022-07-04,"Fiji","Confirmed","#D6604D","Total Count",65889
+2022-07-04,"Fiji","Confirmed","#D6604D","Count per 10K",732.914349276974
+2022-07-04,"Fiji","Confirmed","#D6604D","New Cases per 10K",1.95773081201335
+2022-07-04,"Madagascar","Confirmed","#D6604D","Total Count",65787
+2022-07-04,"Madagascar","Confirmed","#D6604D","Count per 10K",26.4257883109058
+2022-07-04,"Madagascar","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Belize","Confirmed","#D6604D","Total Count",64371
+2022-07-04,"Belize","Confirmed","#D6604D","Count per 10K",1753.97820163488
+2022-07-04,"Belize","Confirmed","#D6604D","New Cases per 10K",6.34877384196185
+2022-07-04,"Sudan","Confirmed","#D6604D","Total Count",62696
+2022-07-04,"Sudan","Confirmed","#D6604D","Count per 10K",15.840723616059
+2022-07-04,"Sudan","Confirmed","#D6604D","New Cases per 10K",0.018191465170924
+2022-07-04,"Cabo Verde","Confirmed","#D6604D","Total Count",61105
+2022-07-04,"Cabo Verde","Confirmed","#D6604D","Count per 10K",1131.57407407407
+2022-07-04,"Cabo Verde","Confirmed","#D6604D","New Cases per 10K",1.90740740740741
+2022-07-04,"Mauritania","Confirmed","#D6604D","Total Count",60368
+2022-07-04,"Mauritania","Confirmed","#D6604D","Count per 10K",140.358056265985
+2022-07-04,"Mauritania","Confirmed","#D6604D","New Cases per 10K",0.269704719832597
+2022-07-04,"Bhutan","Confirmed","#D6604D","Total Count",59824
+2022-07-04,"Bhutan","Confirmed","#D6604D","Count per 10K",749.674185463659
+2022-07-04,"Bhutan","Confirmed","#D6604D","New Cases per 10K",1.19047619047619
+2022-07-04,"Syria","Confirmed","#D6604D","Total Count",55934
+2022-07-04,"Syria","Confirmed","#D6604D","Count per 10K",30.3494302767227
+2022-07-04,"Syria","Confirmed","#D6604D","New Cases per 10K",0.00271296798697775
+2022-07-04,"Gabon","Confirmed","#D6604D","Total Count",47939
+2022-07-04,"Gabon","Confirmed","#D6604D","Count per 10K",242.116161616162
+2022-07-04,"Gabon","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Seychelles","Confirmed","#D6604D","Total Count",44847
+2022-07-04,"Seychelles","Confirmed","#D6604D","Count per 10K",4770.95744680851
+2022-07-04,"Seychelles","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Papua New Guinea","Confirmed","#D6604D","Total Count",44728
+2022-07-04,"Papua New Guinea","Confirmed","#D6604D","Count per 10K",55.3222016079159
+2022-07-04,"Papua New Guinea","Confirmed","#D6604D","New Cases per 10K",0.00371057513914657
+2022-07-04,"Andorra","Confirmed","#D6604D","Total Count",44177
+2022-07-04,"Andorra","Confirmed","#D6604D","Count per 10K",5737.27272727273
+2022-07-04,"Andorra","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Burundi","Confirmed","#D6604D","Total Count",42731
+2022-07-04,"Burundi","Confirmed","#D6604D","Count per 10K",39.3471454880295
+2022-07-04,"Burundi","Confirmed","#D6604D","New Cases per 10K",0.0303867403314917
+2022-07-04,"Togo","Confirmed","#D6604D","Total Count",37482
+2022-07-04,"Togo","Confirmed","#D6604D","Count per 10K",49.2795161714436
+2022-07-04,"Togo","Confirmed","#D6604D","New Cases per 10K",0.0184065211674993
+2022-07-04,"Guinea","Confirmed","#D6604D","Total Count",37123
+2022-07-04,"Guinea","Confirmed","#D6604D","Count per 10K",29.9475637302356
+2022-07-04,"Guinea","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Bahamas","Confirmed","#D6604D","Total Count",36101
+2022-07-04,"Bahamas","Confirmed","#D6604D","Count per 10K",923.299232736573
+2022-07-04,"Bahamas","Confirmed","#D6604D","New Cases per 10K",1.84143222506394
+2022-07-04,"Tanzania","Confirmed","#D6604D","Total Count",35768
+2022-07-04,"Tanzania","Confirmed","#D6604D","Count per 10K",6.43633484488591
+2022-07-04,"Tanzania","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Lesotho","Confirmed","#D6604D","Total Count",33938
+2022-07-04,"Lesotho","Confirmed","#D6604D","Count per 10K",160.996204933586
+2022-07-04,"Lesotho","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Haiti","Confirmed","#D6604D","Total Count",31677
+2022-07-04,"Haiti","Confirmed","#D6604D","Count per 10K",29.2034663962386
+2022-07-04,"Haiti","Confirmed","#D6604D","New Cases per 10K",0.0682216280999355
+2022-07-04,"Mali","Confirmed","#D6604D","Total Count",31176
+2022-07-04,"Mali","Confirmed","#D6604D","Count per 10K",17.3248124479022
+2022-07-04,"Mali","Confirmed","#D6604D","New Cases per 10K",0.00277854959711031
+2022-07-04,"Benin","Confirmed","#D6604D","Total Count",27216
+2022-07-04,"Benin","Confirmed","#D6604D","Count per 10K",25.0331125827815
+2022-07-04,"Benin","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Saint Lucia","Confirmed","#D6604D","Total Count",27094
+2022-07-04,"Saint Lucia","Confirmed","#D6604D","Count per 10K",1522.13483146067
+2022-07-04,"Saint Lucia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Somalia","Confirmed","#D6604D","Total Count",26803
+2022-07-04,"Somalia","Confirmed","#D6604D","Count per 10K",18.7197932672161
+2022-07-04,"Somalia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Congo (Brazzaville)","Confirmed","#D6604D","Total Count",24128
+2022-07-04,"Congo (Brazzaville)","Confirmed","#D6604D","Count per 10K",47.0698400312134
+2022-07-04,"Congo (Brazzaville)","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Timor-Leste","Confirmed","#D6604D","Total Count",22959
+2022-07-04,"Timor-Leste","Confirmed","#D6604D","Count per 10K",180.921985815603
+2022-07-04,"Timor-Leste","Confirmed","#D6604D","New Cases per 10K",0.00788022064617809
+2022-07-04,"Solomon Islands","Confirmed","#D6604D","Total Count",21544
+2022-07-04,"Solomon Islands","Confirmed","#D6604D","Count per 10K",329.923430321593
+2022-07-04,"Solomon Islands","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Burkina Faso","Confirmed","#D6604D","Total Count",21044
+2022-07-04,"Burkina Faso","Confirmed","#D6604D","Count per 10K",11.2860667167221
+2022-07-04,"Burkina Faso","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Grenada","Confirmed","#D6604D","Total Count",18376
+2022-07-04,"Grenada","Confirmed","#D6604D","Count per 10K",1717.38317757009
+2022-07-04,"Grenada","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"San Marino","Confirmed","#D6604D","Total Count",18236
+2022-07-04,"San Marino","Confirmed","#D6604D","Count per 10K",5526.06060606061
+2022-07-04,"San Marino","Confirmed","#D6604D","New Cases per 10K",43.6363636363636
+2022-07-04,"Liechtenstein","Confirmed","#D6604D","Total Count",17935
+2022-07-04,"Liechtenstein","Confirmed","#D6604D","Count per 10K",4598.71794871795
+2022-07-04,"Liechtenstein","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Tajikistan","Confirmed","#D6604D","Total Count",17786
+2022-07-04,"Tajikistan","Confirmed","#D6604D","Count per 10K",18.6475152023485
+2022-07-04,"Tajikistan","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"South Sudan","Confirmed","#D6604D","Total Count",17722
+2022-07-04,"South Sudan","Confirmed","#D6604D","Count per 10K",14.087440381558
+2022-07-04,"South Sudan","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Equatorial Guinea","Confirmed","#D6604D","Total Count",16114
+2022-07-04,"Equatorial Guinea","Confirmed","#D6604D","Count per 10K",131.973791973792
+2022-07-04,"Equatorial Guinea","Confirmed","#D6604D","New Cases per 10K",0.221130221130221
+2022-07-04,"Djibouti","Confirmed","#D6604D","Total Count",15690
+2022-07-04,"Djibouti","Confirmed","#D6604D","Count per 10K",166.56050955414
+2022-07-04,"Djibouti","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Samoa","Confirmed","#D6604D","Total Count",14995
+2022-07-04,"Samoa","Confirmed","#D6604D","Count per 10K",765.051020408163
+2022-07-04,"Samoa","Confirmed","#D6604D","New Cases per 10K",1.58163265306122
+2022-07-04,"Dominica","Confirmed","#D6604D","Total Count",14852
+2022-07-04,"Dominica","Confirmed","#D6604D","Count per 10K",2007.02702702703
+2022-07-04,"Dominica","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Nicaragua","Confirmed","#D6604D","Total Count",14690
+2022-07-04,"Nicaragua","Confirmed","#D6604D","Count per 10K",23.8861788617886
+2022-07-04,"Nicaragua","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Central African Republic","Confirmed","#D6604D","Total Count",14649
+2022-07-04,"Central African Republic","Confirmed","#D6604D","Count per 10K",31.8803046789989
+2022-07-04,"Central African Republic","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Monaco","Confirmed","#D6604D","Total Count",13100
+2022-07-04,"Monaco","Confirmed","#D6604D","Count per 10K",3447.36842105263
+2022-07-04,"Monaco","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Tonga","Confirmed","#D6604D","Total Count",12301
+2022-07-04,"Tonga","Confirmed","#D6604D","Count per 10K",1160.47169811321
+2022-07-04,"Tonga","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Gambia","Confirmed","#D6604D","Total Count",12002
+2022-07-04,"Gambia","Confirmed","#D6604D","Count per 10K",58.8621873467386
+2022-07-04,"Gambia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Yemen","Confirmed","#D6604D","Total Count",11832
+2022-07-04,"Yemen","Confirmed","#D6604D","Count per 10K",3.96700865017099
+2022-07-04,"Yemen","Confirmed","#D6604D","New Cases per 10K",0.002682223563334
+2022-07-04,"Vanuatu","Confirmed","#D6604D","Total Count",11389
+2022-07-04,"Vanuatu","Confirmed","#D6604D","Count per 10K",388.703071672355
+2022-07-04,"Vanuatu","Confirmed","#D6604D","New Cases per 10K",1.22866894197952
+2022-07-04,"Eritrea","Confirmed","#D6604D","Total Count",9805
+2022-07-04,"Eritrea","Confirmed","#D6604D","Count per 10K",19.7880928355197
+2022-07-04,"Eritrea","Confirmed","#D6604D","New Cases per 10K",0.00807265388496468
+2022-07-04,"Saint Vincent and the Grenadines","Confirmed","#D6604D","Total Count",9058
+2022-07-04,"Saint Vincent and the Grenadines","Confirmed","#D6604D","Count per 10K",823.454545454545
+2022-07-04,"Saint Vincent and the Grenadines","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Niger","Confirmed","#D6604D","Total Count",9031
+2022-07-04,"Niger","Confirmed","#D6604D","Count per 10K",4.36849997581386
+2022-07-04,"Niger","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Antigua and Barbuda","Confirmed","#D6604D","Total Count",8665
+2022-07-04,"Antigua and Barbuda","Confirmed","#D6604D","Count per 10K",857.920792079208
+2022-07-04,"Antigua and Barbuda","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Guinea-Bissau","Confirmed","#D6604D","Total Count",8369
+2022-07-04,"Guinea-Bissau","Confirmed","#D6604D","Count per 10K",46.0848017621145
+2022-07-04,"Guinea-Bissau","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Comoros","Confirmed","#D6604D","Total Count",8161
+2022-07-04,"Comoros","Confirmed","#D6604D","Count per 10K",93.8045977011494
+2022-07-04,"Comoros","Confirmed","#D6604D","New Cases per 10K",0.252873563218391
+2022-07-04,"Sierra Leone","Confirmed","#D6604D","Total Count",7704
+2022-07-04,"Sierra Leone","Confirmed","#D6604D","Count per 10K",10.1945216355697
+2022-07-04,"Sierra Leone","Confirmed","#D6604D","New Cases per 10K",0.00264655286489348
+2022-07-04,"Liberia","Confirmed","#D6604D","Total Count",7497
+2022-07-04,"Liberia","Confirmed","#D6604D","Count per 10K",15.8431952662722
+2022-07-04,"Liberia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Chad","Confirmed","#D6604D","Total Count",7426
+2022-07-04,"Chad","Confirmed","#D6604D","Count per 10K",5.13803362623677
+2022-07-04,"Chad","Confirmed","#D6604D","New Cases per 10K",0.000691897875873521
+2022-07-04,"Saint Kitts and Nevis","Confirmed","#D6604D","Total Count",6157
+2022-07-04,"Saint Kitts and Nevis","Confirmed","#D6604D","Count per 10K",1119.45454545455
+2022-07-04,"Saint Kitts and Nevis","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Sao Tome and Principe","Confirmed","#D6604D","Total Count",6064
+2022-07-04,"Sao Tome and Principe","Confirmed","#D6604D","Count per 10K",297.254901960784
+2022-07-04,"Sao Tome and Principe","Confirmed","#D6604D","New Cases per 10K",1.02941176470588
+2022-07-04,"Palau","Confirmed","#D6604D","Total Count",5237
+2022-07-04,"Palau","Confirmed","#D6604D","Count per 10K",2909.44444444444
+2022-07-04,"Palau","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Kiribati","Confirmed","#D6604D","Total Count",3236
+2022-07-04,"Kiribati","Confirmed","#D6604D","Count per 10K",271.932773109244
+2022-07-04,"Kiribati","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Micronesia","Confirmed","#D6604D","Total Count",38
+2022-07-04,"Micronesia","Confirmed","#D6604D","Count per 10K",0.690909090909091
+2022-07-04,"Micronesia","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"Marshall Islands","Confirmed","#D6604D","Total Count",32
+2022-07-04,"Marshall Islands","Confirmed","#D6604D","Count per 10K",5.51724137931035
+2022-07-04,"Marshall Islands","Confirmed","#D6604D","New Cases per 10K",1.03448275862069
+2022-07-04,"Korea, North","Confirmed","#D6604D","Total Count",1
+2022-07-04,"Korea, North","Confirmed","#D6604D","Count per 10K",0.000384867028441673
+2022-07-04,"Korea, North","Confirmed","#D6604D","New Cases per 10K",0
+2022-07-04,"US","Fatal","#202226","Total Count",1017915
+2022-07-04,"US","Fatal","#202226","Count per 10K",31.594605500031
+2022-07-04,"US","Fatal","#202226","New Cases per 10K",0.00207958284188963
+2022-07-04,"Brazil","Fatal","#202226","Total Count",672033
+2022-07-04,"Brazil","Fatal","#202226","Count per 10K",32.3632694928559
+2022-07-04,"Brazil","Fatal","#202226","New Cases per 10K",0.00587518600742585
+2022-07-04,"India","Fatal","#202226","Total Count",525242
+2022-07-04,"India","Fatal","#202226","Count per 10K",3.96657229315549
+2022-07-04,"India","Fatal","#202226","New Cases per 10K",0.00014348599991995
+2022-07-04,"Russia","Fatal","#202226","Total Count",373595
+2022-07-04,"Russia","Fatal","#202226","Count per 10K",25.9504046122321
+2022-07-04,"Russia","Fatal","#202226","New Cases per 10K",0.00298683707845657
+2022-07-04,"Mexico","Fatal","#202226","Total Count",325793
+2022-07-04,"Mexico","Fatal","#202226","Count per 10K",25.5443782342794
+2022-07-04,"Mexico","Fatal","#202226","New Cases per 10K",0.000392033871726517
+2022-07-04,"Peru","Fatal","#202226","Total Count",213579
+2022-07-04,"Peru","Fatal","#202226","Count per 10K",67.2181657959338
+2022-07-04,"Peru","Fatal","#202226","New Cases per 10K",0.00881223641971423
+2022-07-04,"United Kingdom","Fatal","#202226","Total Count",181093
+2022-07-04,"United Kingdom","Fatal","#202226","Count per 10K",27.5263341896062
+2022-07-04,"United Kingdom","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Italy","Fatal","#202226","Total Count",168604
+2022-07-04,"Italy","Fatal","#202226","Count per 10K",28.3701834090527
+2022-07-04,"Italy","Fatal","#202226","New Cases per 10K",0.0099276459700488
+2022-07-04,"Indonesia","Fatal","#202226","Total Count",156758
+2022-07-04,"Indonesia","Fatal","#202226","Count per 10K",6.003408459874
+2022-07-04,"Indonesia","Fatal","#202226","New Cases per 10K",0.000344675717595695
+2022-07-04,"France","Fatal","#202226","Total Count",150765
+2022-07-04,"France","Fatal","#202226","Count per 10K",23.2946029882109
+2022-07-04,"France","Fatal","#202226","New Cases per 10K",0.0217858191313484
+2022-07-04,"Iran","Fatal","#202226","Total Count",141404
+2022-07-04,"Iran","Fatal","#202226","Count per 10K",17.6145097599562
+2022-07-04,"Iran","Fatal","#202226","New Cases per 10K",0.0009965494475379
+2022-07-04,"Germany","Fatal","#202226","Total Count",141397
+2022-07-04,"Germany","Fatal","#202226","Count per 10K",17.261429530611
+2022-07-04,"Germany","Fatal","#202226","New Cases per 10K",0.0124519318806079
+2022-07-04,"Colombia","Fatal","#202226","Total Count",140070
+2022-07-04,"Colombia","Fatal","#202226","Count per 10K",28.7895915976404
+2022-07-04,"Colombia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Argentina","Fatal","#202226","Total Count",129109
+2022-07-04,"Argentina","Fatal","#202226","Count per 10K",29.4453440372203
+2022-07-04,"Argentina","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Poland","Fatal","#202226","Total Count",116435
+2022-07-04,"Poland","Fatal","#202226","Count per 10K",30.4612285475094
+2022-07-04,"Poland","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Ukraine","Fatal","#202226","Total Count",112459
+2022-07-04,"Ukraine","Fatal","#202226","Count per 10K",25.3063750309413
+2022-07-04,"Ukraine","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Spain","Fatal","#202226","Total Count",108111
+2022-07-04,"Spain","Fatal","#202226","Count per 10K",23.3259256062829
+2022-07-04,"Spain","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"South Africa","Fatal","#202226","Total Count",101812
+2022-07-04,"South Africa","Fatal","#202226","Count per 10K",18.1758457556012
+2022-07-04,"South Africa","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Turkey","Fatal","#202226","Total Count",99057
+2022-07-04,"Turkey","Fatal","#202226","Count per 10K",12.4581195291277
+2022-07-04,"Turkey","Fatal","#202226","New Cases per 10K",0.00314417949491901
+2022-07-04,"Romania","Fatal","#202226","Total Count",65755
+2022-07-04,"Romania","Fatal","#202226","Count per 10K",33.246536555769
+2022-07-04,"Romania","Fatal","#202226","New Cases per 10K",0.00808979674385681
+2022-07-04,"Philippines","Fatal","#202226","Total Count",60602
+2022-07-04,"Philippines","Fatal","#202226","Count per 10K",5.86546651180798
+2022-07-04,"Philippines","Fatal","#202226","New Cases per 10K",0.000967866821525358
+2022-07-04,"Chile","Fatal","#202226","Total Count",58617
+2022-07-04,"Chile","Fatal","#202226","Count per 10K",32.7286432160804
+2022-07-04,"Chile","Fatal","#202226","New Cases per 10K",0.0156337241764377
+2022-07-04,"Hungary","Fatal","#202226","Total Count",46647
+2022-07-04,"Hungary","Fatal","#202226","Count per 10K",47.8283605044602
+2022-07-04,"Hungary","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Vietnam","Fatal","#202226","Total Count",43088
+2022-07-04,"Vietnam","Fatal","#202226","Count per 10K",4.55624993391069
+2022-07-04,"Vietnam","Fatal","#202226","New Cases per 10K",0.000105742896720913
+2022-07-04,"Canada","Fatal","#202226","Total Count",42001
+2022-07-04,"Canada","Fatal","#202226","Count per 10K",11.5737117663268
+2022-07-04,"Canada","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Czechia","Fatal","#202226","Total Count",40324
+2022-07-04,"Czechia","Fatal","#202226","Count per 10K",38.0020733201395
+2022-07-04,"Czechia","Fatal","#202226","New Cases per 10K",0.00188483649043445
+2022-07-04,"Bulgaria","Fatal","#202226","Total Count",37260
+2022-07-04,"Bulgaria","Fatal","#202226","Count per 10K",52.2507362221287
+2022-07-04,"Bulgaria","Fatal","#202226","New Cases per 10K",0.00420698359276399
+2022-07-04,"Malaysia","Fatal","#202226","Total Count",35784
+2022-07-04,"Malaysia","Fatal","#202226","Count per 10K",11.4740116074005
+2022-07-04,"Malaysia","Fatal","#202226","New Cases per 10K",0.00256517138551319
+2022-07-04,"Ecuador","Fatal","#202226","Total Count",35745
+2022-07-04,"Ecuador","Fatal","#202226","Count per 10K",21.8156850778151
+2022-07-04,"Ecuador","Fatal","#202226","New Cases per 10K",0.0122062862374123
+2022-07-04,"Belgium","Fatal","#202226","Total Count",31952
+2022-07-04,"Belgium","Fatal","#202226","Count per 10K",28.1317133298116
+2022-07-04,"Belgium","Fatal","#202226","New Cases per 10K",0.0299348476844515
+2022-07-04,"Japan","Fatal","#202226","Total Count",31328
+2022-07-04,"Japan","Fatal","#202226","Count per 10K",2.45230882433522
+2022-07-04,"Japan","Fatal","#202226","New Cases per 10K",0.00109589898942457
+2022-07-04,"Thailand","Fatal","#202226","Total Count",30736
+2022-07-04,"Thailand","Fatal","#202226","Count per 10K",4.46328996282528
+2022-07-04,"Thailand","Fatal","#202226","New Cases per 10K",0.00261384758364312
+2022-07-04,"Pakistan","Fatal","#202226","Total Count",30403
+2022-07-04,"Pakistan","Fatal","#202226","Count per 10K",1.57362980906094
+2022-07-04,"Pakistan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Greece","Fatal","#202226","Total Count",30327
+2022-07-04,"Greece","Fatal","#202226","Count per 10K",27.1164163090129
+2022-07-04,"Greece","Fatal","#202226","New Cases per 10K",0.0223533619456366
+2022-07-04,"Bangladesh","Fatal","#202226","Total Count",29174
+2022-07-04,"Bangladesh","Fatal","#202226","Count per 10K",1.79034316854043
+2022-07-04,"Bangladesh","Fatal","#202226","New Cases per 10K",0.000736413176886445
+2022-07-04,"Tunisia","Fatal","#202226","Total Count",28691
+2022-07-04,"Tunisia","Fatal","#202226","Count per 10K",25.1609225642375
+2022-07-04,"Tunisia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Iraq","Fatal","#202226","Total Count",25247
+2022-07-04,"Iraq","Fatal","#202226","Count per 10K",6.78628067628955
+2022-07-04,"Iraq","Fatal","#202226","New Cases per 10K",0.00107518210896971
+2022-07-04,"Egypt","Fatal","#202226","Total Count",24723
+2022-07-04,"Egypt","Fatal","#202226","Count per 10K",2.58368255494362
+2022-07-04,"Egypt","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Korea, South","Fatal","#202226","Total Count",24576
+2022-07-04,"Korea, South","Fatal","#202226","Count per 10K",4.77482028366039
+2022-07-04,"Korea, South","Fatal","#202226","New Cases per 10K",0.000388575869438508
+2022-07-04,"Portugal","Fatal","#202226","Total Count",24149
+2022-07-04,"Portugal","Fatal","#202226","Count per 10K",23.2828769764751
+2022-07-04,"Portugal","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Netherlands","Fatal","#202226","Total Count",23007
+2022-07-04,"Netherlands","Fatal","#202226","Count per 10K",13.5438865014423
+2022-07-04,"Netherlands","Fatal","#202226","New Cases per 10K",0.00235474186142344
+2022-07-04,"Bolivia","Fatal","#202226","Total Count",21958
+2022-07-04,"Bolivia","Fatal","#202226","Count per 10K",20.1671565025716
+2022-07-04,"Bolivia","Fatal","#202226","New Cases per 10K",0.00091844232182219
+2022-07-04,"Slovakia","Fatal","#202226","Total Count",20147
+2022-07-04,"Slovakia","Fatal","#202226","Count per 10K",37.0077149155033
+2022-07-04,"Slovakia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Austria","Fatal","#202226","Total Count",20068
+2022-07-04,"Austria","Fatal","#202226","Count per 10K",23.0348943985308
+2022-07-04,"Austria","Fatal","#202226","New Cases per 10K",0.0126262626262626
+2022-07-04,"Burma","Fatal","#202226","Total Count",19434
+2022-07-04,"Burma","Fatal","#202226","Count per 10K",3.67476600170181
+2022-07-04,"Burma","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Sweden","Fatal","#202226","Total Count",19124
+2022-07-04,"Sweden","Fatal","#202226","Count per 10K",19.4389103476316
+2022-07-04,"Sweden","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Kazakhstan","Fatal","#202226","Total Count",19018
+2022-07-04,"Kazakhstan","Fatal","#202226","Count per 10K",10.5726039581944
+2022-07-04,"Kazakhstan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Paraguay","Fatal","#202226","Total Count",18994
+2022-07-04,"Paraguay","Fatal","#202226","Count per 10K",28.2438661710037
+2022-07-04,"Paraguay","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Guatemala","Fatal","#202226","Total Count",18616
+2022-07-04,"Guatemala","Fatal","#202226","Count per 10K",11.2266312869376
+2022-07-04,"Guatemala","Fatal","#202226","New Cases per 10K",0.00964901700639247
+2022-07-04,"Georgia","Fatal","#202226","Total Count",16841
+2022-07-04,"Georgia","Fatal","#202226","Count per 10K",42.9070063694268
+2022-07-04,"Georgia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Sri Lanka","Fatal","#202226","Total Count",16522
+2022-07-04,"Sri Lanka","Fatal","#202226","Count per 10K",7.94403308010386
+2022-07-04,"Sri Lanka","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Serbia","Fatal","#202226","Total Count",16132
+2022-07-04,"Serbia","Fatal","#202226","Count per 10K",18.2902494331066
+2022-07-04,"Serbia","Fatal","#202226","New Cases per 10K",0.00113378684807256
+2022-07-04,"Morocco","Fatal","#202226","Total Count",16120
+2022-07-04,"Morocco","Fatal","#202226","Count per 10K",4.5695495648723
+2022-07-04,"Morocco","Fatal","#202226","New Cases per 10K",0.000850412450038269
+2022-07-04,"Croatia","Fatal","#202226","Total Count",16082
+2022-07-04,"Croatia","Fatal","#202226","Count per 10K",38.1723237597911
+2022-07-04,"Croatia","Fatal","#202226","New Cases per 10K",0.00712081652029433
+2022-07-04,"Bosnia and Herzegovina","Fatal","#202226","Total Count",15807
+2022-07-04,"Bosnia and Herzegovina","Fatal","#202226","Count per 10K",44.9445550184817
+2022-07-04,"Bosnia and Herzegovina","Fatal","#202226","New Cases per 10K",0.00284333238555587
+2022-07-04,"China","Fatal","#202226","Total Count",14633
+2022-07-04,"China","Fatal","#202226","Count per 10K",0.103676098100134
+2022-07-04,"China","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Jordan","Fatal","#202226","Total Count",14068
+2022-07-04,"Jordan","Fatal","#202226","Count per 10K",14.8773265651438
+2022-07-04,"Jordan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Switzerland","Fatal","#202226","Total Count",13833
+2022-07-04,"Switzerland","Fatal","#202226","Count per 10K",16.4639371578196
+2022-07-04,"Switzerland","Fatal","#202226","New Cases per 10K",0.00119019281123542
+2022-07-04,"Nepal","Fatal","#202226","Total Count",11952
+2022-07-04,"Nepal","Fatal","#202226","Count per 10K",4.12379670841528
+2022-07-04,"Nepal","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Moldova","Fatal","#202226","Total Count",11567
+2022-07-04,"Moldova","Fatal","#202226","Count per 10K",28.4901477832512
+2022-07-04,"Moldova","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Israel","Fatal","#202226","Total Count",10984
+2022-07-04,"Israel","Fatal","#202226","Count per 10K",13.408203125
+2022-07-04,"Israel","Fatal","#202226","New Cases per 10K",0.008544921875
+2022-07-04,"Honduras","Fatal","#202226","Total Count",10906
+2022-07-04,"Honduras","Fatal","#202226","Count per 10K",11.9675189290025
+2022-07-04,"Honduras","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Lebanon","Fatal","#202226","Total Count",10469
+2022-07-04,"Lebanon","Fatal","#202226","Count per 10K",17.4280006658898
+2022-07-04,"Lebanon","Fatal","#202226","New Cases per 10K",0.00166472448809722
+2022-07-04,"Australia","Fatal","#202226","Total Count",10085
+2022-07-04,"Australia","Fatal","#202226","Count per 10K",4.18013761087623
+2022-07-04,"Australia","Fatal","#202226","New Cases per 10K",0.0186520765978612
+2022-07-04,"Azerbaijan","Fatal","#202226","Total Count",9717
+2022-07-04,"Azerbaijan","Fatal","#202226","Count per 10K",9.99177377892031
+2022-07-04,"Azerbaijan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"North Macedonia","Fatal","#202226","Total Count",9327
+2022-07-04,"North Macedonia","Fatal","#202226","Count per 10K",44.8197981739548
+2022-07-04,"North Macedonia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Saudi Arabia","Fatal","#202226","Total Count",9211
+2022-07-04,"Saudi Arabia","Fatal","#202226","Count per 10K",2.85382327425951
+2022-07-04,"Saudi Arabia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Lithuania","Fatal","#202226","Total Count",9175
+2022-07-04,"Lithuania","Fatal","#202226","Count per 10K",31.550894085282
+2022-07-04,"Lithuania","Fatal","#202226","New Cases per 10K",0.00343878954607978
+2022-07-04,"Armenia","Fatal","#202226","Total Count",8629
+2022-07-04,"Armenia","Fatal","#202226","Count per 10K",29.5008547008547
+2022-07-04,"Armenia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Cuba","Fatal","#202226","Total Count",8529
+2022-07-04,"Cuba","Fatal","#202226","Count per 10K",7.43203206692227
+2022-07-04,"Cuba","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Costa Rica","Fatal","#202226","Total Count",8525
+2022-07-04,"Costa Rica","Fatal","#202226","Count per 10K",17.5519868231419
+2022-07-04,"Costa Rica","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Panama","Fatal","#202226","Total Count",8373
+2022-07-04,"Panama","Fatal","#202226","Count per 10K",20.7560733763014
+2022-07-04,"Panama","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Afghanistan","Fatal","#202226","Total Count",7725
+2022-07-04,"Afghanistan","Fatal","#202226","Count per 10K",2.2290512465374
+2022-07-04,"Afghanistan","Fatal","#202226","New Cases per 10K",0.000288550323176362
+2022-07-04,"Ethiopia","Fatal","#202226","Total Count",7542
+2022-07-04,"Ethiopia","Fatal","#202226","Count per 10K",0.736501860297062
+2022-07-04,"Ethiopia","Fatal","#202226","New Cases per 10K",0.0000976533890608674
+2022-07-04,"Ireland","Fatal","#202226","Total Count",7499
+2022-07-04,"Ireland","Fatal","#202226","Count per 10K",15.8675412611088
+2022-07-04,"Ireland","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Uruguay","Fatal","#202226","Total Count",7331
+2022-07-04,"Uruguay","Fatal","#202226","Count per 10K",21.2862950058072
+2022-07-04,"Uruguay","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Taiwan","Fatal","#202226","Total Count",7025
+2022-07-04,"Taiwan","Fatal","#202226","Count per 10K",2.95416316232128
+2022-07-04,"Taiwan","Fatal","#202226","New Cases per 10K",0.0290159798149706
+2022-07-04,"Belarus","Fatal","#202226","Total Count",6978
+2022-07-04,"Belarus","Fatal","#202226","Count per 10K",7.36075949367089
+2022-07-04,"Belarus","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Algeria","Fatal","#202226","Total Count",6875
+2022-07-04,"Algeria","Fatal","#202226","Count per 10K",1.69309954193961
+2022-07-04,"Algeria","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Slovenia","Fatal","#202226","Total Count",6655
+2022-07-04,"Slovenia","Fatal","#202226","Count per 10K",32.0259865255053
+2022-07-04,"Slovenia","Fatal","#202226","New Cases per 10K",0.014436958614052
+2022-07-04,"Denmark","Fatal","#202226","Total Count",6536
+2022-07-04,"Denmark","Fatal","#202226","Count per 10K",11.4425770308123
+2022-07-04,"Denmark","Fatal","#202226","New Cases per 10K",0.0280112044817927
+2022-07-04,"Libya","Fatal","#202226","Total Count",6430
+2022-07-04,"Libya","Fatal","#202226","Count per 10K",10.2177022088034
+2022-07-04,"Libya","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Latvia","Fatal","#202226","Total Count",5860
+2022-07-04,"Latvia","Fatal","#202226","Count per 10K",29.7311009639777
+2022-07-04,"Latvia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Venezuela","Fatal","#202226","Total Count",5735
+2022-07-04,"Venezuela","Fatal","#202226","Count per 10K",1.81671312721744
+2022-07-04,"Venezuela","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"West Bank and Gaza","Fatal","#202226","Total Count",5662
+2022-07-04,"West Bank and Gaza","Fatal","#202226","Count per 10K",12.08537886873
+2022-07-04,"West Bank and Gaza","Fatal","#202226","New Cases per 10K",0.00426894343649947
+2022-07-04,"Kenya","Fatal","#202226","Total Count",5656
+2022-07-04,"Kenya","Fatal","#202226","Count per 10K",1.16709999587306
+2022-07-04,"Kenya","Fatal","#202226","New Cases per 10K",0.000206347241137386
+2022-07-04,"Zimbabwe","Fatal","#202226","Total Count",5558
+2022-07-04,"Zimbabwe","Fatal","#202226","Count per 10K",3.44148606811145
+2022-07-04,"Zimbabwe","Fatal","#202226","New Cases per 10K",0.00185758513931889
+2022-07-04,"Sudan","Fatal","#202226","Total Count",4952
+2022-07-04,"Sudan","Fatal","#202226","Count per 10K",1.25116854897799
+2022-07-04,"Sudan","Fatal","#202226","New Cases per 10K",0.000252659238485055
+2022-07-04,"Finland","Fatal","#202226","Total Count",4875
+2022-07-04,"Finland","Fatal","#202226","Count per 10K",8.85880428856987
+2022-07-04,"Finland","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Oman","Fatal","#202226","Total Count",4628
+2022-07-04,"Oman","Fatal","#202226","Count per 10K",10.4587570621469
+2022-07-04,"Oman","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Dominican Republic","Fatal","#202226","Total Count",4383
+2022-07-04,"Dominican Republic","Fatal","#202226","Count per 10K",4.11587942529815
+2022-07-04,"Dominican Republic","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"El Salvador","Fatal","#202226","Total Count",4150
+2022-07-04,"El Salvador","Fatal","#202226","Count per 10K",6.54058313632782
+2022-07-04,"El Salvador","Fatal","#202226","New Cases per 10K",0.00157604412923562
+2022-07-04,"Namibia","Fatal","#202226","Total Count",4065
+2022-07-04,"Namibia","Fatal","#202226","Count per 10K",16.3911290322581
+2022-07-04,"Namibia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Trinidad and Tobago","Fatal","#202226","Total Count",4013
+2022-07-04,"Trinidad and Tobago","Fatal","#202226","Count per 10K",29.3992673992674
+2022-07-04,"Trinidad and Tobago","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Zambia","Fatal","#202226","Total Count",4007
+2022-07-04,"Zambia","Fatal","#202226","Count per 10K",2.41516484841179
+2022-07-04,"Zambia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Uganda","Fatal","#202226","Total Count",3621
+2022-07-04,"Uganda","Fatal","#202226","Count per 10K",0.872782491322792
+2022-07-04,"Uganda","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Albania","Fatal","#202226","Total Count",3502
+2022-07-04,"Albania","Fatal","#202226","Count per 10K",11.9685577580314
+2022-07-04,"Albania","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Norway","Fatal","#202226","Total Count",3337
+2022-07-04,"Norway","Fatal","#202226","Count per 10K",6.35014272121789
+2022-07-04,"Norway","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Syria","Fatal","#202226","Total Count",3150
+2022-07-04,"Syria","Fatal","#202226","Count per 10K",1.70916983179598
+2022-07-04,"Syria","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Jamaica","Fatal","#202226","Total Count",3144
+2022-07-04,"Jamaica","Fatal","#202226","Count per 10K",10.9128774730996
+2022-07-04,"Jamaica","Fatal","#202226","New Cases per 10K",0.0138840680319334
+2022-07-04,"Nigeria","Fatal","#202226","Total Count",3144
+2022-07-04,"Nigeria","Fatal","#202226","Count per 10K",0.169041346308941
+2022-07-04,"Nigeria","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Kosovo","Fatal","#202226","Total Count",3140
+2022-07-04,"Kosovo","Fatal","#202226","Count per 10K",17.1490988530857
+2022-07-04,"Kosovo","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Cambodia","Fatal","#202226","Total Count",3056
+2022-07-04,"Cambodia","Fatal","#202226","Count per 10K",1.9388402486994
+2022-07-04,"Cambodia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Kyrgyzstan","Fatal","#202226","Total Count",2991
+2022-07-04,"Kyrgyzstan","Fatal","#202226","Count per 10K",5.02182672934856
+2022-07-04,"Kyrgyzstan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Botswana","Fatal","#202226","Total Count",2750
+2022-07-04,"Botswana","Fatal","#202226","Count per 10K",11.9982547993019
+2022-07-04,"Botswana","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Montenegro","Fatal","#202226","Total Count",2729
+2022-07-04,"Montenegro","Fatal","#202226","Count per 10K",43.3863275039746
+2022-07-04,"Montenegro","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Malawi","Fatal","#202226","Total Count",2646
+2022-07-04,"Malawi","Fatal","#202226","Count per 10K",1.42105263157895
+2022-07-04,"Malawi","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Estonia","Fatal","#202226","Total Count",2591
+2022-07-04,"Estonia","Fatal","#202226","Count per 10K",19.7484756097561
+2022-07-04,"Estonia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Kuwait","Fatal","#202226","Total Count",2555
+2022-07-04,"Kuwait","Fatal","#202226","Count per 10K",6.30397236614853
+2022-07-04,"Kuwait","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"United Arab Emirates","Fatal","#202226","Total Count",2319
+2022-07-04,"United Arab Emirates","Fatal","#202226","Count per 10K",2.50161812297735
+2022-07-04,"United Arab Emirates","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Mozambique","Fatal","#202226","Total Count",2212
+2022-07-04,"Mozambique","Fatal","#202226","Count per 10K",0.767282944257518
+2022-07-04,"Mozambique","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Mongolia","Fatal","#202226","Total Count",2179
+2022-07-04,"Mongolia","Fatal","#202226","Count per 10K",7.198546415593
+2022-07-04,"Mongolia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Yemen","Fatal","#202226","Total Count",2149
+2022-07-04,"Yemen","Fatal","#202226","Count per 10K",0.720512304700597
+2022-07-04,"Yemen","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Senegal","Fatal","#202226","Total Count",1968
+2022-07-04,"Senegal","Fatal","#202226","Count per 10K",1.27692706981573
+2022-07-04,"Senegal","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Cameroon","Fatal","#202226","Total Count",1931
+2022-07-04,"Cameroon","Fatal","#202226","Count per 10K",0.823840607534451
+2022-07-04,"Cameroon","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Angola","Fatal","#202226","Total Count",1900
+2022-07-04,"Angola","Fatal","#202226","Count per 10K",0.659424565300385
+2022-07-04,"Angola","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Uzbekistan","Fatal","#202226","Total Count",1637
+2022-07-04,"Uzbekistan","Fatal","#202226","Count per 10K",0.520558399847362
+2022-07-04,"Uzbekistan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"New Zealand","Fatal","#202226","Total Count",1535
+2022-07-04,"New Zealand","Fatal","#202226","Count per 10K",3.29328470285347
+2022-07-04,"New Zealand","Fatal","#202226","New Cases per 10K",0.0472001716369878
+2022-07-04,"Bahrain","Fatal","#202226","Total Count",1495
+2022-07-04,"Bahrain","Fatal","#202226","Count per 10K",10.4912280701754
+2022-07-04,"Bahrain","Fatal","#202226","New Cases per 10K",0.00701754385964912
+2022-07-04,"Rwanda","Fatal","#202226","Total Count",1460
+2022-07-04,"Rwanda","Fatal","#202226","Count per 10K",1.22503775801309
+2022-07-04,"Rwanda","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Ghana","Fatal","#202226","Total Count",1452
+2022-07-04,"Ghana","Fatal","#202226","Count per 10K",0.514765838267097
+2022-07-04,"Ghana","Fatal","#202226","New Cases per 10K",0.000354521927181196
+2022-07-04,"Singapore","Fatal","#202226","Total Count",1419
+2022-07-04,"Singapore","Fatal","#202226","Count per 10K",2.52401280683031
+2022-07-04,"Singapore","Fatal","#202226","New Cases per 10K",0.00177872643187478
+2022-07-04,"Eswatini","Fatal","#202226","Total Count",1416
+2022-07-04,"Eswatini","Fatal","#202226","Count per 10K",10.5435591958302
+2022-07-04,"Eswatini","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Madagascar","Fatal","#202226","Total Count",1401
+2022-07-04,"Madagascar","Fatal","#202226","Count per 10K",0.56276360715003
+2022-07-04,"Madagascar","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Congo (Kinshasa)","Fatal","#202226","Total Count",1375
+2022-07-04,"Congo (Kinshasa)","Fatal","#202226","Count per 10K",0.174634220686852
+2022-07-04,"Congo (Kinshasa)","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Suriname","Fatal","#202226","Total Count",1369
+2022-07-04,"Suriname","Fatal","#202226","Count per 10K",24.5340501792115
+2022-07-04,"Suriname","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Somalia","Fatal","#202226","Total Count",1361
+2022-07-04,"Somalia","Fatal","#202226","Count per 10K",0.950551753038134
+2022-07-04,"Somalia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Guyana","Fatal","#202226","Total Count",1256
+2022-07-04,"Guyana","Fatal","#202226","Count per 10K",16.248382923674
+2022-07-04,"Guyana","Fatal","#202226","New Cases per 10K",0.0129366106080207
+2022-07-04,"Luxembourg","Fatal","#202226","Total Count",1094
+2022-07-04,"Luxembourg","Fatal","#202226","Count per 10K",18.9930555555556
+2022-07-04,"Luxembourg","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Cyprus","Fatal","#202226","Total Count",1075
+2022-07-04,"Cyprus","Fatal","#202226","Count per 10K",9.18803418803419
+2022-07-04,"Cyprus","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Mauritius","Fatal","#202226","Total Count",1004
+2022-07-04,"Mauritius","Fatal","#202226","Count per 10K",7.95562599049128
+2022-07-04,"Mauritius","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Mauritania","Fatal","#202226","Total Count",984
+2022-07-04,"Mauritania","Fatal","#202226","Count per 10K",2.28784003720065
+2022-07-04,"Mauritania","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Fiji","Fatal","#202226","Total Count",866
+2022-07-04,"Fiji","Fatal","#202226","Count per 10K",9.6329254727475
+2022-07-04,"Fiji","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Tanzania","Fatal","#202226","Total Count",841
+2022-07-04,"Tanzania","Fatal","#202226","Count per 10K",0.151335204779385
+2022-07-04,"Tanzania","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Haiti","Fatal","#202226","Total Count",837
+2022-07-04,"Haiti","Fatal","#202226","Count per 10K",0.771641928643865
+2022-07-04,"Haiti","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Bahamas","Fatal","#202226","Total Count",820
+2022-07-04,"Bahamas","Fatal","#202226","Count per 10K",20.9718670076726
+2022-07-04,"Bahamas","Fatal","#202226","New Cases per 10K",0.051150895140665
+2022-07-04,"Cote d'Ivoire","Fatal","#202226","Total Count",805
+2022-07-04,"Cote d'Ivoire","Fatal","#202226","Count per 10K",0.339719783929777
+2022-07-04,"Cote d'Ivoire","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Laos","Fatal","#202226","Total Count",757
+2022-07-04,"Laos","Fatal","#202226","Count per 10K",1.12015389168393
+2022-07-04,"Laos","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Malta","Fatal","#202226","Total Count",748
+2022-07-04,"Malta","Fatal","#202226","Count per 10K",17.4358974358974
+2022-07-04,"Malta","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Mali","Fatal","#202226","Total Count",737
+2022-07-04,"Mali","Fatal","#202226","Count per 10K",0.409558210614059
+2022-07-04,"Mali","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Lesotho","Fatal","#202226","Total Count",699
+2022-07-04,"Lesotho","Fatal","#202226","Count per 10K",3.31593927893738
+2022-07-04,"Lesotho","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Belize","Fatal","#202226","Total Count",680
+2022-07-04,"Belize","Fatal","#202226","Count per 10K",18.5286103542234
+2022-07-04,"Belize","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Qatar","Fatal","#202226","Total Count",679
+2022-07-04,"Qatar","Fatal","#202226","Count per 10K",2.6420233463035
+2022-07-04,"Qatar","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Papua New Guinea","Fatal","#202226","Total Count",662
+2022-07-04,"Papua New Guinea","Fatal","#202226","Count per 10K",0.818800247371676
+2022-07-04,"Papua New Guinea","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Barbados","Fatal","#202226","Total Count",477
+2022-07-04,"Barbados","Fatal","#202226","Count per 10K",16.7368421052632
+2022-07-04,"Barbados","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Guinea","Fatal","#202226","Total Count",443
+2022-07-04,"Guinea","Fatal","#202226","Count per 10K",0.357373346240723
+2022-07-04,"Guinea","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Cabo Verde","Fatal","#202226","Total Count",405
+2022-07-04,"Cabo Verde","Fatal","#202226","Count per 10K",7.5
+2022-07-04,"Cabo Verde","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Burkina Faso","Fatal","#202226","Total Count",387
+2022-07-04,"Burkina Faso","Fatal","#202226","Count per 10K",0.207551217419286
+2022-07-04,"Burkina Faso","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Congo (Brazzaville)","Fatal","#202226","Total Count",385
+2022-07-04,"Congo (Brazzaville)","Fatal","#202226","Count per 10K",0.751072961373391
+2022-07-04,"Congo (Brazzaville)","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Saint Lucia","Fatal","#202226","Total Count",383
+2022-07-04,"Saint Lucia","Fatal","#202226","Count per 10K",21.5168539325843
+2022-07-04,"Saint Lucia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Gambia","Fatal","#202226","Total Count",365
+2022-07-04,"Gambia","Fatal","#202226","Count per 10K",1.79009318293281
+2022-07-04,"Gambia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Niger","Fatal","#202226","Total Count",310
+2022-07-04,"Niger","Fatal","#202226","Count per 10K",0.149954046340638
+2022-07-04,"Niger","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Maldives","Fatal","#202226","Total Count",306
+2022-07-04,"Maldives","Fatal","#202226","Count per 10K",7.14953271028037
+2022-07-04,"Maldives","Fatal","#202226","New Cases per 10K",0.0233644859813084
+2022-07-04,"Gabon","Fatal","#202226","Total Count",305
+2022-07-04,"Gabon","Fatal","#202226","Count per 10K",1.54040404040404
+2022-07-04,"Gabon","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Liberia","Fatal","#202226","Total Count",294
+2022-07-04,"Liberia","Fatal","#202226","Count per 10K",0.621301775147929
+2022-07-04,"Liberia","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Togo","Fatal","#202226","Total Count",275
+2022-07-04,"Togo","Fatal","#202226","Count per 10K",0.361556665790166
+2022-07-04,"Togo","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Nicaragua","Fatal","#202226","Total Count",242
+2022-07-04,"Nicaragua","Fatal","#202226","Count per 10K",0.39349593495935
+2022-07-04,"Nicaragua","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Grenada","Fatal","#202226","Total Count",232
+2022-07-04,"Grenada","Fatal","#202226","Count per 10K",21.6822429906542
+2022-07-04,"Grenada","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Brunei","Fatal","#202226","Total Count",225
+2022-07-04,"Brunei","Fatal","#202226","Count per 10K",5.31914893617021
+2022-07-04,"Brunei","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Chad","Fatal","#202226","Total Count",193
+2022-07-04,"Chad","Fatal","#202226","Count per 10K",0.13353629004359
+2022-07-04,"Chad","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Djibouti","Fatal","#202226","Total Count",189
+2022-07-04,"Djibouti","Fatal","#202226","Count per 10K",2.00636942675159
+2022-07-04,"Djibouti","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Equatorial Guinea","Fatal","#202226","Total Count",183
+2022-07-04,"Equatorial Guinea","Fatal","#202226","Count per 10K",1.4987714987715
+2022-07-04,"Equatorial Guinea","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Iceland","Fatal","#202226","Total Count",179
+2022-07-04,"Iceland","Fatal","#202226","Count per 10K",5.39156626506024
+2022-07-04,"Iceland","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Guinea-Bissau","Fatal","#202226","Total Count",171
+2022-07-04,"Guinea-Bissau","Fatal","#202226","Count per 10K",0.941629955947137
+2022-07-04,"Guinea-Bissau","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Seychelles","Fatal","#202226","Total Count",167
+2022-07-04,"Seychelles","Fatal","#202226","Count per 10K",17.7659574468085
+2022-07-04,"Seychelles","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Benin","Fatal","#202226","Total Count",163
+2022-07-04,"Benin","Fatal","#202226","Count per 10K",0.149926416482708
+2022-07-04,"Benin","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Comoros","Fatal","#202226","Total Count",160
+2022-07-04,"Comoros","Fatal","#202226","Count per 10K",1.83908045977011
+2022-07-04,"Comoros","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Andorra","Fatal","#202226","Total Count",153
+2022-07-04,"Andorra","Fatal","#202226","Count per 10K",19.8701298701299
+2022-07-04,"Andorra","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Solomon Islands","Fatal","#202226","Total Count",153
+2022-07-04,"Solomon Islands","Fatal","#202226","Count per 10K",2.34303215926493
+2022-07-04,"Solomon Islands","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Antigua and Barbuda","Fatal","#202226","Total Count",141
+2022-07-04,"Antigua and Barbuda","Fatal","#202226","Count per 10K",13.960396039604
+2022-07-04,"Antigua and Barbuda","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"South Sudan","Fatal","#202226","Total Count",138
+2022-07-04,"South Sudan","Fatal","#202226","Count per 10K",0.109697933227345
+2022-07-04,"South Sudan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Timor-Leste","Fatal","#202226","Total Count",133
+2022-07-04,"Timor-Leste","Fatal","#202226","Count per 10K",1.04806934594169
+2022-07-04,"Timor-Leste","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Sierra Leone","Fatal","#202226","Total Count",125
+2022-07-04,"Sierra Leone","Fatal","#202226","Count per 10K",0.165409554055842
+2022-07-04,"Sierra Leone","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Tajikistan","Fatal","#202226","Total Count",125
+2022-07-04,"Tajikistan","Fatal","#202226","Count per 10K",0.131054728454603
+2022-07-04,"Tajikistan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"San Marino","Fatal","#202226","Total Count",115
+2022-07-04,"San Marino","Fatal","#202226","Count per 10K",34.8484848484849
+2022-07-04,"San Marino","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Saint Vincent and the Grenadines","Fatal","#202226","Total Count",114
+2022-07-04,"Saint Vincent and the Grenadines","Fatal","#202226","Count per 10K",10.3636363636364
+2022-07-04,"Saint Vincent and the Grenadines","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Central African Republic","Fatal","#202226","Total Count",113
+2022-07-04,"Central African Republic","Fatal","#202226","Count per 10K",0.245919477693145
+2022-07-04,"Central African Republic","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Eritrea","Fatal","#202226","Total Count",103
+2022-07-04,"Eritrea","Fatal","#202226","Count per 10K",0.207870837537841
+2022-07-04,"Eritrea","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Liechtenstein","Fatal","#202226","Total Count",85
+2022-07-04,"Liechtenstein","Fatal","#202226","Count per 10K",21.7948717948718
+2022-07-04,"Liechtenstein","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Sao Tome and Principe","Fatal","#202226","Total Count",74
+2022-07-04,"Sao Tome and Principe","Fatal","#202226","Count per 10K",3.62745098039216
+2022-07-04,"Sao Tome and Principe","Fatal","#202226","New Cases per 10K",0.0490196078431373
+2022-07-04,"Dominica","Fatal","#202226","Total Count",68
+2022-07-04,"Dominica","Fatal","#202226","Count per 10K",9.18918918918919
+2022-07-04,"Dominica","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Monaco","Fatal","#202226","Total Count",59
+2022-07-04,"Monaco","Fatal","#202226","Count per 10K",15.5263157894737
+2022-07-04,"Monaco","Fatal","#202226","New Cases per 10K",0.263157894736842
+2022-07-04,"Saint Kitts and Nevis","Fatal","#202226","Total Count",43
+2022-07-04,"Saint Kitts and Nevis","Fatal","#202226","Count per 10K",7.81818181818182
+2022-07-04,"Saint Kitts and Nevis","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Burundi","Fatal","#202226","Total Count",38
+2022-07-04,"Burundi","Fatal","#202226","Count per 10K",0.0349907918968692
+2022-07-04,"Burundi","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Samoa","Fatal","#202226","Total Count",29
+2022-07-04,"Samoa","Fatal","#202226","Count per 10K",1.47959183673469
+2022-07-04,"Samoa","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Bhutan","Fatal","#202226","Total Count",21
+2022-07-04,"Bhutan","Fatal","#202226","Count per 10K",0.263157894736842
+2022-07-04,"Bhutan","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Vanuatu","Fatal","#202226","Total Count",14
+2022-07-04,"Vanuatu","Fatal","#202226","Count per 10K",0.477815699658703
+2022-07-04,"Vanuatu","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Kiribati","Fatal","#202226","Total Count",13
+2022-07-04,"Kiribati","Fatal","#202226","Count per 10K",1.09243697478992
+2022-07-04,"Kiribati","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Tonga","Fatal","#202226","Total Count",12
+2022-07-04,"Tonga","Fatal","#202226","Count per 10K",1.13207547169811
+2022-07-04,"Tonga","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Korea, North","Fatal","#202226","Total Count",6
+2022-07-04,"Korea, North","Fatal","#202226","Count per 10K",0.00230920217065004
+2022-07-04,"Korea, North","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Palau","Fatal","#202226","Total Count",6
+2022-07-04,"Palau","Fatal","#202226","Count per 10K",3.33333333333333
+2022-07-04,"Palau","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Marshall Islands","Fatal","#202226","Total Count",0
+2022-07-04,"Marshall Islands","Fatal","#202226","Count per 10K",0
+2022-07-04,"Marshall Islands","Fatal","#202226","New Cases per 10K",0
+2022-07-04,"Micronesia","Fatal","#202226","Total Count",0
+2022-07-04,"Micronesia","Fatal","#202226","Count per 10K",0
+2022-07-04,"Micronesia","Fatal","#202226","New Cases per 10K",0

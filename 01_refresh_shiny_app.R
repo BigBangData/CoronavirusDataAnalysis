@@ -1,7 +1,6 @@
 # environment setup
 rm(list = ls())
 options(scipen=999)
-setwd("../GitHub/CoronavirusDataAnalysis")
 
 # install and/or load packages
 install_packages <- function(package){
@@ -39,14 +38,16 @@ last_month <- merged[merged$Date >= as.Date(Sys.Date() - 30), ]
 last_month$Color <- ifelse(last_month$Status == "Confirmed", "#D6604D", "#202226")
 
 # reorder columns & reshape
-new_order <-  c("Date", "Country", "Status", "Color", "Count", "Count_per10K", "NewCases_per10K")
+new_order <-  c("Date", "Country", "PopulationCategory", "Status", "Color", 
+    "Cumulative_Count", "Cumulative_PctPopulation", "NewCases", "NewCases_per10K")
 last_month <- last_month[, new_order]
-new_names <- c("Date", "Country", "Status", "Color", "Total Count", "Count per 10K", "New Cases per 10K")
+new_names <- c("Date", "Country", "PopulationCategory", "Status", "Color",
+    "Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000")
 colnames(last_month) <- new_names
 
 last_month <- as.data.frame(
     last_month %>% pivot_longer(
-        cols = c( "Total Count", "Count per 10K", "New Cases per 10K")
+        cols = c("Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000")
             , names_to = "Type"
             , values_to = "Value"
     )

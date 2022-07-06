@@ -29,11 +29,17 @@ ui <- fluidPage(
         position = "left",
         sidebarPanel(
             style = "max-height: 80%;",
+            checkboxGroupInput(
+                        inputId = "population_category",
+                        label = "Population Category",
+                        choices = list("more than 100M" = 1, "from 10M to 100M" = 2,
+                                       "from 1M to 10M" = 3, "less than 1M" = 4),
+                        selected = 1),
             # drop-down for type of plot
             selectInput(inputId = "plot_type", 
                         label = "Plot Type",
-                        choices = c( "Total Count", "Count per 10K", "New Cases per 10K"),
-                        selected = "New Cases per 10K"),
+                        choices = c("Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000"),
+                        selected = "New Cases per 10,000"),
             # drop-down for status
             selectInput(inputId = "status", 
                         label = "Status",
@@ -41,16 +47,16 @@ ui <- fluidPage(
                         selected = "Confirmed"),
             # slider for top N number of countries to display
             sliderInput(inputId = "top_n",
-                        label = "Number of Countries:",
+                        label = "Number of Countries (Top Values)",
                         min = 2,
                         max = 15,
                         value = 7),
             tags$hr(style="border-color: black;"),
             # check box for color vs linetype in time series
             selectInput(inputId = "ts_type",
-                        label = "Time Series Lines",
+                        label = "Time Series Line Choices",
                         choices = list("Color" = 1, "Linetype" = 2, "Both" = 3),
-                        selected = 1)
+                        selected = 3)
         ),
 
         # Show plots
@@ -65,30 +71,39 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     output$barplots <- renderPlot({
-        # subset to specific type
-        data <- last_day[last_day$Type == input$plot_type, ]
-        # subset to specific status
+        # subset to population category
+        data <- last_day[last_day$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        data <- data[data$Type == input$plot_type, ]
+        # subset to status
         data <- data[data$Status == input$status, ]
         # top N (order desc)
         data <- data[order(data$Value, decreasing = TRUE), ]
         data <- data[1:input$top_n, ]
         # barplot
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
-        ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
-        geom_bar(stat = "identity", fill = data$Color) +
-        ggtitle(paste0("On ", data$Date[1])) +
-        xlab("") + ylab(input$plot_type) + theme_minimal() +
-        scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
-        theme(plot.title = element_text(size = 14, face = "bold")
-            , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
+        g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
+             geom_bar(stat = "identity", fill = data$Color) +
+             xlab("") + ylab(input$plot_type) + theme_minimal() +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+             theme(plot.title = element_text(size = 14, face = "bold")
+                 , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
+        # plot different titles based on type
+        if (substr(input$plot_type, 1, 10) == "Cumulative") {
+            g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
+        } else {
+            g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
+        }
     })
 
     output$timeseries <- renderPlot({
-        # subset to specific type both monthly and last day data
-        # the latter for getting "top N" countries
-        month_data <- last_month[last_month$Type == input$plot_type, ]
-        day_data <- last_day[last_day$Type == input$plot_type, ]
-        # subset to specific status
+        # subset to population category
+        month_data <- last_month[last_month$PopulationCategory %in% input$population_category, ]
+        day_data <- last_day[last_day$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        month_data <- month_data[month_data$Type == input$plot_type, ]
+        day_data <- day_data[day_data$Type == input$plot_type, ]
+        # subset to status
         month_data <- month_data[month_data$Status == input$status, ]
         day_data <- day_data[day_data$Status == input$status, ]
         # top N (order desc) only daily to get countries

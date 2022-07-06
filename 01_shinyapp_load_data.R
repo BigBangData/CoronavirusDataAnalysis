@@ -32,24 +32,20 @@ if (!file.exists(enriched_rds)) {
 
 # App data
 
-# subset to last day, ordered by Status and overall Count DESC
-current_data <- as.data.frame(
-    merged %>%
-    filter(Date == unique(merged$Date)[1]) %>%
-    arrange(Status, desc(Count))
-)
+# subset to last 30 days, ordered by Status and overall Count DESC
+last_month <- merged[merged$Date >= as.Date(Sys.Date() - 30), ]
 
 # add color based on Status
-current_data$Color <- ifelse(current_data$Status == "Confirmed", "#D6604D", "#202226")
+last_month$Color <- ifelse(last_month$Status == "Confirmed", "#D6604D", "#202226")
 
 # reorder columns & reshape
 new_order <-  c("Date", "Country", "Status", "Color", "Count", "Count_per10K", "NewCases_per10K")
-current_data <- current_data[, new_order]
+last_month <- last_month[, new_order]
 new_names <- c("Date", "Country", "Status", "Color", "Total Count", "Count per 10K", "New Cases per 10K")
-colnames(current_data) <- new_names
+colnames(last_month) <- new_names
 
-current_data <- as.data.frame(
-    current_data %>% pivot_longer(
+last_month <- as.data.frame(
+    last_month %>% pivot_longer(
         cols = c( "Total Count", "Count per 10K", "New Cases per 10K")
             , names_to = "Type"
             , values_to = "Value"
@@ -57,4 +53,4 @@ current_data <- as.data.frame(
 )
 
 # write csv to app folder
-write.csv(current_data, "./CoronavirusShinyApp/current_data.csv", row.names = FALSE)
+write.csv(last_month, "./CoronavirusShinyApp/last_month.csv", row.names = FALSE)

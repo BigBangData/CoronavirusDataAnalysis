@@ -5,7 +5,7 @@ library(ggplot2)
 # load dataset
 last_month <- read.csv("last_month.csv")
 
-# subset to last_day for barplots
+# subset to last_day
 last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
 # define ui
@@ -33,7 +33,7 @@ ui <- fluidPage(
             selectInput(inputId = "plot_type", 
                         label = "Plot Type",
                         choices = c( "Total Count", "Count per 10K", "New Cases per 10K"),
-                        selected = "Total Count"),
+                        selected = "New Cases per 10K"),
             # drop-down for status
             selectInput(inputId = "status", 
                         label = "Status",
@@ -44,13 +44,19 @@ ui <- fluidPage(
                         label = "Number of Countries:",
                         min = 2,
                         max = 15,
-                        value = 5)
+                        value = 7),
+            tags$hr(style="border-color: black;"),
+            # check box for color vs linetype in time series
+            selectInput(inputId = "ts_type",
+                        label = "Time Series Lines",
+                        choices = list("Color" = 1, "Linetype" = 2, "Both" = 3),
+                        selected = 1)
         ),
 
         # Show plots
         mainPanel(
-           plotOutput("barplots"),
-           plotOutput("timeseries")
+           plotOutput("barplots", width = "85%", height = "300px"),
+           plotOutput("timeseries", width = "100%", height = "300px")
         )
     )
 )
@@ -69,13 +75,12 @@ server <- function(input, output) {
         # barplot
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
         ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
-            geom_bar(stat = "identity", fill = data$Color) +
-            ggtitle(paste0("On ", data$Date[1])) +
-            xlab("") + ylab(input$plot_type) + theme_minimal() +
-            scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
-            theme(plot.title = element_text(size = 14, face = "bold")
-                , axis.text.x = element_text(angle = 90, hjust = 1, size = 10)
-            )
+        geom_bar(stat = "identity", fill = data$Color) +
+        ggtitle(paste0("On ", data$Date[1])) +
+        xlab("") + ylab(input$plot_type) + theme_minimal() +
+        scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+        theme(plot.title = element_text(size = 14, face = "bold")
+            , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
     })
 
     output$timeseries <- renderPlot({
@@ -100,17 +105,29 @@ server <- function(input, output) {
                 , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
         # time series
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
-        ggplot(data = month_data, aes(x = Date, y = Value, color = Country)) + 
-            geom_line(size = 1.5) +
-            ggtitle("Time Series - Last 30 days") +
-            xlab("") + ylab(input$plot_type) + theme_minimal() +
-            scale_color_manual(values = sample(palette, input$top_n)) +
-            scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
-            theme(plot.title = element_text(size = 14, face = "bold")
+        g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
+             ggtitle("Time Series - Last 30 days") +
+             xlab("") + ylab(input$plot_type) + theme_minimal() +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+             theme(plot.title = element_text(size = 14, face = "bold")
                 , legend.title = element_text(size = 14)
                 , legend.text = element_text(size = 12)
-                , axis.text.x = element_text(size =12)
-            )
+                , axis.text.x = element_text(size =12))
+        # plot types
+        if (input$ts_type == 1) {
+            g +
+            geom_line(aes(color = Country), size = 1.2) +
+            scale_color_manual(values = sample(palette, input$top_n))
+        } else if (input$ts_type == 2) {
+            g +
+            geom_line(aes(linetype = Country), size = .8) +
+            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, input$top_n))
+        } else {
+            g +
+            geom_line(aes(linetype = Country, color = Country), size = 1) +
+            scale_color_manual(values = sample(palette, input$top_n)) +
+            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, input$top_n))
+        }
     })
 
 }

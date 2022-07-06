@@ -15,30 +15,39 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 ## defaul inputs
 
         input <- data.frame(
-            'plot_type' = 'New Cases per 10K'
+            'population_category' = 1
+            , 'plot_type' = 'New Cases per 10,000'
             , 'status' = 'Confirmed'
-            , 'top_n' = 7
-            , 'ts_type' = 1
+            , 'top_n' = 15
+            , 'ts_type' = 3
         )
 
 ## default barplot
 
-        # subset to specific type
-        data <- last_day[last_day$Type == input$plot_type, ]
-        # subset to specific status
+        # subset to population category
+        data <- last_day[last_day$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        data <- data[data$Type == input$plot_type, ]
+        # subset to status
         data <- data[data$Status == input$status, ]
         # top N (order desc)
         data <- data[order(data$Value, decreasing = TRUE), ]
-        data <- data[1:input$top_n, ]
+        top_n <- min(length(unique(data$Country)), input$top_n)
+        data <- data[1:top_n, ]
         # barplot
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
-        ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
-        geom_bar(stat = "identity", fill = data$Color) +
-        ggtitle(paste0("On ", data$Date[1])) +
-        xlab("") + ylab(input$plot_type) + theme_minimal() +
-        scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
-        theme(plot.title = element_text(size = 14, face = "bold")
-            , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
+        g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
+             geom_bar(stat = "identity", fill = data$Color) +
+             xlab("") + ylab(input$plot_type) + theme_minimal() +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+             theme(plot.title = element_text(size = 14, face = "bold")
+                 , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
+        # plot different titles based on type
+        if (substr(input$plot_type, 1, 10) == "Cumulative") {
+            g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
+        } else {
+            g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
+        }
 
 ## default time series
 
@@ -51,7 +60,8 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
         day_data <- day_data[day_data$Status == input$status, ]
         # top N (order desc) only daily to get countries
         day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
-        day_data <- day_data[1:input$top_n, ]
+        top_n <- min(length(unique(day_data$Country)), input$top_n)
+        day_data <- day_data[1:top_n, ]
         # subset monthly data to last_day's top N countries
         month_data <- month_data[month_data$Country %in% day_data$Country, ]
         # fix Date data type
@@ -77,20 +87,20 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
         if (input$ts_type == 1) {
             g +
             geom_line(aes(color = Country), size = 1.2) +
-            scale_color_manual(values = sample(palette, input$top_n))
+            scale_color_manual(values = sample(palette, top_n))
         }
         
         if (input$ts_type == 2) {
             g +
             geom_line(aes(linetype = Country), size = .7) +
-            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, input$top_n))
+            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
         }
-
+        
         if (input$ts_type == 3) {
             g +
             geom_line(aes(linetype = Country, color = Country), size = 1) +
-            scale_color_manual(values = sample(palette, input$top_n)) +
-            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, input$top_n))
+            scale_color_manual(values = sample(palette, top_n)) +
+            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
         }
 
 

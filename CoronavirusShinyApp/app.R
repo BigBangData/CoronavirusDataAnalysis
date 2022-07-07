@@ -30,9 +30,9 @@ ui <- fluidPage(
                         selected = c(4, 6)),
             checkboxGroupInput(
                         inputId = "population_category",
-                        label = "Population Category",
-                        choices = list("more than 100M" = 1, "from 10M to 100M" = 2,
-                                       "from 1M to 10M" = 3, "less than 1M" = 4),
+                        label = "Population",
+                        choices = list("more than 100 M" = 1, "from 10 M to 100 M" = 2,
+                                       "from 1 M to 10 M" = 3, "less than 1 M" = 4),
                         selected = c(1, 2)),
             # drop-down for type of plot
             selectInput(inputId = "plot_type", 

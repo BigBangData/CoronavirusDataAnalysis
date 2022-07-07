@@ -1,0 +1,9 @@
+REVISE...
+- README (GitHub presentation)
+- Portfolio
+- Rpubs (what is the purpose now?)
+
+FUTURE...
+- Forecasting
+- Another tab or separate app?
+

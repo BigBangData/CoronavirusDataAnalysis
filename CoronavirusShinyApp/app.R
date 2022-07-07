@@ -11,28 +11,12 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 # define ui
 ui <- fluidPage(
 
-    # app title
-    titlePanel(
+    headerPanel(
         title = div(
             img(src="corona_thumb.jpg", height = 40, width = 40), 
             "Coronavirus: Latest Country Statistics", 
             style = "color:#A93C38"
             )
-    ),
-
-    fluidRow(
-        column(12,
-                p(
-                    "Explore the raw data compiled by the Johns Hopkins University
-                        Center for Systems Science and Engineering in this ",
-                    tags$a(href="https://github.com/CSSEGISandData/COVID-19", 
-                    "JHU CSSE GitHub repository."),
-                    "See ", 
-                    tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", 
-                    "my GitHub repository"),
-                    " for all files and code related to this app."
-                )
-        )
     ),
 
     sidebarLayout(
@@ -80,7 +64,24 @@ ui <- fluidPage(
             plotOutput("barplots", width = "85%", height = "350px"),
             plotOutput("timeseries", width = "100%", height = "350px")
         )
+    ),
+
+    fluidRow(
+        tags$hr(style="border-color: grey;"),
+        column(6,
+            p(style = "text=align:left;",
+                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
+                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov"), " |",
+                "Code and files: ", tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", "BigBangData GitHub")
+            )
+        ),
+        column(6,
+            p(style = "text-align:right;",
+                "Created by ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches")
+            )
+        )
     )
+
 )
 
 # define server logic
@@ -144,7 +145,6 @@ server <- function(input, output) {
         palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
                 , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
                 , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
-
         # time series
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
         # immutable elements

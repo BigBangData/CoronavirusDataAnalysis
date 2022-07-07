@@ -12,17 +12,29 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 ui <- fluidPage(
 
     # app title
-    titlePanel("Coronavirus: Latest Country Stats"),
+    titlePanel(
+        title = div(
+            img(src="corona_thumb.jpg", height = 50, width = 50), 
+            "Coronavirus: Latest Country Stats"
+            )
+    ),
 
     fluidRow(
         column(12,
-                p(strong("Warning: "),
-                "This is a personal project and not intended as a serious data analysis.", style = "color:#A93C38"),
-                p("Explore the raw data compiled by the Johns Hopkins University Center for Systems Science and Engineering in this ",
-                tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub repository."),
-                "See ", tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", "my GitHub repository"),
-                " for all files and code related to this app.")
-            )
+                p(
+                    strong("Warning: "),
+                    "This is a personal project and not intended as a serious data analysis.",
+                    style = "color:#A93C38"
+                ),
+                p(
+                    "Explore the raw data compiled by the Johns Hopkins University Center for Systems Science and Engineering in this ",
+                    tags$a(href="https://github.com/CSSEGISandData/COVID-19", 
+                    "JHU CSSE GitHub repository."),
+                    "See ", 
+                    tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", "my GitHub repository"),
+                    " for all files and code related to this app."
+                )
+        )
     ),
 
     sidebarLayout(
@@ -61,8 +73,8 @@ ui <- fluidPage(
 
         # Show plots
         mainPanel(
-           plotOutput("barplots", width = "85%", height = "300px"),
-           plotOutput("timeseries", width = "100%", height = "300px")
+            plotOutput("barplots", width = "85%", height = "300px"),
+            plotOutput("timeseries", width = "100%", height = "300px")
         )
     )
 )

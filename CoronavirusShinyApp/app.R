@@ -165,13 +165,13 @@ server <- function(input, output) {
             scale_color_manual(values = sample(palette, top_n))
         }
         # linetypes
-        if (input$ts_type == 2) {
+        else if (input$ts_type == 2) {
             g +
             geom_line(aes(linetype = Country), size = .7) +
             scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
         }
         # both
-        if (input$ts_type == 3) {
+        else {
             g +
             geom_line(aes(linetype = Country, color = Country), size = 1) +
             scale_color_manual(values = sample(palette, top_n)) +

@@ -15,7 +15,8 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 ## defaul inputs
 
         input <- data.frame(
-            'population_category' = 1
+            'continent' = 'Africa'
+            , 'population_category' = 2
             , 'plot_type' = 'New Cases per 10,000'
             , 'status' = 'Confirmed'
             , 'top_n' = 15
@@ -24,8 +25,10 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
 ## default barplot
 
+        # subset to continent
+        data <- last_day[last_day$Continent %in% input$continent, ]
         # subset to population category
-        data <- last_day[last_day$PopulationCategory %in% input$population_category, ]
+        data <- data[data$PopulationCategory %in% input$population_category, ]
         # subset to plot type
         data <- data[data$Type == input$plot_type, ]
         # subset to status
@@ -36,13 +39,15 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
         data <- data[1:top_n, ]
         # barplot
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
+        # immutable elements
         g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
              geom_bar(stat = "identity", fill = data$Color) +
              xlab("") + ylab(input$plot_type) + theme_minimal() +
-             scale_y_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE)) +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ","
+                , scientific = FALSE)) +
              theme(plot.title = element_text(size = 14, face = "bold")
                  , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
-        # plot different titles based on type
+        # mutable elements
         if (substr(input$plot_type, 1, 10) == "Cumulative") {
             g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
         } else {
@@ -51,11 +56,16 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
 ## default time series
 
-        # subset to specific type both monthly and last day data
-        # the latter for getting "top N" countries
-        month_data <- last_month[last_month$Type == input$plot_type, ]
-        day_data <- last_day[last_day$Type == input$plot_type, ]
-        # subset to specific status
+        # subset to continent
+        month_data <- last_month[last_month$Continent %in% input$continent, ]
+        day_data <- last_day[last_day$Continent %in% input$continent, ]
+        # subset to population category
+        month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+        day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        month_data <- month_data[month_data$Type == input$plot_type, ]
+        day_data <- day_data[day_data$Type == input$plot_type, ]
+        # subset to status
         month_data <- month_data[month_data$Status == input$status, ]
         day_data <- day_data[day_data$Status == input$status, ]
         # top N (order desc) only daily to get countries

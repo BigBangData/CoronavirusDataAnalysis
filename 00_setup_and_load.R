@@ -145,32 +145,35 @@ merged <- data.frame(merged %>% arrange(Country, Status, desc(Date)))
 merged <- sqldf('
     WITH count_lag AS (
         SELECT
-            Country
+            Continent
+            , PopulationCategory
+            , Country
             , Status
             , Date
             , Count
-            , PopulationCategory
             , Population
             , LAG(Count, 1) OVER (PARTITION BY Country, Status) AS CountLag
         FROM merged
     )
     , new_cases AS (
         SELECT
-            Country
+            Continent
+            , PopulationCategory
+            , Country
             , Status
             , Date
             , Count
-            , PopulationCategory
             , Population * 1e3 AS Population
             , LEAD(CountLag - Count, 1) OVER (PARTITION BY Country, Status) AS NewCases
         FROM count_lag
     )
     , final AS (
         SELECT
-            Country
+            Continent
+            , PopulationCategory
+            , Country
             , Status
             , Date
-            , PopulationCategory
             , Count AS Cumulative_Count
             , (Count * 100) / Population AS Cumulative_PctPopulation
             , NewCases
@@ -182,6 +185,7 @@ merged <- sqldf('
 
 
 # replace NA with 0
+merged$NewCases[is.na(merged$NewCases)] <- 0
 merged$NewCases_per10K[is.na(merged$NewCases_per10K)] <- 0
 
 # save merged

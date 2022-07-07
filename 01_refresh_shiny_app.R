@@ -38,10 +38,10 @@ last_month <- merged[merged$Date >= as.Date(Sys.Date() - 30), ]
 last_month$Color <- ifelse(last_month$Status == "Confirmed", "#D6604D", "#202226")
 
 # reorder columns & reshape
-new_order <-  c("Date", "Country", "PopulationCategory", "Status", "Color", 
+new_order <-  c("Date", "Country", "Continent", "PopulationCategory", "Status", "Color", 
     "Cumulative_Count", "Cumulative_PctPopulation", "NewCases", "NewCases_per10K")
 last_month <- last_month[, new_order]
-new_names <- c("Date", "Country", "PopulationCategory", "Status", "Color",
+new_names <- c("Date", "Country", "Continent", "PopulationCategory", "Status", "Color",
     "Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000")
 colnames(last_month) <- new_names
 

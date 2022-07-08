@@ -54,30 +54,32 @@ ui <- fluidPage(
             tags$hr(style="border-color: black;"),
             # check box for color vs linetype in time series
             selectInput(inputId = "ts_type",
-                        label = "Time Series Line Choices",
-                        choices = list("Color" = 1, "Linetype" = 2, "Both" = 3),
+                        label = "Line Choices",
+                        choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
                         selected = 3)
         ),
 
-        # Show plots
+        # show plots
         mainPanel(
-            plotOutput("barplots", width = "85%", height = "350px"),
-            plotOutput("timeseries", width = "100%", height = "350px")
+            plotOutput("barplots", width = "85%", height = "360px"),
+            plotOutput("timeseries", width = "100%", height = "365px")
         )
     ),
 
     fluidRow(
-        tags$hr(style="border-color: grey;"),
+        # link sources
         column(6,
             p(style = "text=align:left;",
                 "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
-                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov"), " |",
-                "Code and files: ", tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis", "BigBangData GitHub")
+                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
             )
         ),
         column(6,
+            # signature, GitHub link
             p(style = "text-align:right;",
-                "Created by ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches")
+                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
+                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
+                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
             )
         )
     )
@@ -149,7 +151,7 @@ server <- function(input, output) {
         par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
         # immutable elements
         g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
-             ggtitle("Time Series - Last 30 days") +
+             ggtitle(paste0(input$status, " Cases, Last 30 Days")) +
              xlab("") + ylab(input$plot_type) + theme_minimal() +
              scale_y_continuous(labels = function(x) format(x, big.mark = ","
                 , scientific = FALSE)) +
@@ -161,16 +163,16 @@ server <- function(input, output) {
         # color
         if (input$ts_type == 1) {
             g +
-            geom_line(aes(color = Country), size = 1.2) +
+            geom_line(aes(color = Country), size = 1) +
             scale_color_manual(values = sample(palette, top_n))
         }
-        # linetypes
+        # linetype
         else if (input$ts_type == 2) {
             g +
-            geom_line(aes(linetype = Country), size = .7) +
+            geom_line(aes(linetype = Country), size = 1) +
             scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
         }
-        # both
+        # color and linetype
         else {
             g +
             geom_line(aes(linetype = Country, color = Country), size = 1) +

@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "07/03/2022"
+date: "07/08/2022"
 output: 
   html_document:
     keep_md: true
@@ -13,57 +13,48 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
+At the onset of the COVID-19 pandemic, the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) put out a dashboard with a [map of the spread of SARS-CoV-2](https://coronavirus.jhu.edu/map.html) which made the rounds in the internet.
 
-This is an old project from the beginning of the pandemic which I'm revising by creating this [Shiny app.](https://bigbangdata.shinyapps.io/shinyapp/)
+Curious about the data source for the JHU CSSE map, I found their [GitHub repository](https://github.com/CSSEGISandData/COVID-19) and started this simple data viz project, enriching the data with a [dataset of country populations](https://github.com/BigBangData/CoronavirusDataAnalysis/blob/covid/data/country_population.csv) I cobbled together with internet searches and [WHO data.](https://apps.who.int/gho/data/view.main.POP2040ALL)
+
+
+[<img src="CoronavirusShinyApp/www/GitHub-Mark-32px.png" style="width:20px;"/>](https://github.com/BigBangData/CoronavirusDataAnalysis) BigBangData
+
 
 ---
-
-__April 2020__
-
-This is a simple exploration of the time series data compiled from various sources at the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19). 
-
-The raw data can also be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases) This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files and code.
-
-
-This project is not intended to be a serious data analysis, which would require more data and study. This is a personal project to explore automated plotting of the daily JHU datasets. **The plots produced here do not reflect reality and should not be taken as a model for how COVID-19 spreads through populations.** For example, they do not take into consideration the meaning of confirmed cases - this varies per location and time, availability of testing, changes in policy, and so forth. The data also might contain reporting errors.
-
----
-
 
 ## Contents {#contents-link}
 
-* [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup steps.
-* [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated columns.
-* [Exploratory Data Analysis](#eda-link): main section with visualizations.
-* [Code Appendix](#codeappendix-link): entire R code.
+* [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup
+* [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated fields
+* [Data Visualization](#dataviz-link): see shiny app for barplots and time series
+* [Forecasting](#forecast-link): time series visualizations
+* [Code Appendix](#codeappendix-link): see GitHub for reproducibility
 
 ---
 
 ## Data Pre-Processing {#preprocess-link}
 
-I focused on confirmed cases and fatal cases. See [Code Appendix](#codeappendix-link) for full, commented code.
-
 
 ```{r include=FALSE}
-# setup
+# setup & pre-process latest data
 source("./00_setup_and_load.R")
+
+# read in preprocessed data
 rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
 dfm <- readRDS(rds_file)
-```
 
-
-```{r echo=FALSE}
 # calculate number of countries and number of days in the time series
 Ncountries <- length(unique(dfm$Country))
 Ndays <- length(unique(dfm$Date))
 ```
 
-### Summary
 
-The pre-processed dataset is comprised of `r nrow(dfm)` rows and `r length(dfm)` columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. Today there are `r Ndays` days and `r Ncountries` countries in the data, after removing the small and seasonal populations of Antarctica and the Olympics.
+The pre-processed dataset is comprised of `r nrow(dfm)` rows and `r length(dfm)` columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. 
 
-The project focuses on countries so latitude, longitude, and the sub-national province/state columns were discarded. 
+Today (`r Sys.Date()`) there are `r Ndays` days and `r Ncountries` countries in the data, before removing the small and seasonal populations of ships, Antarctica, the Olympics, and the Holy See. 
 
+Since the project focuses on countries, latitude, longitude, and the sub-national "province.state" fields were discarded.
 
 ---
 
@@ -73,7 +64,17 @@ The project focuses on countries so latitude, longitude, and the sub-national pr
 ## Data Wrangling and Enrichment {#enrich-link}
 
 
-I maintain a static data set of countries and their populations. This data is cobbled together with internet searches and [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL?lang=en) I use the country's population to calculate two columns: `Count Per 10K` and `New Cases Per 10K` which track the cumulative cases were observed per 10,000 people, and how many new cases.
+I maintain a static data set of countries and their population. This data was cobbled together with internet searches and [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL) I use countries' population counts to calculate three columns from the original count:
+
+- `Cumulative_Count` (original) tracks the cumulative count of cases given a status (Confirmed or Fatal), country, and date
+- `Cumulative_PctPopulation` (calculated) percentage of the population the cumulative count represents [cumulative count * 100 / population]
+- `NewCases` (calculated) daily count of new cases [cumulative count - cumulative count previous day]
+- `NewCases_per10K` (calculated) daily count of new cases per 10,000 people to facilitate comparisons [new cases * 10,000 / population]
+
+I also added two new fields for the shiny app to help compare countries in the same geographical area or of similar population size:
+
+- `Continent`: coded in alphabetical order (1 - Africa, 2 - Asia, 3 - Europe, 4 - North America, 5 - Oceania, 6 - South America), this field oversimplifies countries spanning multiple continents (i.e., eastern Europe)
+- `PopulationCategory`: (calculated) coded in descending size (1 - over 100 M, 2 - from 10 M to 100 M, 3 - from 1 M to 10 M, 4 - less than 1 M)
 
 The top rows of the enriched data set for Brazil and the US are:
 
@@ -85,215 +86,58 @@ kable(rbind(head(merged[merged$Country == "Brazil", ], 3)
                   , full_width = FALSE)
 ```
 
+
+__Note__: there were a few data quality issues in the original count which resulted in a few "negative counts" for new cases and other calculated fields, so I zeroed those for plotting but kept the original count issues. This will be seen in a few sudden drops in what should've been otherwise a cumulative count. I did not pursue each case individually to try to figure out whether these were data entry errors or valid course corrections.
+
 ---
 
 [Back to [Contents](#contents-link)]{style="float:right"}
 
 
-## Exploratory Data Analysis {#eda-link}
+## Exploratory Data Analysis {#dataviz-link}
 
 
 ### Total Counts
 
-```{r echo=FALSE, fig.height=6, fig.width=6} 
-# subset to current counts 
+
+
+```{r echo=FALSE}
+# subset to last date and calculate world totals
 current_data <- data.frame(
     merged %>%
-    filter(Date == unique(merged$Date)[1])) %>%
-    arrange(Status, desc(Count)
+    select(Country, Status, Date, Cumulative_Count) %>%
+    filter(Date == max(merged$Date)) %>%
+    arrange(Status, desc(Cumulative_Count))
 )
 
-# subset to world totals 
-world_totals <- data.frame(current_data %>% 
-					group_by(Status) %>%
-					summarise('Total'=sum(Count)))
+
+world_totals <- data.frame(
+    current_data %>%
+    group_by(Status) %>%
+    summarise('Total'= sum(Cumulative_Count))
+)
 
 world_totals$Total <- formatC(world_totals$Total, big.mark=",")
 
 kable(world_totals) %>%
-      kable_styling(bootstrap_options = c("striped", "hover")
-                    , full_width = FALSE)
+      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
+---
 
+### Latest Country Statistics
 
+For barplots of the last day's top countries and time series of the last 30 days, I've created an app.
+
+Interact with the [shiny app here.](https://bigbangdata.shinyapps.io/shinyapp/)
+
+![](./img/shinyapp.gif)
 
 ---
 
-### Bar Charts
-
-See this [Shiny app](https://bigbangdata.shinyapps.io/shinyapp/) for interactive bar charts with the latest counts and percentages.
-
-
-```{r echo=FALSE}
-# subset to country totals
-country_totals <- data.frame(
-    current_data %>%
-		select(Country, Status, Count, Count_per10K, NewCases_per10K) %>%
-		group_by(Country, Status)
-)
-	
-# subset to top counts 	
-get_top_counts <- function(dfm, coln, num) {
-	  dfm <- dfm[dfm$Status == coln, ][1:num, ]
-	  row.names(dfm) <- 1:num
-	  dfm
-}					
-
-# separate by status 
-top_confirmed 	<- get_top_counts(country_totals, "Confirmed", 10)
-top_fatal		<- get_top_counts(country_totals, "Fatal", 10)
-```
-
-
----
-
-### Interactive Time Series Plots
-
-Counts and percentages of the top five countries for confirmed and fatal cases.
-
-
-```{r message=FALSE, warnings=FALSE, echo=FALSE}
-# functions for plotting interactive time series
-# arg values:
-# dfm = the dataframe
-# country = country name
-# status_df = to be used as the vector of country names 
-#             which is passed instead of a single country
-# status = Confirmed, Fatal, Recovered, Active
-# scale_ = Linear, Log
-# type = Count, Percentage, NewCases
-create_xts_series <- function(dfm, country, status, scale_, type) {
-  
-  	dfm <- dfm[dfm$Country == country & dfm$Status == status, ]
-  	
-  	if (type == "Count") {
-  	  series <- if (scale_ == "Linear") {
-  	  			  xts(dfm$Count, order.by = dfm$Date)
-  	  		} else {
-  	  		    xts(log(dfm$Count), order.by = dfm$Date)
-  	  		}
-  	} else if (type == "Percentage") {
-  	  series <- if (scale_ == "Linear") {
-  	  			  xts(dfm$Percentage, order.by = dfm$Date)
-  	  		} else {
-  	  		    xts(log(dfm$Percentage), order.by = dfm$Date)
-  	  		}
-  	} else { # for new cases
-  	  series <- if (scale_ == "Linear") {
-  	  			  xts(dfm$NewCases, order.by = dfm$Date)
-  	  		} else {
-  	  		    xts(log(dfm$NewCases), order.by = dfm$Date)
-  	  		}
-  	}
-  	series
-}
-
-create_seriesObject <- function(dfm, status_df, status, scale_, type) {
-  
-    seriesObject <- NULL
-    
-    for (i in 1:5) {
-        seriesObject <- cbind(seriesObject
-                              , create_xts_series(dfm
-                                                  , status_df$Country[i]
-                                                  , status
-                                                  , scale_
-                                                  , type))
-    }
-    
-    names(seriesObject) <- status_df$Country[1:5]
-    seriesObject
-}
-
-plot_interactive_df <- function(dfm, status_df, status, scale_, type) {
-  
-    seriesObject <- create_seriesObject(dfm
-                  									  , status_df
-                  									  , status
-                  									  , scale_
-                  									  , type)
-    
-    if (type == "Count") {
-  
-        txt_ <- if (scale_ == "Linear") {
-    	  				"Count Of "
-    	  			} else {
-    	  			  "Log Count Of "
-    	  			}			
-  				
-    } else if (type == "Percentage") {
-        
-        txt_ <- if (scale_ == "Linear") {
-    	  				"Percentage Of "
-    	  			} else {
-    	  			  "Log Percentage Of "
-    	  			} 		
-  				
-    } else { # for new cases
-      
-        txt_ <- if (scale_ == "Linear") {
-    	  				"New "
-    	  			} else {
-    	  			  "Log Of New "
-    	  			}  	
-    }
-    
-    ylab_lab   <- paste0(txt_, status, " Cases")
-    main_title <- paste0("Top Countries - ", txt_, status, " Cases")
-    
-    interactive_df <- dygraph(seriesObject, main = main_title) %>% 
-  					dyAxis("x", drawGrid = FALSE) %>%							
-  					dyAxis("y", label = ylab_lab) %>%
-  					dyOptions(colors=brewer.pal(5, "Dark2")
-  							, axisLineWidth = 1.5
-  							, axisLineColor = "navy"
-  							, gridLineColor = "lightblue") %>%			
-  					dyRangeSelector() %>%
-  					dyLegend(width = 750)
-    
-    interactive_df
-}
-```
-
-
-```{r message=FALSE, warnings=FALSE, echo=FALSE}
-## plot time series
-#plot_types <- data.frame(
-#    'Num' = 1:12
-#    , 'Status' = c(rep("Confirmed", 6), rep("Fatal", 6))
-#    , 'Type' = rep(c("Count", "Percentage", "NewCases"), each=2)
-#    , 'Scale' = rep(c("Linear", "Log"), 6)
-#)
-#
-## fatal
-#fatal_plots <- lapply(1:3, function(i) plot_interactive_df(merged
-#  							                     , top_fatal[1:5, ]
-#  							                     , top_fatal$Status[i]
-#  							                     , plot_types$Scale[i]
-#  							                     , plot_types$Type[i]))
-#		
-#htmltools::tagList(fatal_plots)
-#
-## confirmed 
-#confirmed_plots <- lapply(1:3, function(i) plot_interactive_df(merged
-#      							                     , top_confirmed[1:5, ]
-#      							                     , top_confirmed$Status[i]
-#      							                     , plot_types$Scale[i]
-#      							                     , plot_types$Type[i]))
-#		
-#htmltools::tagList(confirmed_plots)
-```
+## Forecasting {#forecast-link}
 
 
 
-### Further Plots to Consider
-
-
-Future iterations could include other interesting metrics such as:
-
-- Doubling rates
-- Proportion of New Cases to Total Cases
-- Percentage increase plus a horizontal line showing proportion of population to world population
 
 
 ---
@@ -302,6 +146,53 @@ Future iterations could include other interesting metrics such as:
 [Back to [Contents](#contents-link)]{style="float:right"}
 
 ### Code Appendix {#codeappendix-link}
+
+```{r eval=FALSE}
+## ----include=FALSE------------------------------------------------------
+# setup & pre-process latest data
+source("./00_setup_and_load.R")
+
+# read in preprocessed data
+rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
+dfm <- readRDS(rds_file)
+
+# calculate number of countries and number of days in the time series
+Ncountries <- length(unique(dfm$Country))
+Ndays <- length(unique(dfm$Date))
+
+nrow(dfm)
+length(dfm)
+Sys.Date()
+Ndays
+Ncountries
+## ----echo=FALSE------------------------------------------------------
+# top and bottom rows for final data set
+kable(rbind(head(merged[merged$Country == "Brazil", ], 3)
+            , head(merged[merged$Country == "US", ], 3))) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                  , full_width = FALSE)
+
+## ----echo=FALSE------------------------------------------------------
+# subset to last date and calculate world totals
+current_data <- data.frame(
+    merged %>%
+    select(Country, Status, Date, Cumulative_Count) %>%
+    filter(Date == max(merged$Date)) %>%
+    arrange(Status, desc(Cumulative_Count))
+)
+
+
+world_totals <- data.frame(
+    current_data %>%
+    group_by(Status) %>%
+    summarise('Total'= sum(Cumulative_Count))
+)
+
+world_totals$Total <- formatC(world_totals$Total, big.mark=",")
+
+kable(world_totals) %>%
+      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
 
 Fork or clone this [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) with all files and code, including the code for the Shiny app.
 

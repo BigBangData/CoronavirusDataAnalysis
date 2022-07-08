@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "07/03/2022"
+date: "07/08/2022"
 output: 
   html_document:
     keep_md: true
@@ -9,48 +9,37 @@ output:
 
 
 
+At the onset of the COVID-19 pandemic, the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) put out a dashboard with a [map of the spread of SARS-CoV-2](https://coronavirus.jhu.edu/map.html) which made the rounds in the internet.
 
-This is an old project from the beginning of the pandemic which I'm revising by creating this [Shiny app.](https://bigbangdata.shinyapps.io/shinyapp/)
+Curious about the data source for the JHU CSSE map, I found their [GitHub repository](https://github.com/CSSEGISandData/COVID-19) and started this simple data viz project, enriching the data with a [dataset of country populations](https://github.com/BigBangData/CoronavirusDataAnalysis/blob/covid/data/country_population.csv) I cobbled together with internet searches and [WHO data.](https://apps.who.int/gho/data/view.main.POP2040ALL)
+
+
+[<img src="CoronavirusShinyApp/www/GitHub-Mark-32px.png" style="width:20px;"/>](https://github.com/BigBangData/CoronavirusDataAnalysis) BigBangData
+
 
 ---
-
-__April 2020__
-
-This is a simple exploration of the time series data compiled from various sources at the [COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19). 
-
-The raw data can also be downloaded manually at [Novel Coronavirus 2019 Cases.](https://data.humdata.org/dataset/novel-coronavirus-2019-ncov-cases) This [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) hosts all files and code.
-
-
-This project is not intended to be a serious data analysis, which would require more data and study. This is a personal project to explore automated plotting of the daily JHU datasets. **The plots produced here do not reflect reality and should not be taken as a model for how COVID-19 spreads through populations.** For example, they do not take into consideration the meaning of confirmed cases - this varies per location and time, availability of testing, changes in policy, and so forth. The data also might contain reporting errors.
-
----
-
 
 ## Contents {#contents-link}
 
-* [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup steps.
-* [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated columns.
-* [Exploratory Data Analysis](#eda-link): main section with visualizations.
-* [Code Appendix](#codeappendix-link): entire R code.
+* [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup
+* [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated fields
+* [Data Visualization](#dataviz-link): see shiny app for barplots and time series
+* [Forecasting](#forecast-link): time series visualizations
+* [Code Appendix](#codeappendix-link): see GitHub for reproducibility
 
 ---
 
 ## Data Pre-Processing {#preprocess-link}
 
-I focused on confirmed cases and fatal cases. See [Code Appendix](#codeappendix-link) for full, commented code.
 
 
 
 
+The pre-processed dataset is comprised of 357404 rows and 4 columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. 
 
+Today (2022-07-08) there are 898 days and 199 countries in the data, before removing the small and seasonal populations of ships, Antarctica, the Olympics, and the Holy See. 
 
-
-### Summary
-
-The pre-processed dataset is comprised of 355812 rows and 4 columns. Each single-status dataset is as long as the number of days times the number of countries for the data in a given day. Today there are 894 days and 199 countries in the data, after removing the small and seasonal populations of Antarctica and the Olympics.
-
-The project focuses on countries so latitude, longitude, and the sub-national province/state columns were discarded. 
-
+Since the project focuses on countries, latitude, longitude, and the sub-national "province.state" fields were discarded.
 
 ---
 
@@ -60,7 +49,17 @@ The project focuses on countries so latitude, longitude, and the sub-national pr
 ## Data Wrangling and Enrichment {#enrich-link}
 
 
-I maintain a static data set of countries and their populations. This data is cobbled together with internet searches and [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL?lang=en) I use the country's population to calculate two columns: `Count Per 10K` and `New Cases Per 10K` which track the cumulative cases were observed per 10,000 people, and how many new cases.
+I maintain a static data set of countries and their population. This data was cobbled together with internet searches and [World Health Organization data.](https://apps.who.int/gho/data/view.main.POP2040ALL) I use countries' population counts to calculate three columns from the original count:
+
+- `Cumulative_Count` (original) tracks the cumulative count of cases given a status (Confirmed or Fatal), country, and date
+- `Cumulative_PctPopulation` (calculated) percentage of the population the cumulative count represents [cumulative count * 100 / population]
+- `NewCases` (calculated) daily count of new cases [cumulative count - cumulative count previous day]
+- `NewCases_per10K` (calculated) daily count of new cases per 10,000 people to facilitate comparisons [new cases * 10,000 / population]
+
+I also added two new fields for the shiny app to help compare countries in the same geographical area or of similar population size:
+
+- `Continent`: coded in alphabetical order (1 - Africa, 2 - Asia, 3 - Europe, 4 - North America, 5 - Oceania, 6 - South America), this field oversimplifies countries spanning multiple continents (i.e., eastern Europe)
+- `PopulationCategory`: (calculated) coded in descending size (1 - over 100 M, 2 - from 10 M to 100 M, 3 - from 1 M to 10 M, 4 - less than 1 M)
 
 The top rows of the enriched data set for Brazil and the US are:
 
@@ -68,81 +67,107 @@ The top rows of the enriched data set for Brazil and the US are:
  <thead>
   <tr>
    <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Continent </th>
+   <th style="text-align:right;"> PopulationCategory </th>
    <th style="text-align:left;"> Country </th>
    <th style="text-align:left;"> Status </th>
    <th style="text-align:left;"> Date </th>
-   <th style="text-align:right;"> Count </th>
-   <th style="text-align:right;"> Count_per10K </th>
+   <th style="text-align:right;"> Cumulative_Count </th>
+   <th style="text-align:right;"> Cumulative_PctPopulation </th>
+   <th style="text-align:right;"> NewCases </th>
    <th style="text-align:right;"> NewCases_per10K </th>
   </tr>
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 41125 </td>
+   <td style="text-align:left;"> 41309 </td>
+   <td style="text-align:right;"> 6 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> Brazil </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-03 </td>
-   <td style="text-align:right;"> 32490422 </td>
-   <td style="text-align:right;"> 1564.650 </td>
-   <td style="text-align:right;"> 0.8945211 </td>
+   <td style="text-align:left;"> 2022-07-07 </td>
+   <td style="text-align:right;"> 32759730 </td>
+   <td style="text-align:right;"> 15.77619 </td>
+   <td style="text-align:right;"> 72050 </td>
+   <td style="text-align:right;"> 3.469731 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 41126 </td>
+   <td style="text-align:left;"> 41310 </td>
+   <td style="text-align:right;"> 6 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> Brazil </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-02 </td>
-   <td style="text-align:right;"> 32471847 </td>
-   <td style="text-align:right;"> 1563.755 </td>
-   <td style="text-align:right;"> 1.8195740 </td>
+   <td style="text-align:left;"> 2022-07-06 </td>
+   <td style="text-align:right;"> 32687680 </td>
+   <td style="text-align:right;"> 15.74149 </td>
+   <td style="text-align:right;"> 77166 </td>
+   <td style="text-align:right;"> 3.716103 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 41127 </td>
+   <td style="text-align:left;"> 41311 </td>
+   <td style="text-align:right;"> 6 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> Brazil </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-01 </td>
-   <td style="text-align:right;"> 32434063 </td>
-   <td style="text-align:right;"> 1561.936 </td>
-   <td style="text-align:right;"> 3.6621190 </td>
+   <td style="text-align:left;"> 2022-07-05 </td>
+   <td style="text-align:right;"> 32610514 </td>
+   <td style="text-align:right;"> 15.70433 </td>
+   <td style="text-align:right;"> 74591 </td>
+   <td style="text-align:right;"> 3.592098 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 325417 </td>
+   <td style="text-align:left;"> 321485 </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> US </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-03 </td>
-   <td style="text-align:right;"> 87843561 </td>
-   <td style="text-align:right;"> 2726.537 </td>
-   <td style="text-align:right;"> 0.1532684 </td>
+   <td style="text-align:left;"> 2022-07-07 </td>
+   <td style="text-align:right;"> 88381589 </td>
+   <td style="text-align:right;"> 27.43236 </td>
+   <td style="text-align:right;"> 118681 </td>
+   <td style="text-align:right;"> 3.683686 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 325418 </td>
+   <td style="text-align:left;"> 321486 </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> US </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-02 </td>
-   <td style="text-align:right;"> 87838623 </td>
-   <td style="text-align:right;"> 2726.383 </td>
-   <td style="text-align:right;"> 0.5168539 </td>
+   <td style="text-align:left;"> 2022-07-06 </td>
+   <td style="text-align:right;"> 88262908 </td>
+   <td style="text-align:right;"> 27.39553 </td>
+   <td style="text-align:right;"> 197006 </td>
+   <td style="text-align:right;"> 6.114781 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 325419 </td>
+   <td style="text-align:left;"> 321487 </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:right;"> 1 </td>
    <td style="text-align:left;"> US </td>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 2022-07-01 </td>
-   <td style="text-align:right;"> 87821971 </td>
-   <td style="text-align:right;"> 2725.867 </td>
-   <td style="text-align:right;"> 6.0365324 </td>
+   <td style="text-align:left;"> 2022-07-05 </td>
+   <td style="text-align:right;"> 88065902 </td>
+   <td style="text-align:right;"> 27.33438 </td>
+   <td style="text-align:right;"> 144053 </td>
+   <td style="text-align:right;"> 4.471196 </td>
   </tr>
 </tbody>
 </table>
+
+
+__Note__: there were a few data quality issues in the original count which resulted in a few "negative counts" for new cases and other calculated fields, so I zeroed those for plotting but kept the original count issues. This will be seen in a few sudden drops in what should've been otherwise a cumulative count. I did not pursue each case individually to try to figure out whether these were data entry errors or valid course corrections.
 
 ---
 
 [Back to [Contents](#contents-link)]{style="float:right"}
 
 
-## Exploratory Data Analysis {#eda-link}
+## Exploratory Data Analysis {#dataviz-link}
 
 
 ### Total Counts
+
+
 
 <table class="table table-striped table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
  <thead>
@@ -154,49 +179,30 @@ The top rows of the enriched data set for Brazil and the US are:
 <tbody>
   <tr>
    <td style="text-align:left;"> Confirmed </td>
-   <td style="text-align:left;"> 549,181,398 </td>
+   <td style="text-align:left;"> 553,511,578 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Fatal </td>
-   <td style="text-align:left;"> 6,339,113 </td>
+   <td style="text-align:left;"> 6,347,459 </td>
   </tr>
 </tbody>
 </table>
+---
 
+### Latest Country Statistics
 
+For barplots of the last day's top countries and time series of the last 30 days, I've created an app.
+
+Interact with the [shiny app here.](https://bigbangdata.shinyapps.io/shinyapp/)
+
+![](./img/shinyapp.gif)
 
 ---
 
-### Bar Charts
-
-See this [Shiny app](https://bigbangdata.shinyapps.io/shinyapp/) for interactive bar charts with the latest counts and percentages.
+## Forecasting {#forecast-link}
 
 
 
-
-
----
-
-### Interactive Time Series Plots
-
-Counts and percentages of the top five countries for confirmed and fatal cases.
-
-
-
-
-
-
-
-
-
-### Further Plots to Consider
-
-
-Future iterations could include other interesting metrics such as:
-
-- Doubling rates
-- Proportion of New Cases to Total Cases
-- Percentage increase plus a horizontal line showing proportion of population to world population
 
 
 ---
@@ -205,6 +211,54 @@ Future iterations could include other interesting metrics such as:
 [Back to [Contents](#contents-link)]{style="float:right"}
 
 ### Code Appendix {#codeappendix-link}
+
+
+```r
+## ----include=FALSE------------------------------------------------------
+# setup & pre-process latest data
+source("./00_setup_and_load.R")
+
+# read in preprocessed data
+rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
+dfm <- readRDS(rds_file)
+
+# calculate number of countries and number of days in the time series
+Ncountries <- length(unique(dfm$Country))
+Ndays <- length(unique(dfm$Date))
+
+nrow(dfm)
+length(dfm)
+Sys.Date()
+Ndays
+Ncountries
+## ----echo=FALSE------------------------------------------------------
+# top and bottom rows for final data set
+kable(rbind(head(merged[merged$Country == "Brazil", ], 3)
+            , head(merged[merged$Country == "US", ], 3))) %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
+                  , full_width = FALSE)
+
+## ----echo=FALSE------------------------------------------------------
+# subset to last date and calculate world totals
+current_data <- data.frame(
+    merged %>%
+    select(Country, Status, Date, Cumulative_Count) %>%
+    filter(Date == max(merged$Date)) %>%
+    arrange(Status, desc(Cumulative_Count))
+)
+
+
+world_totals <- data.frame(
+    current_data %>%
+    group_by(Status) %>%
+    summarise('Total'= sum(Cumulative_Count))
+)
+
+world_totals$Total <- formatC(world_totals$Total, big.mark=",")
+
+kable(world_totals) %>%
+      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
 
 Fork or clone this [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) with all files and code, including the code for the Shiny app.
 

@@ -12,16 +12,19 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
 ui <- fluidPage(
 
     headerPanel(
-        title = div(
-            img(src="corona_thumb.jpg", height = 40, width = 40), 
-            "Coronavirus: Latest Country Statistics", 
-            style = "color:#A93C38"
-            )
+
+        title = div(style = "color:#A93C38",
+                    img(src="corona_thumb.jpg", height = 40, width = 40), 
+                    "Coronavirus: Latest Country Statistics"
+                )
     ),
 
     sidebarLayout(
+
         position = "left",
+
         sidebarPanel(
+            width = 2,
             checkboxGroupInput(
                         inputId = "continent",
                         label = "Continent",
@@ -37,9 +40,9 @@ ui <- fluidPage(
             # drop-down for type of plot
             selectInput(inputId = "plot_type", 
                         label = "Plot Type",
-                        choices = c("Cumulative Count", "Cumulative % of Population"
-                            , "New Cases", "New Cases per 10,000"),
-                        selected = "New Cases per 10,000"),
+                        choices = c("Total Count", "Total % of Population"
+                            , "New Cases", "New Cases per 10K"),
+                        selected = "New Cases per 10K"),
             # drop-down for status
             selectInput(inputId = "status", 
                         label = "Status",
@@ -61,29 +64,59 @@ ui <- fluidPage(
 
         # show plots
         mainPanel(
-            plotOutput("barplots", width = "85%", height = "360px"),
-            plotOutput("timeseries", width = "100%", height = "365px")
-        )
-    ),
+            width = 10,
 
-    fluidRow(
-        # link sources
-        column(6,
-            p(style = "text=align:left;",
-                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
-                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
-            )
-        ),
-        column(6,
-            # signature, GitHub link
-            p(style = "text-align:right;",
-                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
-                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
-                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
+            tabsetPanel(
+                type = "tabs",
+
+                tabPanel("Barplot",
+                    br(), br(),
+                    plotOutput("barplots", width = "95%", height = "600px"),
+                    br(), br(),
+                    fluidRow(
+                        # link sources
+                        column(6,
+                            p(style = "text=align:left;",
+                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
+                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
+                            )
+                        ),
+                        column(5,
+                            # signature, GitHub link
+                            p(style = "text-align:right;",
+                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
+                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
+                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
+                            )
+                        )
+                    )
+                ),
+
+                tabPanel("Time Series",
+                    br(), br(),
+                    plotOutput("timeseries", width = "95%", height = "600px"),
+                    br(), br(),
+                    fluidRow(
+                        # link sources
+                        column(6,
+                            p(style = "text=align:left;",
+                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
+                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
+                            )
+                        ),
+                        column(5,
+                            # signature, GitHub link
+                            p(style = "text-align:right;",
+                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
+                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
+                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
+                            )
+                        )
+                    )
+                )
             )
         )
     )
-
 )
 
 # define server logic
@@ -103,15 +136,18 @@ server <- function(input, output) {
         top_n <- min(length(unique(data$Country)), input$top_n)
         data <- data[1:top_n, ]
         # barplot
-        par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
         # immutable elements
         g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
              geom_bar(stat = "identity", fill = data$Color) +
              xlab("") + ylab(input$plot_type) + theme_minimal() +
              scale_y_continuous(labels = function(x) format(x, big.mark = ","
                 , scientific = FALSE)) +
-             theme(plot.title = element_text(size = 14, face = "bold")
-                 , axis.text.x = element_text(angle = 90, hjust = 1, size = 10))
+             theme(
+                plot.title = element_text(size = 16, face = "bold")
+                , axis.text.x = element_text(angle = 45, hjust = 1, size = 14)
+                , axis.title.y = element_text(size = 14)
+                , axis.text.y = element_text(size = 12)
+            )
         # mutable elements
         if (substr(input$plot_type, 1, 10) == "Cumulative") {
             g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
@@ -148,17 +184,20 @@ server <- function(input, output) {
                 , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
                 , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
         # time series
-        par(mar = c(1, 1, 1, 1), oma = c(0, 0, 0, 0))
         # immutable elements
         g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
              ggtitle(paste0(input$status, " Cases, Last 30 Days")) +
              xlab("") + ylab(input$plot_type) + theme_minimal() +
              scale_y_continuous(labels = function(x) format(x, big.mark = ","
                 , scientific = FALSE)) +
-             theme(plot.title = element_text(size = 14, face = "bold")
-                , legend.title = element_text(size = 14)
-                , legend.text = element_text(size = 12)
-                , axis.text.x = element_text(size = 12))
+             theme(
+                plot.title = element_text(size = 16, face = "bold")
+                , legend.title = element_text(size = 16)
+                , legend.text = element_text(size = 14)
+                , axis.text.x = element_text(size = 14)
+                , axis.title.y = element_text(size = 14)
+                , axis.text.y = element_text(size = 12)
+            )
         # mutable elements
         # color
         if (input$ts_type == 1) {
@@ -177,7 +216,9 @@ server <- function(input, output) {
             g +
             geom_line(aes(linetype = Country, color = Country), size = 1) +
             scale_color_manual(values = sample(palette, top_n)) +
-            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
+            # weighted distribution to avoid dotted lines
+            scale_linetype_manual(values = sample(c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5),
+                replace = TRUE, top_n))
         }
     })
 

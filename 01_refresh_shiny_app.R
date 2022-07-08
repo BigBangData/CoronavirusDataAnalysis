@@ -42,16 +42,19 @@ new_order <-  c("Date", "Country", "Continent", "PopulationCategory", "Status", 
     "Cumulative_Count", "Cumulative_PctPopulation", "NewCases", "NewCases_per10K")
 last_month <- last_month[, new_order]
 new_names <- c("Date", "Country", "Continent", "PopulationCategory", "Status", "Color",
-    "Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000")
+    "Total Count", "Total % of Population", "New Cases", "New Cases per 10K")
 colnames(last_month) <- new_names
 
 last_month <- as.data.frame(
     last_month %>% pivot_longer(
-        cols = c("Cumulative Count", "Cumulative % of Population", "New Cases", "New Cases per 10,000")
+        cols = c("Total Count", "Total % of Population", "New Cases", "New Cases per 10K")
             , names_to = "Type"
             , values_to = "Value"
     )
 )
+
+# fix data quality problem of negative cases
+last_month[last_month$Value < 0,]$Value <- 0
 
 # write csv to app folder
 write.csv(last_month, "./CoronavirusShinyApp/last_month.csv", row.names = FALSE)

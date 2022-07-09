@@ -3,7 +3,7 @@ library(shiny)
 library(ggplot2)
 
 # load dataset
-last_month <- read.csv("last_month.csv")
+last_month <- readRDS("last_month.rds")
 
 # subset to last_day
 last_day <- last_month[last_month$Date == max(last_month$Date), ]
@@ -71,7 +71,7 @@ ui <- fluidPage(
 
                 tabPanel("Barplot",
                     br(), br(),
-                    plotOutput("barplots", width = "95%", height = "600px"),
+                    plotOutput("barplots1", width = "95%", height = "600px"),
                     br(), br(),
                     fluidRow(
                         # link sources
@@ -94,7 +94,7 @@ ui <- fluidPage(
 
                 tabPanel("Time Series",
                     br(), br(),
-                    plotOutput("timeseries", width = "95%", height = "600px"),
+                    plotOutput("timeseries1", width = "95%", height = "600px"),
                     br(), br(),
                     fluidRow(
                         # link sources
@@ -113,7 +113,32 @@ ui <- fluidPage(
                             )
                         )
                     )
+                ),
+
+                tabPanel("Barplot & Time Series",
+                    br(),
+                    plotOutput("barplots2", width = "85%", height = "330px"),
+                    plotOutput("timeseries2", width = "95%", height = "330px"),
+                    fluidRow(
+                        # link sources
+                        column(6,
+                            p(style = "text=align:left;",
+                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
+                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
+                            )
+                        ),
+                        column(5,
+                            # signature, GitHub link
+                            p(style = "text-align:right;",
+                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
+                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
+                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
+                            )
+                        )
+                    )
                 )
+
+
             )
         )
     )
@@ -122,7 +147,7 @@ ui <- fluidPage(
 # define server logic
 server <- function(input, output) {
 
-    output$barplots <- renderPlot({
+    output$barplots1 <- renderPlot({
         # subset to continent
         data <- last_day[last_day$Continent %in% input$continent, ]
         # subset to population category
@@ -149,14 +174,114 @@ server <- function(input, output) {
                 , axis.text.y = element_text(size = 12)
             )
         # mutable elements
-        if (substr(input$plot_type, 1, 10) == "Cumulative") {
+        if (substr(input$plot_type, 1, 5) == "Total") {
             g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
         } else {
             g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
         }
     })
 
-    output$timeseries <- renderPlot({
+    output$barplots2 <- renderPlot({
+        # subset to continent
+        data <- last_day[last_day$Continent %in% input$continent, ]
+        # subset to population category
+        data <- data[data$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        data <- data[data$Type == input$plot_type, ]
+        # subset to status
+        data <- data[data$Status == input$status, ]
+        # top N (order desc)
+        data <- data[order(data$Value, decreasing = TRUE), ]
+        top_n <- min(length(unique(data$Country)), input$top_n)
+        data <- data[1:top_n, ]
+        # barplot
+        # immutable elements
+        g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
+             geom_bar(stat = "identity", fill = data$Color) +
+             xlab("") + ylab(input$plot_type) + theme_minimal() +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ","
+                , scientific = FALSE)) +
+             theme(
+                plot.title = element_text(size = 16, face = "bold")
+                , axis.text.x = element_text(angle = 45, hjust = 1, size = 14)
+                , axis.title.y = element_text(size = 14)
+                , axis.text.y = element_text(size = 12)
+            )
+        # mutable elements
+        if (substr(input$plot_type, 1, 5) == "Total") {
+            g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
+        } else {
+            g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
+        }
+    })
+
+    output$timeseries1 <- renderPlot({
+
+        # subset to continent
+        month_data <- last_month[last_month$Continent %in% input$continent, ]
+        day_data <- last_day[last_day$Continent %in% input$continent, ]
+        # subset to population category
+        month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+        day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        month_data <- month_data[month_data$Type == input$plot_type, ]
+        day_data <- day_data[day_data$Type == input$plot_type, ]
+        # subset to status
+        month_data <- month_data[month_data$Status == input$status, ]
+        day_data <- day_data[day_data$Status == input$status, ]
+        # top N (order desc) only daily to get countries
+        day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
+        top_n <- min(length(unique(day_data$Country)), input$top_n)
+        day_data <- day_data[1:top_n, ]
+        # subset monthly data to last_day's top N countries
+        month_data <- month_data[month_data$Country %in% day_data$Country, ]
+        # fix Date data type
+        month_data$Date <- as.Date(month_data$Date)
+        # library(RColorBrewer)
+        # brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
+        palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
+                , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
+                , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+        # time series
+        # immutable elements
+        g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
+             ggtitle(paste0(input$status, " Cases, Last 30 Days")) +
+             xlab("") + ylab(input$plot_type) + theme_minimal() +
+             scale_y_continuous(labels = function(x) format(x, big.mark = ","
+                , scientific = FALSE)) +
+             theme(
+                plot.title = element_text(size = 16, face = "bold")
+                , legend.title = element_text(size = 16)
+                , legend.text = element_text(size = 14)
+                , axis.text.x = element_text(size = 14)
+                , axis.title.y = element_text(size = 14)
+                , axis.text.y = element_text(size = 12)
+            )
+        # mutable elements
+        # color
+        if (input$ts_type == 1) {
+            g +
+            geom_line(aes(color = Country), size = 1) +
+            scale_color_manual(values = sample(palette, top_n))
+        }
+        # linetype
+        else if (input$ts_type == 2) {
+            g +
+            geom_line(aes(linetype = Country), size = 1) +
+            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
+        }
+        # color and linetype
+        else {
+            g +
+            geom_line(aes(linetype = Country, color = Country), size = 1) +
+            scale_color_manual(values = sample(palette, top_n)) +
+            # weighted distribution to avoid dotted lines
+            scale_linetype_manual(values = sample(c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5),
+                replace = TRUE, top_n))
+        }
+    })
+
+    output$timeseries2 <- renderPlot({
 
         # subset to continent
         month_data <- last_month[last_month$Continent %in% input$continent, ]

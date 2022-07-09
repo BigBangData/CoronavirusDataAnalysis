@@ -2,6 +2,9 @@
 rm(list = ls())
 options(scipen=999)
 
+# uncomment if sourcing file from dir
+# setwd("../GitHub/CoronavirusDataAnalysis/code")
+
 # install and/or load packages
 install_packages <- function(package){
     newpackage <- package[!(package %in% installed.packages()[, "Package"])]
@@ -19,13 +22,13 @@ suppressPackageStartupMessages(
 )
 
 # check if today's RDS file exists
-enriched_rds <- paste0("data/", gsub("-", "", Sys.Date()), "_enriched.rds")
+enriched_rds <- paste0(gsub("-", "", Sys.Date()), "_enriched.rds")
 
 # load preprocessed data or preprocess if not available
-if (!file.exists(enriched_rds)) {
+if (!file.exists(paste0("../data/", enriched_rds))) {
     source("00_setup_and_load.R")
 } else {
-    merged <- readRDS(enriched_rds)
+    merged <- readRDS(paste0("../data/", enriched_rds))
     rm(list=ls()[-which(ls() == "merged")])
 }
 
@@ -56,5 +59,6 @@ last_month <- as.data.frame(
 # fix data quality problem of negative cases
 last_month[last_month$Value < 0,]$Value <- 0
 
-# write csv to app folder
-write.csv(last_month, "./CoronavirusShinyApp/last_month.csv", row.names = FALSE)
+# write data to app folder
+# write.csv(last_month, "../CoronavirusShinyApp/last_month.csv", row.names = FALSE)
+saveRDS(last_month, file = "../CoronavirusShinyApp/last_month.rds")

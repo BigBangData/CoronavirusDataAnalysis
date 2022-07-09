@@ -3,7 +3,7 @@ rm(list = ls())
 options(scipen=999)
 
 # uncomment if sourcing file from dir
-# setwd("../GitHub/CoronavirusDataAnalysis")
+# setwd("../GitHub/CoronavirusDataAnalysis/code")
 
 # install and/or load packages
 install_packages <- function(package){
@@ -17,27 +17,27 @@ install_packages <- function(package){
 suppressPackageStartupMessages(
     install_packages(
         # list of packages
-        c("dygraphs", "forecast", "kableExtra", "MLmetrics",
-        "RColorBrewer", "sqldf", "testthat", "tidyverse", "xts")
+        c("forecast", "kableExtra", "MLmetrics",
+         "RColorBrewer", "sqldf", "testthat", "tidyverse")
     )
 )
 
 # create data dir if not exists
-if (!file.exists("data")) dir.create("data")
+if (!file.exists("../data")) dir.create("../data")
 
 ## Download or Load data
 
 # check if today's pre-processed data exists
-rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
+rds_file <- paste0(gsub("-", "", Sys.Date()), "_data.rds")
 
 # if not, download it
-if (!file.exists(rds_file)) {
+if (!file.exists(paste0("../data/", rds_file))) {
 
     # download datasets
     base_url <- paste0("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/"
                       , "csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_")
     
-    setwd("data")
+    setwd("../data")
     system(paste0("curl -LJO ", base_url, "confirmed_global.csv"))
     system(paste0("curl -LJO ", base_url, "deaths_global.csv"))
     setwd("..")
@@ -93,13 +93,13 @@ if (!file.exists(rds_file)) {
     
     dfm <- deduplicate_provinces(dfm)
     
-    saveRDS(dfm, file = rds_file)
+    saveRDS(dfm, file = paste0("./data/", rds_file))
 
 }
 
 # cleanup env and read in RDS file
 rm(list=ls()[-which(ls() == "rds_file")])
-dfm <- readRDS(rds_file)
+dfm <- readRDS(paste0("./data/", rds_file))
 
 ## Enrich data
 
@@ -121,7 +121,7 @@ dfm$Country[which(dfm$Country == "Taiwan*")] <- "Taiwan"
 
 # read in static data set of countries and populations
 # DATA QUALITY ISSUE: need to maintain population on a yearly basis
-country_population <- read.csv("data/country_population.csv")
+country_population <- read.csv("./data/country_population.csv")
 
 # unit test for no new contries in data
 current_countries <- unique(dfm$Country)
@@ -189,7 +189,7 @@ merged$NewCases[is.na(merged$NewCases)] <- 0
 merged$NewCases_per10K[is.na(merged$NewCases_per10K)] <- 0
 
 # save merged
-filename <- paste0("data/", gsub("-", "", Sys.Date()), "_enriched.rds")
+filename <- paste0("./data/", gsub("-", "", Sys.Date()), "_enriched.rds")
 saveRDS(merged, file = filename)
 
 # cleanup env except for merged

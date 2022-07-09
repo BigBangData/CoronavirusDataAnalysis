@@ -5,11 +5,11 @@
 
 # for shiny app
 # Spin up base R
-setwd("../GitHub/CoronavirusDataAnalysis")
+setwd("../GitHub/CoronavirusDataAnalysis/code")
 source("01_refresh_shiny_app.R")
 
 library(shiny)
-setwd("CoronavirusShinyApp/")
+setwd("../CoronavirusShinyApp/")
 runApp() # to test
 
 library(rsconnect)

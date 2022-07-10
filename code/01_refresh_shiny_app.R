@@ -60,5 +60,4 @@ last_month <- as.data.frame(
 last_month[last_month$Value < 0,]$Value <- 0
 
 # write data to app folder
-# write.csv(last_month, "../CoronavirusShinyApp/last_month.csv", row.names = FALSE)
 saveRDS(last_month, file = "../CoronavirusShinyApp/last_month.rds")

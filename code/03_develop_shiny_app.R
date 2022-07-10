@@ -1,27 +1,30 @@
-
 # app dir
+rm(list=ls())
 setwd("../GitHub/CoronavirusDataAnalysis/CoronavirusShinyApp")
 
 # load libraries
 library(shiny)
 library(ggplot2)
+library(xts)
+library(dygraphs)
 
 # load dataset
-last_month <- read.csv("last_month.csv")
+last_month <- readRDS("last_month.rds")
 
 # subset to last_day
 last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
-## defaul inputs
+## default inputs
 
-        input <- data.frame(
-            'continent' = 'Africa'
-            , 'population_category' = 2
-            , 'plot_type' = 'New Cases per 10,000'
-            , 'status' = 'Confirmed'
-            , 'top_n' = 15
-            , 'ts_type' = 3
-        )
+input <- data.frame(
+    'continent' = 1
+    , 'population_category' = 2
+    , 'plot_type' = 'New Cases'
+    , 'status' = 'Confirmed'
+    , 'top_n' = 8
+    , 'ts_type' = 3
+)
+
 
 ## default barplot
 
@@ -114,4 +117,72 @@ last_day <- last_month[last_month$Date == max(last_month$Date), ]
         }
 
 
+## Interactive Time Series
 
+        # subset to continent
+        month_data <- last_month[last_month$Continent %in% input$continent, ]
+        day_data <- last_day[last_day$Continent %in% input$continent, ]
+        # subset to population category
+        month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+        day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
+        # subset to plot type
+        month_data <- month_data[month_data$Type == input$plot_type, ]
+        day_data <- day_data[day_data$Type == input$plot_type, ]
+        # subset to status
+        month_data <- month_data[month_data$Status == input$status, ]
+        day_data <- day_data[day_data$Status == input$status, ]
+        # top N (order desc) only daily to get countries
+        day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
+        top_n <- min(length(unique(day_data$Country)), input$top_n)
+        day_data <- day_data[1:top_n, ]
+        # subset monthly data to last_day's top N countries
+        month_data <- month_data[month_data$Country %in% day_data$Country, ]
+        # fix Date data type
+        month_data$Date <- as.Date(month_data$Date)
+        # library(RColorBrewer)
+        # brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
+        palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
+                , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
+                , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+
+        create_xts_series <- function(df_month, country) {
+
+            df_month <- df_month[df_month$Country == country, ]
+            series <- xts(df_month$Value, order.by = df_month$Date)
+
+            return(series)
+        }
+
+        create_seriesObject <- function(df_month, df_day) {
+
+            seriesObject <- NULL
+            for (i in 1:input$top_n) {
+                seriesObject <- cbind(seriesObject,
+                                    create_xts_series(df_month, df_day$Country[i])
+                                    )
+            }
+            names(seriesObject) <- df_day$Country
+
+            return(seriesObject)
+        }
+
+        plot_interactive_df <- function(df_month, df_day) {
+
+            seriesObject <- create_seriesObject(df_month, df_day)
+            title <- paste0("Top ", input$top_n, " Countries - Time Series")
+
+            interactive_df <- dygraph(seriesObject, main = title) %>%
+                dyAxis("x", drawGrid = FALSE) %>%
+                dyAxis("y", label = input$plot_type) %>%
+                dyOptions(
+                    colors = sample(palette, input$top_n)
+                    , axisLineWidth = 1.5
+                    , axisLineColor = "navy"
+                    , gridLineColor = "lightblue") %>%
+                dyRangeSelector() %>%
+                dyLegend(width = 750)
+
+            return(interactive_df)
+        }
+
+        plot_interactive_df(month_data, day_data)

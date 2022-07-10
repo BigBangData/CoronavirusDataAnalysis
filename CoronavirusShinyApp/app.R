@@ -1,6 +1,8 @@
 # load libraries
 library(shiny)
 library(ggplot2)
+library(xts)
+library(dygraphs)
 
 # load dataset
 last_month <- readRDS("last_month.rds")
@@ -8,137 +10,104 @@ last_month <- readRDS("last_month.rds")
 # subset to last_day
 last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
+tabPanelfooter <- fluidRow(
+    # link sources
+    column(6,
+        p(style = "text=align:left;",
+        "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
+        "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov"))
+    ),
+    column(5,
+        # signature, GitHub link
+        p(style = "text-align:right;",
+        "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
+        tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
+        img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData")
+    )
+)
+
 # define ui
 ui <- fluidPage(
+        title = "Coronavirus: Latest Country Statistics",
 
     headerPanel(
-
-        title = div(style = "color:#A93C38",
-                    img(src="corona_thumb.jpg", height = 40, width = 40), 
-                    "Coronavirus: Latest Country Statistics"
-                )
+        title = div(
+            style = "color:#A93C38",
+            img(src="corona_thumb.jpg", height = 40, width = 40),
+            "Coronavirus: Latest Country Statistics"
+        )
     ),
 
     sidebarLayout(
-
         position = "left",
 
+        # side panel with choices
         sidebarPanel(
             width = 2,
+
+            # checkbox for continent
             checkboxGroupInput(
-                        inputId = "continent",
-                        label = "Continent",
-                        choices = list("Africa" = 1, "Asia" = 2, "Europe" = 3,
-                            "North America" = 4, "Oceania" = 5, "South America" = 6),
-                        selected = c(4, 6)),
+                inputId = "continent",
+                label = "Continent",
+                choices = list("Africa" = 1, "Asia" = 2, "Europe" = 3,
+                    "North America" = 4, "Oceania" = 5, "South America" = 6),
+                selected = c(4, 6)),
+            # checkbox for population category
             checkboxGroupInput(
-                        inputId = "population_category",
-                        label = "Population",
-                        choices = list("more than 100 M" = 1, "from 10 M to 100 M" = 2,
-                                       "from 1 M to 10 M" = 3, "less than 1 M" = 4),
-                        selected = c(1, 2)),
-            # drop-down for type of plot
-            selectInput(inputId = "plot_type", 
-                        label = "Plot Type",
-                        choices = c("Total Count", "Total % of Population"
-                            , "New Cases", "New Cases per 10K"),
-                        selected = "New Cases per 10K"),
+                inputId = "population_category",
+                label = "Population",
+                choices = list("more than 100 M" = 1, "from 10 M to 100 M" = 2,
+                    "from 1 M to 10 M" = 3, "less than 1 M" = 4),
+                selected = c(1, 2)),
+            # drop-down for plot type
+            selectInput(
+                inputId = "plot_type", 
+                label = "Plot Type",
+                choices = c("Total Count", "Total % of Population"
+                    , "New Cases", "New Cases per 10K"),
+                selected = "New Cases per 10K"),
             # drop-down for status
-            selectInput(inputId = "status", 
-                        label = "Status",
-                        choices = c("Confirmed", "Fatal"),
-                        selected = "Confirmed"),
+            selectInput(
+                inputId = "status", 
+                label = "Status",
+                choices = c("Confirmed", "Fatal"),
+                selected = "Confirmed"),
             # slider for top N number of countries to display
-            sliderInput(inputId = "top_n",
-                        label = "Number of Countries (Top Values)",
-                        min = 2,
-                        max = 15,
-                        value = 8),
+            sliderInput(
+                inputId = "top_n",
+                label = "Number of Countries",
+                min = 2,
+                max = 15,
+                value = 8),
+            # divider
             tags$hr(style="border-color: black;"),
-            # check box for color vs linetype in time series
-            selectInput(inputId = "ts_type",
-                        label = "Line Choices",
-                        choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
-                        selected = 3)
+            # checkbox for time series line options
+            selectInput(
+                inputId = "ts_type",
+                label = "Time Series Line Options",
+                choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
+                selected = 3)
         ),
 
-        # show plots
+        # main panel with plots
         mainPanel(
             width = 10,
 
-            tabsetPanel(
-                type = "tabs",
-
-                tabPanel("Barplot",
-                    br(), br(),
-                    plotOutput("barplots1", width = "95%", height = "600px"),
-                    br(), br(),
-                    fluidRow(
-                        # link sources
-                        column(6,
-                            p(style = "text=align:left;",
-                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
-                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
-                            )
-                        ),
-                        column(5,
-                            # signature, GitHub link
-                            p(style = "text-align:right;",
-                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
-                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
-                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
-                            )
-                        )
-                    )
-                ),
-
-                tabPanel("Time Series",
-                    br(), br(),
-                    plotOutput("timeseries1", width = "95%", height = "600px"),
-                    br(), br(),
-                    fluidRow(
-                        # link sources
-                        column(6,
-                            p(style = "text=align:left;",
-                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
-                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
-                            )
-                        ),
-                        column(5,
-                            # signature, GitHub link
-                            p(style = "text-align:right;",
-                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
-                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
-                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
-                            )
-                        )
-                    )
-                ),
-
-                tabPanel("Barplot & Time Series",
+            tabsetPanel(type = "tabs",
+                # tab 1
+                tabPanel(title = "Bar Graph & Time Series",
                     br(),
-                    plotOutput("barplots2", width = "85%", height = "330px"),
-                    plotOutput("timeseries2", width = "95%", height = "330px"),
-                    fluidRow(
-                        # link sources
-                        column(6,
-                            p(style = "text=align:left;",
-                                "Data source: ", tags$a(href="https://github.com/CSSEGISandData/COVID-19", "JHU CSSE GitHub"), " |",
-                                "Virus image source: ", tags$a(href="https://phil.cdc.gov/Details.aspx?pid=23312", "CDC.gov")
-                            )
-                        ),
-                        column(5,
-                            # signature, GitHub link
-                            p(style = "text-align:right;",
-                                "By ", tags$a(href="https://bigbangdata.github.io/", "Marcelo Sanches"),
-                                tags$a(href="https://github.com/BigBangData/CoronavirusDataAnalysis",
-                                    img(src="GitHub-Mark-32px.png", height = 20)), " BigBangData"
-                            )
-                        )
-                    )
+                    plotOutput("barplot", width = "85%", height = "330px"),
+                    plotOutput("timeseries", width = "95%", height = "330px"),
+                    tabPanelfooter
+                ),
+                # tab 2
+                tabPanel(title ="Interactive Dygraph",
+                    br(), br(),
+                    dygraphOutput("dygraph", width = "95%", height = "600px"),
+                    br(), br(),
+                    tabPanelfooter
                 )
-
-
             )
         )
     )
@@ -147,7 +116,8 @@ ui <- fluidPage(
 # define server logic
 server <- function(input, output) {
 
-    output$barplots1 <- renderPlot({
+    output$barplot <- renderPlot({
+
         # subset to continent
         data <- last_day[last_day$Continent %in% input$continent, ]
         # subset to population category
@@ -160,62 +130,28 @@ server <- function(input, output) {
         data <- data[order(data$Value, decreasing = TRUE), ]
         top_n <- min(length(unique(data$Country)), input$top_n)
         data <- data[1:top_n, ]
-        # barplot
+
         # immutable elements
         g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
-             geom_bar(stat = "identity", fill = data$Color) +
-             xlab("") + ylab(input$plot_type) + theme_minimal() +
-             scale_y_continuous(labels = function(x) format(x, big.mark = ","
-                , scientific = FALSE)) +
-             theme(
-                plot.title = element_text(size = 16, face = "bold")
-                , axis.text.x = element_text(angle = 45, hjust = 1, size = 14)
-                , axis.title.y = element_text(size = 14)
-                , axis.text.y = element_text(size = 12)
-            )
+                geom_bar(stat = "identity", fill = data$Color) +
+                xlab("") + ylab(input$plot_type) + theme_minimal() +
+                scale_y_continuous(labels = function(x) {
+                    format(x, big.mark = ",", scientific = FALSE)
+                }) +
+                theme(plot.title = element_text(size = 16, face = "bold")
+                    , axis.text.x = element_text(angle = 45, hjust = 1, size = 14)
+                    , axis.title.y = element_text(size = 14)
+                    , axis.text.y = element_text(size = 12))
+
         # mutable elements
         if (substr(input$plot_type, 1, 5) == "Total") {
-            g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
+            g + ggtitle(paste0("Top ", input$top_n, " Countries - As Of ", data$Date[1]))
         } else {
-            g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
+            g + ggtitle(paste0("Top ", input$top_n, " Countries - On ", data$Date[1]))
         }
     })
 
-    output$barplots2 <- renderPlot({
-        # subset to continent
-        data <- last_day[last_day$Continent %in% input$continent, ]
-        # subset to population category
-        data <- data[data$PopulationCategory %in% input$population_category, ]
-        # subset to plot type
-        data <- data[data$Type == input$plot_type, ]
-        # subset to status
-        data <- data[data$Status == input$status, ]
-        # top N (order desc)
-        data <- data[order(data$Value, decreasing = TRUE), ]
-        top_n <- min(length(unique(data$Country)), input$top_n)
-        data <- data[1:top_n, ]
-        # barplot
-        # immutable elements
-        g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
-             geom_bar(stat = "identity", fill = data$Color) +
-             xlab("") + ylab(input$plot_type) + theme_minimal() +
-             scale_y_continuous(labels = function(x) format(x, big.mark = ","
-                , scientific = FALSE)) +
-             theme(
-                plot.title = element_text(size = 16, face = "bold")
-                , axis.text.x = element_text(angle = 45, hjust = 1, size = 14)
-                , axis.title.y = element_text(size = 14)
-                , axis.text.y = element_text(size = 12)
-            )
-        # mutable elements
-        if (substr(input$plot_type, 1, 5) == "Total") {
-            g + ggtitle(paste0(input$status, " Cases As Of ", data$Date[1]))
-        } else {
-            g + ggtitle(paste0(input$status, " Cases On ", data$Date[1]))
-        }
-    })
-
-    output$timeseries1 <- renderPlot({
+    output$timeseries <- renderPlot({
 
         # subset to continent
         month_data <- last_month[last_month$Continent %in% input$continent, ]
@@ -242,21 +178,21 @@ server <- function(input, output) {
         palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
                 , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
                 , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
-        # time series
+
         # immutable elements
         g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
-             ggtitle(paste0(input$status, " Cases, Last 30 Days")) +
-             xlab("") + ylab(input$plot_type) + theme_minimal() +
-             scale_y_continuous(labels = function(x) format(x, big.mark = ","
-                , scientific = FALSE)) +
-             theme(
-                plot.title = element_text(size = 16, face = "bold")
-                , legend.title = element_text(size = 16)
-                , legend.text = element_text(size = 14)
-                , axis.text.x = element_text(size = 14)
-                , axis.title.y = element_text(size = 14)
-                , axis.text.y = element_text(size = 12)
-            )
+                ggtitle(paste0("Top ", input$top_n, " Countries - Last 30 Days")) +
+                xlab("") + ylab(input$plot_type) + theme_minimal() +
+                scale_y_continuous(labels = function(x) {
+                    format(x, big.mark = ",", scientific = FALSE)
+                }) +
+                theme(plot.title = element_text(size = 16, face = "bold")
+                    , legend.title = element_text(size = 16)
+                    , legend.text = element_text(size = 14)
+                    , axis.text.x = element_text(size = 14)
+                    , axis.title.y = element_text(size = 14)
+                    , axis.text.y = element_text(size = 12))
+
         # mutable elements
         # color
         if (input$ts_type == 1) {
@@ -281,7 +217,7 @@ server <- function(input, output) {
         }
     })
 
-    output$timeseries2 <- renderPlot({
+    output$dygraph <- renderDygraph({
 
         # subset to continent
         month_data <- last_month[last_month$Continent %in% input$continent, ]
@@ -308,43 +244,39 @@ server <- function(input, output) {
         palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
                 , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
                 , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
-        # time series
-        # immutable elements
-        g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
-             ggtitle(paste0(input$status, " Cases, Last 30 Days")) +
-             xlab("") + ylab(input$plot_type) + theme_minimal() +
-             scale_y_continuous(labels = function(x) format(x, big.mark = ","
-                , scientific = FALSE)) +
-             theme(
-                plot.title = element_text(size = 16, face = "bold")
-                , legend.title = element_text(size = 16)
-                , legend.text = element_text(size = 14)
-                , axis.text.x = element_text(size = 14)
-                , axis.title.y = element_text(size = 14)
-                , axis.text.y = element_text(size = 12)
-            )
-        # mutable elements
-        # color
-        if (input$ts_type == 1) {
-            g +
-            geom_line(aes(color = Country), size = 1) +
-            scale_color_manual(values = sample(palette, top_n))
+
+        create_xts_series <- function(df_month, country) {
+            df_month <- df_month[df_month$Country == country, ]
+            series <- xts(df_month$Value, order.by = df_month$Date)
+            return(series)
         }
-        # linetype
-        else if (input$ts_type == 2) {
-            g +
-            geom_line(aes(linetype = Country), size = 1) +
-            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
+
+        create_seriesObject <- function(df_month, df_day) {
+            seriesObject <- NULL
+            for (i in (1:input$top_n)) {
+                seriesObject <- cbind(
+                    seriesObject,
+                    create_xts_series(df_month, df_day$Country[i])
+                )
+            }
+            names(seriesObject) <- df_day$Country
+            return(seriesObject)
         }
-        # color and linetype
-        else {
-            g +
-            geom_line(aes(linetype = Country, color = Country), size = 1) +
-            scale_color_manual(values = sample(palette, top_n)) +
-            # weighted distribution to avoid dotted lines
-            scale_linetype_manual(values = sample(c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5),
-                replace = TRUE, top_n))
-        }
+
+        # render dygraph
+        seriesObject <- create_seriesObject(month_data, day_data)
+        title <- paste0("Top ", input$top_n, " Countries - Time Series")
+
+        dygraph(seriesObject, main = title) %>%
+            dyAxis("x", drawGrid = FALSE) %>%
+            dyAxis("y", label = input$plot_type) %>%
+            dyOptions(
+                colors = sample(palette, input$top_n)
+                , axisLineWidth = 1.5
+                , axisLineColor = "navy"
+                , gridLineColor = "lightblue") %>%
+            dyRangeSelector() %>%
+            dyLegend(width = 750)
     })
 
 }

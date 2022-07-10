@@ -26,6 +26,41 @@ input <- data.frame(
 )
 
 
+# set color palette using library(RColorBrewer)
+# brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
+color_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
+    , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
+    , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+
+subset_data_for_ts <- function(last_month, last_day, input) {
+    # subset to continent
+    month_data <- last_month[last_month$Continent %in% input$continent, ]
+    day_data <- last_day[last_day$Continent %in% input$continent, ]
+    # subset to population category
+    month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+    day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
+    # subset to plot type
+    month_data <- month_data[month_data$Type == input$plot_type, ]
+    day_data <- day_data[day_data$Type == input$plot_type, ]
+    # subset to status
+    month_data <- month_data[month_data$Status == input$status, ]
+    day_data <- day_data[day_data$Status == input$status, ]
+    # subset to top N (order desc) - only daily to get countries
+    day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
+    # account for case when there are less countries than user chose
+    top_n <- min(length(unique(day_data$Country)), input$top_n)
+    day_data <- day_data[1:top_n, ]
+    # subset monthly data (to last_day's top N countries)
+    month_data <- month_data[month_data$Country %in% day_data$Country, ]
+    # fix Date data type
+    month_data$Date <- as.Date(month_data$Date)
+    # return combined dataframes
+    month_data$dfm <- "Month"
+    day_data$dfm <- "Day"
+    return(rbind(day_data, month_data))
+}
+
+
 ## default barplot
 
         # subset to continent

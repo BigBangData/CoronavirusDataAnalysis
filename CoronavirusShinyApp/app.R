@@ -4,12 +4,13 @@ library(ggplot2)
 library(xts)
 library(dygraphs)
 
-# load dataset
+# load data
 last_month <- readRDS("last_month.rds")
 
-# subset to last_day
+# last day subset (for barplots and ordering)
 last_day <- last_month[last_month$Date == max(last_month$Date), ]
 
+## UI
 tabPanelfooter <- fluidRow(
     # link sources
     column(6,
@@ -26,7 +27,6 @@ tabPanelfooter <- fluidRow(
     )
 )
 
-# define ui
 ui <- fluidPage(
         title = "Coronavirus: Latest Country Statistics",
 
@@ -113,7 +113,42 @@ ui <- fluidPage(
     )
 )
 
-# define server logic
+## Server
+
+# set color palette using library(RColorBrewer)
+# brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
+color_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
+    , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
+    , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+
+subset_data_for_ts <- function(last_month, last_day, input) {
+    # subset to continent
+    month_data <- last_month[last_month$Continent %in% input$continent, ]
+    day_data <- last_day[last_day$Continent %in% input$continent, ]
+    # subset to population category
+    month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+    day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
+    # subset to plot type
+    month_data <- month_data[month_data$Type == input$plot_type, ]
+    day_data <- day_data[day_data$Type == input$plot_type, ]
+    # subset to status
+    month_data <- month_data[month_data$Status == input$status, ]
+    day_data <- day_data[day_data$Status == input$status, ]
+    # subset to top N (order desc) - only daily to get countries
+    day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
+    # account for case when there are less countries than user chose
+    top_n <- min(length(unique(day_data$Country)), input$top_n)
+    day_data <- day_data[1:top_n, ]
+    # subset monthly data (to last_day's top N countries)
+    month_data <- month_data[month_data$Country %in% day_data$Country, ]
+    # fix Date data type
+    month_data$Date <- as.Date(month_data$Date)
+    # return combined dataframes
+    month_data$dfm <- "Month"
+    day_data$dfm <- "Day"
+    return(rbind(day_data, month_data))
+}
+
 server <- function(input, output) {
 
     output$barplot <- renderPlot({
@@ -145,43 +180,25 @@ server <- function(input, output) {
 
         # mutable elements
         if (substr(input$plot_type, 1, 5) == "Total") {
-            g + ggtitle(paste0("Top ", input$top_n, " Countries - As Of ", data$Date[1]))
+            g + ggtitle(paste0("Top ", top_n, " Countries - As Of ", data$Date[1]))
         } else {
-            g + ggtitle(paste0("Top ", input$top_n, " Countries - On ", data$Date[1]))
+            g + ggtitle(paste0("Top ", top_n, " Countries - On ", data$Date[1]))
         }
     })
 
     output$timeseries <- renderPlot({
 
-        # subset to continent
-        month_data <- last_month[last_month$Continent %in% input$continent, ]
-        day_data <- last_day[last_day$Continent %in% input$continent, ]
-        # subset to population category
-        month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
-        day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
-        # subset to plot type
-        month_data <- month_data[month_data$Type == input$plot_type, ]
-        day_data <- day_data[day_data$Type == input$plot_type, ]
-        # subset to status
-        month_data <- month_data[month_data$Status == input$status, ]
-        day_data <- day_data[day_data$Status == input$status, ]
-        # top N (order desc) only daily to get countries
-        day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
-        top_n <- min(length(unique(day_data$Country)), input$top_n)
-        day_data <- day_data[1:top_n, ]
-        # subset monthly data to last_day's top N countries
-        month_data <- month_data[month_data$Country %in% day_data$Country, ]
-        # fix Date data type
-        month_data$Date <- as.Date(month_data$Date)
-        # library(RColorBrewer)
-        # brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
-        palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
-                , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
-                , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+        # subset data
+        dfs <- subset_data_for_ts(last_month, last_day, input)
+        month_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
+        day_data <- as.data.frame(dfs[dfs$dfm == "Day", ])
+        # recalc top_n from day_data
+        day_top_n <- nrow(day_data)
 
+        # ggplot time series
         # immutable elements
         g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
-                ggtitle(paste0("Top ", input$top_n, " Countries - Last 30 Days")) +
+                ggtitle(paste0("Top ", day_top_n, " Countries - Last 30 Days")) +
                 xlab("") + ylab(input$plot_type) + theme_minimal() +
                 scale_y_continuous(labels = function(x) {
                     format(x, big.mark = ",", scientific = FALSE)
@@ -194,66 +211,49 @@ server <- function(input, output) {
                     , axis.text.y = element_text(size = 12))
 
         # mutable elements
+        # sample colors
+        sample_colors <- sample(color_palette, replace = TRUE, day_top_n)
+        # sample linetypes (weighted to avoid over-dotting)
+        weighted_distro <- c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5)
+        sample_linetypes <- sample(weighted_distro, replace = TRUE, day_top_n)
         # color
         if (input$ts_type == 1) {
-            g +
-            geom_line(aes(color = Country), size = 1) +
-            scale_color_manual(values = sample(palette, top_n))
+            g + geom_line(aes(color = Country), size = 1) +
+            scale_color_manual(values = sample_colors)
         }
         # linetype
         else if (input$ts_type == 2) {
-            g +
-            geom_line(aes(linetype = Country), size = 1) +
-            scale_linetype_manual(values = sample(c(1:6), replace = TRUE, top_n))
+            g + geom_line(aes(linetype = Country), size = 1) +
+            scale_linetype_manual(values = sample_linetypes)
         }
         # color and linetype
         else {
-            g +
-            geom_line(aes(linetype = Country, color = Country), size = 1) +
-            scale_color_manual(values = sample(palette, top_n)) +
-            # weighted distribution to avoid dotted lines
-            scale_linetype_manual(values = sample(c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5),
-                replace = TRUE, top_n))
+            g + geom_line(aes(linetype = Country, color = Country), size = 1) +
+            scale_color_manual(values = sample_colors) +
+            scale_linetype_manual(values = sample_linetypes)
         }
     })
 
     output$dygraph <- renderDygraph({
 
-        # subset to continent
-        month_data <- last_month[last_month$Continent %in% input$continent, ]
-        day_data <- last_day[last_day$Continent %in% input$continent, ]
-        # subset to population category
-        month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
-        day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
-        # subset to plot type
-        month_data <- month_data[month_data$Type == input$plot_type, ]
-        day_data <- day_data[day_data$Type == input$plot_type, ]
-        # subset to status
-        month_data <- month_data[month_data$Status == input$status, ]
-        day_data <- day_data[day_data$Status == input$status, ]
-        # top N (order desc) only daily to get countries
-        day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
-        top_n <- min(length(unique(day_data$Country)), input$top_n)
-        day_data <- day_data[1:top_n, ]
-        # subset monthly data to last_day's top N countries
-        month_data <- month_data[month_data$Country %in% day_data$Country, ]
-        # fix Date data type
-        month_data$Date <- as.Date(month_data$Date)
-        # library(RColorBrewer)
-        # brewer.pal(n = 8, name = "Set1") # "Accent", "RdBu"
-        palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
-                , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
-                , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
+        # subset data
+        dfs <- subset_data_for_ts(last_month, last_day, input)
+        month_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
+        day_data <- as.data.frame(dfs[dfs$dfm == "Day", ])
+        # recalc top_n from day_data
+        day_top_n <- nrow(day_data)
 
+        ## interactive dygraph
+        # create xts
         create_xts_series <- function(df_month, country) {
             df_month <- df_month[df_month$Country == country, ]
             series <- xts(df_month$Value, order.by = df_month$Date)
             return(series)
         }
-
+        # create seriesObject
         create_seriesObject <- function(df_month, df_day) {
             seriesObject <- NULL
-            for (i in (1:input$top_n)) {
+            for (i in (1:day_top_n)) {
                 seriesObject <- cbind(
                     seriesObject,
                     create_xts_series(df_month, df_day$Country[i])
@@ -262,19 +262,18 @@ server <- function(input, output) {
             names(seriesObject) <- df_day$Country
             return(seriesObject)
         }
-
-        # render dygraph
         seriesObject <- create_seriesObject(month_data, day_data)
-        title <- paste0("Top ", input$top_n, " Countries - Time Series")
-
+        # render dygraph
+        title <- paste0("Top ", day_top_n, " Countries - Last 30 Days")
         dygraph(seriesObject, main = title) %>%
             dyAxis("x", drawGrid = FALSE) %>%
             dyAxis("y", label = input$plot_type) %>%
             dyOptions(
-                colors = sample(palette, input$top_n)
+                colors = sample(color_palette, replace = TRUE, day_top_n)
                 , axisLineWidth = 1.5
                 , axisLineColor = "navy"
-                , gridLineColor = "lightblue") %>%
+                , gridLineColor = "lightblue"
+                , labelsKMB = TRUE) %>%
             dyRangeSelector() %>%
             dyLegend(width = 750)
     })

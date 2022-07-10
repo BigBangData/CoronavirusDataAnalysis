@@ -1,3 +1,7 @@
-YoY comparison
-date picker (add all dates?)
-redo demo
+next:
+    - date picker (add 60, 90 days)
+    - redo demo in readme, rpubs, portfolio
+
+missing:
+    - YoY comparison (out of scope)
+    - Forecast (out of scope)

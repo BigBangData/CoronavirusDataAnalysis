@@ -51,48 +51,60 @@ ui <- fluidPage(
                 label = "Continent",
                 choices = list("Africa" = 1, "Asia" = 2, "Europe" = 3,
                     "North America" = 4, "Oceania" = 5, "South America" = 6),
-                selected = c(4, 6)),
+                selected = c(4, 6)
+            ),
             # checkbox for population category
             checkboxGroupInput(
                 inputId = "population_category",
                 label = "Population",
                 choices = list("more than 100 M" = 1, "from 10 M to 100 M" = 2,
                     "from 1 M to 10 M" = 3, "less than 1 M" = 4),
-                selected = c(1, 2)),
+                selected = c(1, 2)
+            ),
             # drop-down for plot type
             selectInput(
-                inputId = "plot_type", 
-                label = "Plot Type",
+                inputId = "plot_type",
+                label = "Metric & Status",
                 choices = c("Total Count", "Total % of Population"
                     , "New Cases", "New Cases per 10K"),
-                selected = "New Cases per 10K"),
+                selected = "New Cases per 10K"
+            ),
             # drop-down for status
             selectInput(
-                inputId = "status", 
-                label = "Status",
+                inputId = "status",
+                label = NULL,
                 choices = c("Confirmed", "Fatal"),
-                selected = "Confirmed"),
+                selected = "Confirmed"
+            ),
             # slider for top N number of countries to display
             sliderInput(
                 inputId = "top_n",
                 label = "Number of Countries",
                 min = 2,
                 max = 15,
-                value = 8),
-            # divider
-            tags$hr(style="border-color: black;"),
-            # checkbox for time series line options
+                value = 8
+            ),
+            HTML("<strong><font size=4>Time Series Options</font></strong>"),
+            # line differentiation options
+            # scale
+            checkboxInput(
+                inputId = "ts_scale",
+                label = "log scale",
+                value = FALSE
+            ),
             selectInput(
                 inputId = "ts_type",
-                label = "Time Series Options",
-                choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
-                selected = 3),
-            radioButtons(
-                inputId = "ts_scale",
                 label = NULL,
-                choiceNames = list("linear", "log"),
-                inline = TRUE,
-                choiceValues = list("linear", "log")
+                choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
+                selected = 3
+            ),
+            # start date
+            dateInput(
+                inputId = "date", 
+                label = "Start On", 
+                value = "2022-07-01",
+                min = min(last_month$Date),
+                max = max(last_month$Date) - 1L
             )
         ),
 
@@ -104,14 +116,14 @@ ui <- fluidPage(
                 # tab 1
                 tabPanel(title = "Bar Graph & Time Series",
                     br(),
-                    plotOutput("barplot", width = "85%", height = "330px"),
-                    plotOutput("timeseries", width = "95%", height = "330px"),
+                    plotOutput("barplot", width = "85%", height = "350px"),
+                    plotOutput("timeseries", width = "95%", height = "350px"),
                     tabPanelfooter
                 ),
                 # tab 2
                 tabPanel(title ="Interactive Dygraph",
                     br(), br(),
-                    dygraphOutput("dygraph", width = "95%", height = "600px"),
+                    dygraphOutput("dygraph", width = "95%", height = "640px"),
                     br(), br(),
                     tabPanelfooter
                 )
@@ -129,8 +141,10 @@ color_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
     , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
 
 subset_data_for_ts <- function(last_month, last_day, input) {
+    # subset dates
+    month_data <- last_month[last_month$Date >= input$date, ]
     # subset to continent
-    month_data <- last_month[last_month$Continent %in% input$continent, ]
+    month_data <- month_data[month_data$Continent %in% input$continent, ]
     day_data <- last_day[last_day$Continent %in% input$continent, ]
     # subset to population category
     month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
@@ -204,7 +218,7 @@ server <- function(input, output) {
 
         # ggplot time series
         # linear v log scales
-        if (input$ts_scale == "linear") {
+        if (input$ts_scale == FALSE) {
             g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
                 ylab(input$plot_type)
         } else {
@@ -212,8 +226,9 @@ server <- function(input, output) {
                 ylab(paste0("Log of ", input$plot_type))
         }
         # base plot
-        g <- g + 
-            ggtitle(paste0("Top ", day_top_n, " Countries - Last 30 Days")) +
+        g <- g +
+            ggtitle(paste0("Top ", day_top_n, " Countries - Last ", 
+                length(unique(month_data$Date)), " Days")) +
             xlab("") + theme_minimal() +
             scale_y_continuous(labels = function(x) {
                 format(x, big.mark = ",", scientific = FALSE)
@@ -261,7 +276,7 @@ server <- function(input, output) {
 
         ## interactive dygraph
         # linear v log scales
-        if (input$ts_scale == "linear") {
+        if (input$ts_scale == FALSE) {
             # create xts func
             create_xts_series <- function(df_month, country) {
                 df_month <- df_month[df_month$Country == country, ]
@@ -294,7 +309,8 @@ server <- function(input, output) {
         }
         seriesObject <- create_seriesObject(month_data, day_data)
         # render dygraph
-        title <- paste0("Top ", day_top_n, " Countries - Last 30 Days")
+        title <- paste0("Top ", day_top_n, " Countries - Last ",
+            length(unique(month_data$Date)), " Days")
         dygraph(seriesObject, main = title) %>%
             dyAxis("x", drawGrid = FALSE) %>%
             dyAxis("y", label = y_label) %>%

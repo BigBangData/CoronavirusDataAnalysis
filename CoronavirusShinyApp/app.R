@@ -262,18 +262,23 @@ server <- function(input, output) {
         ## interactive dygraph
         # linear v log scales
         if (input$ts_scale == "linear") {
-            # create xts
+            # create xts func
             create_xts_series <- function(df_month, country) {
                 df_month <- df_month[df_month$Country == country, ]
                 series <- xts(df_month$Value, order.by = df_month$Date)
                 return(series)
             }
+            # y-axis lab
+            y_label <- input$plot_type
         } else {
+            # create xts func
             create_xts_series <- function(df_month, country) {
                 df_month <- df_month[df_month$Country == country, ]
                 series <- xts(log(df_month$Value), order.by = df_month$Date)
                 return(series)
             }
+            # y-axis lab
+            y_label <- paste0("Log of ", input$plot_type)
         }
         # create seriesObject
         create_seriesObject <- function(df_month, df_day) {
@@ -292,7 +297,7 @@ server <- function(input, output) {
         title <- paste0("Top ", day_top_n, " Countries - Last 30 Days")
         dygraph(seriesObject, main = title) %>%
             dyAxis("x", drawGrid = FALSE) %>%
-            dyAxis("y", label = input$plot_type) %>%
+            dyAxis("y", label = y_label) %>%
             dyOptions(
                 colors = sample(color_palette, replace = TRUE, day_top_n)
                 , axisLineWidth = 1.5

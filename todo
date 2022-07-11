@@ -1,4 +1,6 @@
 next:
+    - change fontsize for checkbox groups
+    - linetype options for dygraph
     - date picker (add 60, 90 days)
     - redo demo in readme, rpubs, portfolio
 

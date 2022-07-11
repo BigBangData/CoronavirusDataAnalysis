@@ -84,9 +84,16 @@ ui <- fluidPage(
             # checkbox for time series line options
             selectInput(
                 inputId = "ts_type",
-                label = "Time Series Line Options",
+                label = "Time Series Options",
                 choices = list("Color" = 1, "Linetype" = 2, "Color & Linetype" = 3),
-                selected = 3)
+                selected = 3),
+            radioButtons(
+                inputId = "ts_scale",
+                label = NULL,
+                choiceNames = list("linear", "log"),
+                inline = TRUE,
+                choiceValues = list("linear", "log")
+            )
         ),
 
         # main panel with plots
@@ -166,7 +173,7 @@ server <- function(input, output) {
         top_n <- min(length(unique(data$Country)), input$top_n)
         data <- data[1:top_n, ]
 
-        # immutable elements
+        # base plot
         g <- ggplot(data = data, aes(x = reorder(Country, -Value),  y = Value)) +
                 geom_bar(stat = "identity", fill = data$Color) +
                 xlab("") + ylab(input$plot_type) + theme_minimal() +
@@ -196,26 +203,34 @@ server <- function(input, output) {
         day_top_n <- nrow(day_data)
 
         # ggplot time series
-        # immutable elements
-        g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
-                ggtitle(paste0("Top ", day_top_n, " Countries - Last 30 Days")) +
-                xlab("") + ylab(input$plot_type) + theme_minimal() +
-                scale_y_continuous(labels = function(x) {
-                    format(x, big.mark = ",", scientific = FALSE)
-                }) +
-                theme(plot.title = element_text(size = 16, face = "bold")
-                    , legend.title = element_text(size = 16)
-                    , legend.text = element_text(size = 14)
-                    , axis.text.x = element_text(size = 14)
-                    , axis.title.y = element_text(size = 14)
-                    , axis.text.y = element_text(size = 12))
-
-        # mutable elements
+        # linear v log scales
+        if (input$ts_scale == "linear") {
+            g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
+                ylab(input$plot_type)
+        } else {
+            g <- ggplot(data = month_data, aes(x = Date, y = log(Value))) +
+                ylab(paste0("Log of ", input$plot_type))
+        }
+        # base plot
+        g <- g + 
+            ggtitle(paste0("Top ", day_top_n, " Countries - Last 30 Days")) +
+            xlab("") + theme_minimal() +
+            scale_y_continuous(labels = function(x) {
+                format(x, big.mark = ",", scientific = FALSE)
+            }) +
+            theme(plot.title = element_text(size = 16, face = "bold")
+                , legend.title = element_text(size = 16)
+                , legend.text = element_text(size = 14)
+                , axis.text.x = element_text(size = 14)
+                , axis.title.y = element_text(size = 14)
+                , axis.text.y = element_text(size = 12))
+        
         # sample colors
         sample_colors <- sample(color_palette, replace = TRUE, day_top_n)
         # sample linetypes (weighted to avoid over-dotting)
         weighted_distro <- c(1, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5)
         sample_linetypes <- sample(weighted_distro, replace = TRUE, day_top_n)
+        # mutable elements:
         # color
         if (input$ts_type == 1) {
             g + geom_line(aes(color = Country), size = 1) +
@@ -232,6 +247,7 @@ server <- function(input, output) {
             scale_color_manual(values = sample_colors) +
             scale_linetype_manual(values = sample_linetypes)
         }
+
     })
 
     output$dygraph <- renderDygraph({
@@ -244,11 +260,20 @@ server <- function(input, output) {
         day_top_n <- nrow(day_data)
 
         ## interactive dygraph
-        # create xts
-        create_xts_series <- function(df_month, country) {
-            df_month <- df_month[df_month$Country == country, ]
-            series <- xts(df_month$Value, order.by = df_month$Date)
-            return(series)
+        # linear v log scales
+        if (input$ts_scale == "linear") {
+            # create xts
+            create_xts_series <- function(df_month, country) {
+                df_month <- df_month[df_month$Country == country, ]
+                series <- xts(df_month$Value, order.by = df_month$Date)
+                return(series)
+            }
+        } else {
+            create_xts_series <- function(df_month, country) {
+                df_month <- df_month[df_month$Country == country, ]
+                series <- xts(log(df_month$Value), order.by = df_month$Date)
+                return(series)
+            }
         }
         # create seriesObject
         create_seriesObject <- function(df_month, df_day) {

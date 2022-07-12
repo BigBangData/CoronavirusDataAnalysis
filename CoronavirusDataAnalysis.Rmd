@@ -1,7 +1,7 @@
 ---
 title: "Coronavirus Data Analysis"
 author: "Marcelo Sanches"
-date: "07/08/2022"
+date: "07/11/2022"
 output: 
   html_document:
     keep_md: true
@@ -28,8 +28,8 @@ Curious about the data source for the JHU CSSE map, I found their [GitHub reposi
 * [Data Pre-Processing](#preprocess-link): brief description of data pre-processing and cleanup
 * [Data Wrangling and Enrichment](#enrich-link): adding population data and calculated fields
 * [Data Visualization](#dataviz-link): see shiny app for barplots and time series
-* [Forecasting](#forecast-link): time series visualizations
-* [Code Appendix](#codeappendix-link): see GitHub for reproducibility
+* [Forecasting](#forecast-link): in progress...
+* [Code Appendix](#codeappendix-link): code for Rpubs; see GitHub for reproducibility
 
 ---
 
@@ -37,12 +37,28 @@ Curious about the data source for the JHU CSSE map, I found their [GitHub reposi
 
 
 ```{r include=FALSE}
-# setup & pre-process latest data
-source("./00_setup_and_load.R")
+# load libraries
+install_packages <- function(package){
+    newpackage <- package[!(package %in% installed.packages()[, "Package"])]
+      if (length(newpackage)) {
+        suppressMessages(install.packages(newpackage, dependencies = TRUE)) 
+      }
+      sapply(package, require, character.only = TRUE)
+}
+
+suppressPackageStartupMessages(
+    install_packages(
+        # list of packages
+        c("kableExtra", "tidyverse")
+    )
+)
 
 # read in preprocessed data
-rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
-dfm <- readRDS(rds_file)
+prep_data <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
+dfm <- readRDS(prep_data)
+
+enriched_data <- paste0("./data/", gsub("-", "", Sys.Date()), "_enriched.rds")
+merged <- readRDS(enriched_data)
 
 # calculate number of countries and number of days in the time series
 Ncountries <- length(unique(dfm$Country))
@@ -54,7 +70,7 @@ The pre-processed dataset is comprised of `r nrow(dfm)` rows and `r length(dfm)`
 
 Today (`r Sys.Date()`) there are `r Ndays` days and `r Ncountries` countries in the data, before removing the small and seasonal populations of ships, Antarctica, the Olympics, and the Holy See. 
 
-Since the project focuses on countries, latitude, longitude, and the sub-national "province.state" fields were discarded.
+Since the project focuses on countries, `latitude`, `longitude`, and the sub-national `province.state` fields were discarded.
 
 ---
 
@@ -74,16 +90,17 @@ I maintain a static data set of countries and their population. This data was co
 I also added two new fields for the shiny app to help compare countries in the same geographical area or of similar population size:
 
 - `Continent`: coded in alphabetical order (1 - Africa, 2 - Asia, 3 - Europe, 4 - North America, 5 - Oceania, 6 - South America), this field oversimplifies countries spanning multiple continents (i.e., eastern Europe)
-- `PopulationCategory`: (calculated) coded in descending size (1 - over 100 M, 2 - from 10 M to 100 M, 3 - from 1 M to 10 M, 4 - less than 1 M)
+- `PopulationCategory`: (calculated) coded in descending size (1 - 100 M +, 2 - 10 M to 100 M, 3 - 1 M to 10 M, 4 - less than 1 M)
 
 The top rows of the enriched data set for Brazil and the US are:
 
 ```{r echo=FALSE}
-# top and bottom rows for final data set
-kable(rbind(head(merged[merged$Country == "Brazil", ], 3)
-            , head(merged[merged$Country == "US", ], 3))) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
-                  , full_width = FALSE)
+# top rows for Brazil and US
+brazil_us <- rbind(head(merged[merged$Country == "Brazil", ], 3), 
+                   head(merged[merged$Country == "US", ], 3))
+
+kable(x = brazil_us, table.attr = "style='width:100%;'" ) %>% 
+kable_classic(full_width = TRUE, position = "center", )
 ```
 
 
@@ -100,7 +117,6 @@ __Note__: there were a few data quality issues in the original count which resul
 ### Total Counts
 
 
-
 ```{r echo=FALSE}
 # subset to last date and calculate world totals
 current_data <- data.frame(
@@ -120,7 +136,8 @@ world_totals <- data.frame(
 world_totals$Total <- formatC(world_totals$Total, big.mark=",")
 
 kable(world_totals) %>%
-      kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+      kable_styling(bootstrap_options = c("striped", "hover"), 
+                    full_width = FALSE)
 ```
 ---
 
@@ -137,7 +154,7 @@ Interact with the [shiny app here.](https://bigbangdata.shinyapps.io/shinyapp/)
 ## Forecasting {#forecast-link}
 
 
-
+- IN PROGRESS...
 
 
 ---
@@ -147,32 +164,51 @@ Interact with the [shiny app here.](https://bigbangdata.shinyapps.io/shinyapp/)
 
 ### Code Appendix {#codeappendix-link}
 
+Fork or clone this [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) with all files and code, including the code for the Shiny app.
+
+
 ```{r eval=FALSE}
-## ----include=FALSE------------------------------------------------------
-# setup & pre-process latest data
-source("./00_setup_and_load.R")
+# load libraries
+install_packages <- function(package){
+    newpackage <- package[!(package %in% installed.packages()[, "Package"])]
+      if (length(newpackage)) {
+        suppressMessages(install.packages(newpackage, dependencies = TRUE)) 
+      }
+      sapply(package, require, character.only = TRUE)
+}
+
+suppressPackageStartupMessages(
+    install_packages(
+        # list of packages
+        c("kableExtra", "tidyverse")
+    )
+)
 
 # read in preprocessed data
-rds_file <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
-dfm <- readRDS(rds_file)
+prep_data <- paste0("./data/", gsub("-", "", Sys.Date()), "_data.rds")
+dfm <- readRDS(prep_data)
+
+enriched_data <- paste0("./data/", gsub("-", "", Sys.Date()), "_enriched.rds")
+merged <- readRDS(enriched_data)
 
 # calculate number of countries and number of days in the time series
 Ncountries <- length(unique(dfm$Country))
 Ndays <- length(unique(dfm$Date))
 
+# embedded vars generated during explanation
 nrow(dfm)
 length(dfm)
 Sys.Date()
 Ndays
 Ncountries
-## ----echo=FALSE------------------------------------------------------
-# top and bottom rows for final data set
-kable(rbind(head(merged[merged$Country == "Brazil", ], 3)
-            , head(merged[merged$Country == "US", ], 3))) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed")
-                  , full_width = FALSE)
 
-## ----echo=FALSE------------------------------------------------------
+# top rows for Brazil and US
+brazil_us <- rbind(head(merged[merged$Country == "Brazil", ], 3), 
+                   head(merged[merged$Country == "US", ], 3))
+
+kable(x = brazil_us, table.attr = "style='width:100%;'" ) %>% 
+kable_classic(full_width = TRUE, position = "center", )
+
 # subset to last date and calculate world totals
 current_data <- data.frame(
     merged %>%
@@ -194,7 +230,6 @@ kable(world_totals) %>%
       kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-Fork or clone this [GitHub repository](https://github.com/BigBangData/CoronavirusDataAnalysis) with all files and code, including the code for the Shiny app.
 
 
 ```{r}

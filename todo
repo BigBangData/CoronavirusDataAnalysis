@@ -1,7 +1,6 @@
-next:
+Shiny App:
     - linetype options for dygraph
-    - redo demo in readme, rpubs, portfolio
 
-missing:
-    - YoY comparison (out of scope)
-    - Forecast (out of scope)
+Rpubs Analysis:
+    - YoY comparisons
+    - Forecasting

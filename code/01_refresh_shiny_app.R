@@ -34,22 +34,22 @@ if (!file.exists(paste0("../data/", enriched_rds))) {
 
 # App data
 
-# subset to last 30 days, ordered by Status and overall Count DESC
-last_month <- merged[merged$Date >= as.Date(Sys.Date() - 30), ]
+# subset to last 90 days, ordered by Status and overall Count DESC
+last_90d <- merged[merged$Date >= as.Date(Sys.Date() - 90), ]
 
 # add color based on Status
-last_month$Color <- ifelse(last_month$Status == "Confirmed", "#D6604D", "#202226")
+last_90d$Color <- ifelse(last_90d$Status == "Confirmed", "#D6604D", "#202226")
 
 # reorder columns & reshape
 new_order <-  c("Date", "Country", "Continent", "PopulationCategory", "Status", "Color", 
     "Cumulative_Count", "Cumulative_PctPopulation", "NewCases", "NewCases_per10K")
-last_month <- last_month[, new_order]
+last_90d <- last_90d[, new_order]
 new_names <- c("Date", "Country", "Continent", "PopulationCategory", "Status", "Color",
     "Total Count", "Total % of Population", "New Cases", "New Cases per 10K")
-colnames(last_month) <- new_names
+colnames(last_90d) <- new_names
 
-last_month <- as.data.frame(
-    last_month %>% pivot_longer(
+last_90d <- as.data.frame(
+    last_90d %>% pivot_longer(
         cols = c("Total Count", "Total % of Population", "New Cases", "New Cases per 10K")
             , names_to = "Type"
             , values_to = "Value"
@@ -57,7 +57,7 @@ last_month <- as.data.frame(
 )
 
 # fix data quality problem of negative cases
-last_month[last_month$Value < 0,]$Value <- 0
+last_90d[last_90d$Value < 0,]$Value <- 0
 
 # write data to app folder
-saveRDS(last_month, file = "../CoronavirusShinyApp/last_month.rds")
+saveRDS(last_90d, file = "../CoronavirusShinyApp/last_90d.rds")

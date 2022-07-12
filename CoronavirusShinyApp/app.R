@@ -5,10 +5,10 @@ library(xts)
 library(dygraphs)
 
 # load data
-last_month <- readRDS("last_month.rds")
+last_90d <- readRDS("last_90d.rds")
 
 # last day subset (for barplots and ordering)
-last_day <- last_month[last_month$Date == max(last_month$Date), ]
+last_day <- last_90d[last_90d$Date == max(last_90d$Date), ]
 
 ## UI
 tabPanelfooter <- fluidRow(
@@ -102,9 +102,9 @@ ui <- fluidPage(
             dateInput(
                 inputId = "date", 
                 label = "Start On", 
-                value = "2022-07-01",
-                min = min(last_month$Date),
-                max = max(last_month$Date) - 1L
+                value = min(last_90d$Date),
+                min = min(last_90d$Date),
+                max = max(last_90d$Date) - 1L
             )
         ),
 
@@ -140,20 +140,20 @@ color_palette <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00"
     , "#A65628", "#F781BF", "#999999", "#BF5B17", "#666666"
     , "#B2182B", "#D6604D", "#2166AC", "#053061", "#F0027F")
 
-subset_data_for_ts <- function(last_month, last_day, input) {
+subset_data_for_ts <- function(last_90d, last_day, input) {
     # subset dates
-    month_data <- last_month[last_month$Date >= input$date, ]
+    quarter_data <- last_90d[last_90d$Date >= input$date, ]
     # subset to continent
-    month_data <- month_data[month_data$Continent %in% input$continent, ]
+    quarter_data <- quarter_data[quarter_data$Continent %in% input$continent, ]
     day_data <- last_day[last_day$Continent %in% input$continent, ]
     # subset to population category
-    month_data <- month_data[month_data$PopulationCategory %in% input$population_category, ]
+    quarter_data <- quarter_data[quarter_data$PopulationCategory %in% input$population_category, ]
     day_data <- day_data[day_data$PopulationCategory %in% input$population_category, ]
     # subset to plot type
-    month_data <- month_data[month_data$Type == input$plot_type, ]
+    quarter_data <- quarter_data[quarter_data$Type == input$plot_type, ]
     day_data <- day_data[day_data$Type == input$plot_type, ]
     # subset to status
-    month_data <- month_data[month_data$Status == input$status, ]
+    quarter_data <- quarter_data[quarter_data$Status == input$status, ]
     day_data <- day_data[day_data$Status == input$status, ]
     # subset to top N (order desc) - only daily to get countries
     day_data <- day_data[order(day_data$Value, decreasing = TRUE), ]
@@ -161,13 +161,13 @@ subset_data_for_ts <- function(last_month, last_day, input) {
     top_n <- min(length(unique(day_data$Country)), input$top_n)
     day_data <- day_data[1:top_n, ]
     # subset monthly data (to last_day's top N countries)
-    month_data <- month_data[month_data$Country %in% day_data$Country, ]
+    quarter_data <- quarter_data[quarter_data$Country %in% day_data$Country, ]
     # fix Date data type
-    month_data$Date <- as.Date(month_data$Date)
+    quarter_data$Date <- as.Date(quarter_data$Date)
     # return combined dataframes
-    month_data$dfm <- "Month"
+    quarter_data$dfm <- "Month"
     day_data$dfm <- "Day"
-    return(rbind(day_data, month_data))
+    return(rbind(day_data, quarter_data))
 }
 
 server <- function(input, output) {
@@ -210,8 +210,8 @@ server <- function(input, output) {
     output$timeseries <- renderPlot({
 
         # subset data
-        dfs <- subset_data_for_ts(last_month, last_day, input)
-        month_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
+        dfs <- subset_data_for_ts(last_90d, last_day, input)
+        quarter_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
         day_data <- as.data.frame(dfs[dfs$dfm == "Day", ])
         # recalc top_n from day_data
         day_top_n <- nrow(day_data)
@@ -219,16 +219,16 @@ server <- function(input, output) {
         # ggplot time series
         # linear v log scales
         if (input$ts_scale == FALSE) {
-            g <- ggplot(data = month_data, aes(x = Date, y = Value)) +
+            g <- ggplot(data = quarter_data, aes(x = Date, y = Value)) +
                 ylab(input$plot_type)
         } else {
-            g <- ggplot(data = month_data, aes(x = Date, y = log(Value))) +
+            g <- ggplot(data = quarter_data, aes(x = Date, y = log(Value))) +
                 ylab(paste0("Log of ", input$plot_type))
         }
         # base plot
         g <- g +
             ggtitle(paste0("Top ", day_top_n, " Countries - Last ", 
-                length(unique(month_data$Date)), " Days")) +
+                length(unique(quarter_data$Date)), " Days")) +
             xlab("") + theme_minimal() +
             scale_y_continuous(labels = function(x) {
                 format(x, big.mark = ",", scientific = FALSE)
@@ -268,8 +268,8 @@ server <- function(input, output) {
     output$dygraph <- renderDygraph({
 
         # subset data
-        dfs <- subset_data_for_ts(last_month, last_day, input)
-        month_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
+        dfs <- subset_data_for_ts(last_90d, last_day, input)
+        quarter_data <- as.data.frame(dfs[dfs$dfm == "Month", ])
         day_data <- as.data.frame(dfs[dfs$dfm == "Day", ])
         # recalc top_n from day_data
         day_top_n <- nrow(day_data)
@@ -307,10 +307,10 @@ server <- function(input, output) {
             names(seriesObject) <- df_day$Country
             return(seriesObject)
         }
-        seriesObject <- create_seriesObject(month_data, day_data)
+        seriesObject <- create_seriesObject(quarter_data, day_data)
         # render dygraph
         title <- paste0("Top ", day_top_n, " Countries - Last ",
-            length(unique(month_data$Date)), " Days")
+            length(unique(quarter_data$Date)), " Days")
         dygraph(seriesObject, main = title) %>%
             dyAxis("x", drawGrid = FALSE) %>%
             dyAxis("y", label = y_label) %>%

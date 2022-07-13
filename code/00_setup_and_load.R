@@ -17,8 +17,7 @@ install_packages <- function(package){
 suppressPackageStartupMessages(
     install_packages(
         # list of packages
-        c("forecast", "kableExtra", "MLmetrics",
-         "RColorBrewer", "sqldf", "testthat", "tidyverse")
+        c("sqldf", "testthat", "tidyverse")
     )
 )
 

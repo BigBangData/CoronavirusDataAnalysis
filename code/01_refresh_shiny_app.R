@@ -60,4 +60,4 @@ last_90d <- as.data.frame(
 last_90d[last_90d$Value < 0,]$Value <- 0
 
 # write data to app folder
-saveRDS(last_90d, file = "../CoronavirusShinyApp/last_90d.rds")
+saveRDS(last_90d, file = "CoronavirusShinyApp/last_90d.rds")

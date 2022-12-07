@@ -8,6 +8,8 @@
 setwd("../GitHub/CoronavirusDataAnalysis/code")
 source("01_refresh_shiny_app.R") # leaves you a dir up
 
+# see console for any errors, such as missing countries
+
 library(shiny)
 setwd("CoronavirusShinyApp/")
 runApp() # to test
